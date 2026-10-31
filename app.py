@@ -31,9 +31,11 @@ app.add_middleware(
 
 engine = MerchantCopilotEngine()
 
-# Mount static audio files
-static_audio_dir = os.path.join(os.path.dirname(__file__), "static", "audio")
+# Mount static assets (audio and audio_bundle.js)
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+static_audio_dir = os.path.join(static_dir, "audio")
 os.makedirs(static_audio_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 app.mount("/audio", StaticFiles(directory=static_audio_dir), name="audio")
 
 class QueryRequest(BaseModel):
