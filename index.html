@@ -3,11 +3,24 @@
 <head>
   <!-- Paytm VyaparAI Mobile PWA Service Worker Registration -->
   <script>
+        if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => {
+          if (name !== 'paytm-vyaparai-mobile-v3') caches.delete(name);
+        });
+      });
+    }
     if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.update();
+      });
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js', { scope: '/' })
-          .then(reg => console.log('Paytm VyaparAI PWA Mobile Service Worker registered on scope:', reg.scope))
-          .catch(err => console.log('PWA Service Worker note:', err));
+          .then(reg => {
+            reg.update();
+            console.log('Paytm VyaparAI PWA Service Worker v3 active');
+          })
+          .catch(err => console.log('PWA Service Worker skipped:', err));
       });
     }
   </script>

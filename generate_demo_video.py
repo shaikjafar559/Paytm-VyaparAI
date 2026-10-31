@@ -118,7 +118,7 @@ async def record():
         )
         page = await context.new_page()
 
-        print("Navigating to local Paytm VyaparAI terminal (http://127.0.0.1:8080/)...")
+        print("Navigating to local terminal (http://127.0.0.1:8080/)...")
         await page.goto("http://127.0.0.1:8080/", wait_until="networkidle")
         await page.wait_for_timeout(1000)
 
@@ -129,7 +129,7 @@ async def record():
 
         # SCENE 1: Welcome & Overview
         print("Recording Scene 1: Overview & Soundbox Connection...")
-        await page.evaluate("setDemoCaption('Next-Gen AI Retail OS for 40M+ Bharat Kirana Merchants', 'OVERVIEW')")
+        await page.evaluate("setDemoCaption('Voice-First AI Retail Operating System for 40M+ Kirana Merchants', 'OVERVIEW')")
         await page.mouse.move(300, 120, steps=15)
         await page.wait_for_timeout(2000)
 
@@ -160,7 +160,7 @@ async def record():
 
         # SCENE 4: Smart Khata & Customer Records
         print("Recording Scene 4: Smart Khata Ledger...")
-        await page.evaluate("setDemoCaption('Tab 2: Smart Khata Ledger with Customer Phone Numbers & Balance Sync', 'SMART KHATA')")
+        await page.evaluate("setDemoCaption('Tab 3: Smart Khata Ledger with Customer Phone Numbers & Balance Sync', 'SMART KHATA')")
         await smooth_move_to(page, "#tab-udhar")
         await page.click("#tab-udhar")
         await page.wait_for_timeout(2000)
@@ -191,55 +191,39 @@ async def record():
                     await wa_tab.click()
                     await page.wait_for_timeout(1500)
 
-                # Close dispatch modal explicitly using JS function
+                # Close dispatch modal explicitly
                 await page.evaluate("closeWhatsAppDispatchModal()")
                 await page.wait_for_timeout(800)
 
-        # SCENE 6: Payment Tracker Tab & Real-Time Receipt Modal
-        print("Recording Scene 6: Payment Tracker & Instant Payment Modal...")
-        await page.evaluate("setDemoCaption('Tab 7: Live Payment Tracker & Passbook with KPI Analytics', 'PASSBOOK')")
-        await smooth_move_to(page, "#tab-tracker")
-        await page.click("#tab-tracker")
-        await page.wait_for_timeout(1800)
-
-        # Simulate Payment
-        await page.evaluate("setDemoCaption('Simulating Real-Time Customer UPI Payment Ingestion', 'LIVE PAYMENT')")
-        name_input = await page.query_selector("#sim-pay-name")
-        amt_input = await page.query_selector("#sim-pay-amt")
-        if name_input and amt_input:
-            await name_input.fill("Shaik Jafar")
-            await amt_input.fill("1250")
-            pay_btn = await page.query_selector("button:has-text('Receive Payment')")
-            if pay_btn:
-                await smooth_move_to(page, "button:has-text('Receive Payment')")
-                await pay_btn.click()
+        # SCENE 6: Real-Time Payment Received Modal & Khata Settlement
+        print("Recording Scene 6: Khata Mark Paid & Real-Time Receipt Modal...")
+        await page.evaluate("setDemoCaption('Instant Payment Settlement & Verified Paytm Checkmark Receipt Modal', 'PAYMENT RECEIPT')")
+        paid_btn = await page.query_selector("button:has-text('Mark Paid')")
+        if paid_btn:
+            box = await paid_btn.bounding_box()
+            if box:
+                await page.mouse.move(box['x'] + box['width']/2, box['y'] + box['height']/2, steps=12)
+                await paid_btn.click()
                 await page.wait_for_timeout(2500)
 
-                # View Receipt Modal
-                await page.evaluate("setDemoCaption('Instant Payment Received Modal with RRN, Checkmark & Print Receipt', 'RECEIPT ENGINE')")
+                # View Receipt Modal details
+                await page.evaluate("setDemoCaption('Real-Time Payment Verified via Soundbox 4.0 with UPI RRN', 'RECEIPT ENGINE')")
                 await page.wait_for_timeout(2500)
 
-                # Close Receipt Modal explicitly
+                # Close Receipt Modal
                 await page.evaluate("closePaymentReceivedModal()")
                 await page.wait_for_timeout(800)
 
-        # Scroll passbook feed
-        await page.evaluate("setDemoCaption('Automated Passbook Ledger with Replay Voice Chimes & CSV Export', 'PASSBOOK')")
-        await page.evaluate("window.scrollBy({ top: 300, behavior: 'smooth' })")
-        await page.wait_for_timeout(1500)
-        await page.evaluate("window.scrollBy({ top: -300, behavior: 'smooth' })")
-        await page.wait_for_timeout(1000)
-
         # SCENE 7: ONDC Wholesale Restock
         print("Recording Scene 7: ONDC Wholesale Restock...")
-        await page.evaluate("setDemoCaption('Tab 4: Autonomous ONDC Wholesale Restocking Engine', 'ONDC SUPPLY')")
+        await page.evaluate("setDemoCaption('Tab 2: Autonomous ONDC Wholesale Restocking Engine', 'ONDC SUPPLY')")
         await smooth_move_to(page, "#tab-demand")
         await page.click("#tab-demand")
         await page.wait_for_timeout(2000)
 
         # SCENE 8: Instant Working Capital Credit
         print("Recording Scene 8: Instant Credit...")
-        await page.evaluate("setDemoCaption('Tab 5: Cash-Flow Velocity Underwriting (₹5,00,000 Pre-Approved Credit)', 'FINTECH')")
+        await page.evaluate("setDemoCaption('Tab 4: 180s Cash-Flow Velocity Underwriting (₹5,00,000 Credit Line)', 'FINTECH')")
         await smooth_move_to(page, "#tab-credit")
         await page.click("#tab-credit")
         await page.wait_for_timeout(2000)
@@ -264,7 +248,7 @@ async def record():
 
         # Get recorded video path before closing
         video_path = await page.video.path()
-        print(f"Recorded raw WebM video to: {video_path}")
+        print(f"Recorded clean raw WebM video to: {video_path}")
 
         await context.close()
         await browser.close()
@@ -273,12 +257,12 @@ async def record():
 def convert_to_mp4(webm_path):
     print(f"[2/3] Processing WebM: {webm_path}")
     shutil.copyfile(webm_path, OUTPUT_WEBM)
-    print(f"Saved pristine WebM video to Desktop: {OUTPUT_WEBM}")
+    print(f"Saved pristine clean WebM video to Desktop: {OUTPUT_WEBM}")
 
     print(f"[3/3] Converting frames to MP4: {OUTPUT_MP4}...")
     cap = cv2.VideoCapture(webm_path)
     if not cap.isOpened():
-        print("Notice: OpenCV could not read raw stream directly, WebM is already available.")
+        print("Notice: OpenCV could not read raw stream directly, WebM is ready.")
         return
 
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -301,10 +285,10 @@ def convert_to_mp4(webm_path):
     cap.release()
     out.release()
     out_ws.release()
-    print(f"Successfully rendered MP4 ({frames} frames @ {fps} FPS): {OUTPUT_MP4}")
+    print(f"Successfully rendered clean MP4 ({frames} frames @ {fps} FPS): {OUTPUT_MP4}")
 
 if __name__ == '__main__':
     raw_video = asyncio.run(record())
     if raw_video and os.path.exists(raw_video):
         convert_to_mp4(raw_video)
-        print("ALL OPERATIONS COMPLETED! Video ready on Desktop!")
+        print("ALL OPERATIONS COMPLETED! Clean video ready on Desktop!")

@@ -63,8 +63,16 @@ async def serve_dashboard():
     html_path = os.path.join(os.path.dirname(__file__), "index.html")
     if os.path.exists(html_path):
         with open(html_path, "r", encoding="utf-8") as f:
-            return f.read()
-    return "<h1>Paytm VyaparAI Server Running.</h1>"
+            content = f.read()
+            return HTMLResponse(
+                content=content,
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
+    return HTMLResponse("<h1>Paytm VyaparAI Server Running.</h1>")
 
 
 @app.get("/favicon.ico")
@@ -98,6 +106,17 @@ async def get_manifest():
 @app.get("/sw.js")
 async def get_service_worker():
     sw_path = os.path.join(os.path.dirname(__file__), "sw.js")
+    if os.path.exists(sw_path):
+        with open(sw_path, "r", encoding="utf-8") as f:
+            return Response(
+                content=f.read(),
+                media_type="application/javascript",
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
     if os.path.exists(sw_path):
         return FileResponse(sw_path, media_type="application/javascript", headers={"Service-Worker-Allowed": "/"})
     return Response(status_code=404)
