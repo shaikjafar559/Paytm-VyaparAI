@@ -4965,6 +4965,17 @@
       }
     }
 
+    function triggerSoundboxSpeech(text) {
+      if (typeof speakFallbackSpeech === 'function') {
+        speakFallbackSpeech(text);
+      } else if (window.speechSynthesis) {
+        try {
+          const u = new SpeechSynthesisUtterance(text);
+          window.speechSynthesis.speak(u);
+        } catch (e) {}
+      }
+    }
+
     function showToastNotification(text) {
       let toast = document.getElementById('global-floating-toast');
       if (!toast) {
