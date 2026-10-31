@@ -1407,6 +1407,10 @@
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
               <span>Soundbox 4.0 Live Inflow</span>
             </span>
+            <span id="backend-sync-status-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span id="backend-sync-text">Backend Synced (Real-Time)</span>
+            </span>
           </div>
           <h2 class="text-2xl font-black tracking-tight">Real-Time UPI Collections & Settlements</h2>
           <p class="text-xs text-slate-300 leading-relaxed">
@@ -6293,6 +6297,36 @@ function switchTab(tabId) {
           renderPaymentTracker();
         }
       }
+
+      // REAL-TIME BACKEND SYNC: Record transaction directly in FastAPI backend ledger
+      if (typeof fetch !== 'undefined') {
+        fetch('/api/payments/record', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer_name: newTxn.customerName,
+            phone: newTxn.phone,
+            amount: newTxn.amount,
+            channel: newTxn.channel,
+            channel_label: newTxn.channelLabel,
+            notes: newTxn.notes,
+            rrn: newTxn.rrn
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Real-Time Payment Synchronized with Backend Ledger:', data);
+          if (typeof updateBackendSyncIndicator === 'function') {
+            updateBackendSyncIndicator('LIVE_SYNCED');
+          }
+        })
+        .catch(err => {
+          console.warn('Backend sync offline fallback:', err);
+          if (typeof updateBackendSyncIndicator === 'function') {
+            updateBackendSyncIndicator('OFFLINE_CACHED');
+          }
+        });
+      }
       
       const rrn = details.rrn || ('UPI/' + Date.now().toString().slice(-8) + Math.floor(1000 + Math.random() * 9000));
       const timeStr = details.timestamp || new Date().toLocaleString('en-IN', { 
@@ -6597,7 +6631,79 @@ function switchTab(tabId) {
       }
     ];
 
+    // Real-Time Backend Payment Tracker Engine
+    let isFetchingTrackerBackend = false;
+
+    async function fetchBackendPaymentTracker(silent = false) {
+      if (isFetchingTrackerBackend) return;
+      isFetchingTrackerBackend = true;
+      try {
+        const res = await fetch('/api/payments/tracker');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.status === 'SUCCESS' && Array.isArray(data.transactions)) {
+            paymentTrackerData = data.transactions;
+            updateBackendSyncIndicator('LIVE_SYNCED');
+
+            // Update top KPIs from backend
+            if (data.kpis) {
+              const kpiTotal = document.getElementById('tracker-kpi-total');
+              const kpiKhata = document.getElementById('tracker-kpi-khata');
+              const kpiScans = document.getElementById('tracker-kpi-scans');
+              const txnsBadge = document.getElementById('tracker-txns-badge');
+
+              if (kpiTotal && data.kpis.total_collection) {
+                kpiTotal.innerText = `₹${data.kpis.total_collection.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+              }
+              if (kpiKhata && data.kpis.khata_recovery !== undefined) {
+                kpiKhata.innerText = `₹${data.kpis.khata_recovery.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+              }
+              if (kpiScans && data.kpis.qr_standee_scans !== undefined) {
+                kpiScans.innerText = `₹${data.kpis.qr_standee_scans.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+              }
+              if (txnsBadge && data.kpis.total_transactions) {
+                txnsBadge.innerText = `${data.kpis.total_transactions} TXNS`;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        if (!silent) console.warn('Could not sync tracker from backend (using local cache):', err);
+        updateBackendSyncIndicator('OFFLINE_CACHED');
+      } finally {
+        isFetchingTrackerBackend = false;
+        renderPaymentTrackerTable();
+      }
+    }
+
+    function updateBackendSyncIndicator(status) {
+      const badge = document.getElementById('backend-sync-status-badge');
+      const text = document.getElementById('backend-sync-text');
+      if (!badge || !text) return;
+
+      if (status === 'LIVE_SYNCED') {
+        badge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center space-x-1.5 shadow-sm";
+        text.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1 animate-pulse"></span>Backend Synced (Real-Time)';
+      } else {
+        badge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center space-x-1.5 shadow-sm";
+        text.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 inline-block mr-1"></span>Local Cache Mode';
+      }
+    }
+
+    // Auto-poll backend every 3.5 seconds for real-time payments across devices
+    setInterval(() => {
+      const trackerTab = document.getElementById('content-tracker');
+      if (trackerTab && !trackerTab.classList.contains('hidden')) {
+        fetchBackendPaymentTracker(true);
+      }
+    }, 3500);
+
     function renderPaymentTracker() {
+      // Fetch latest from backend, falls back to rendering table
+      fetchBackendPaymentTracker(false);
+    }
+
+    function renderPaymentTrackerTable() {
       const tbody = document.getElementById('payment-tracker-tbody');
       if (!tbody) return;
 
@@ -6753,18 +6859,36 @@ function switchTab(tabId) {
       });
     }
 
-    // Export Payment Tracker to CSV
+    // Export Payment Tracker to CSV via Backend with Client Fallback
     function exportPaymentTrackerCSV() {
-      let csv = "Transaction ID,Date & Time,Payer Name,Phone,Channel,Notes,UPI RRN,Amount Credited (INR),Status\n";
-      paymentTrackerData.forEach(t => {
-        csv += `"${t.id}","${t.timestamp}","${t.customerName}","${t.phone}","${t.channelLabel}","${t.notes}","${t.rrn}","${t.amount}","${t.status}"\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Paytm_Payment_Tracker_${Date.now()}.csv`;
-      a.click();
-      showToastNotification("Exported Payment Tracker to CSV file!");
+      // First try downloading official backend CSV stream
+      fetch('/api/payments/export/csv')
+        .then(res => {
+          if (res.ok) {
+            return res.blob();
+          }
+          throw new Error('Backend CSV stream error');
+        })
+        .then(blob => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `Paytm_Payment_Tracker_Backend_${Date.now()}.csv`;
+          a.click();
+          showToastNotification("📥 Downloaded verified passbook CSV from backend!");
+        })
+        .catch(err => {
+          // Client-side fallback
+          let csv = "Transaction ID,Date & Time,Payer Name,Phone,Channel,Notes,UPI RRN,Amount Credited (INR),Status\n";
+          paymentTrackerData.forEach(t => {
+            csv += `"${t.id}","${t.timestamp}","${t.customerName}","${t.phone}","${t.channelLabel}","${t.notes}","${t.rrn}","${t.amount}","${t.status}"\n`;
+          });
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `Paytm_Payment_Tracker_${Date.now()}.csv`;
+          a.click();
+          showToastNotification("Exported Payment Tracker to CSV file!");
+        });
     }
 
     // Print Payment Tracker Passbook
