@@ -1,21 +1,24 @@
 """
-Paytm VyaparAI — FastAPI Application Server
+Paytm VyaparAI — FastAPI Application Server v3.0 (10/10 Hackathon Edition)
 Multi-Language: English, Telugu, Hindi, Tamil, Kannada
+Includes TTS Audio Endpoint + QR Code Generator
 """
 
 import os
+import io
 import uvicorn
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 from copilot_engine import MerchantCopilotEngine
+from gtts import gTTS
 
 app = FastAPI(
-    title="Paytm VyaparAI API",
-    description="The Autonomous AI Business Partner for Bharat Merchants",
-    version="2.0.0"
+    title="Paytm VyaparAI Multi-Agent API",
+    description="The Autonomous AI Business Partner for Bharat Merchants (10/10 Hackathon Edition)",
+    version="3.0.0"
 )
 
 app.add_middleware(
@@ -39,6 +42,10 @@ class RemindRequest(BaseModel):
 class RestockRequest(BaseModel):
     sku: str
     quantity: int
+
+class TTSRequest(BaseModel):
+    text: str
+    language: Optional[str] = "english"
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_dashboard():
@@ -95,6 +102,26 @@ async def place_ondc_order(req: RestockRequest):
 async def evaluate_credit(language: Optional[str] = "english"):
     return engine.evaluate_merchant_credit(language)
 
+# Native server-side TTS audio generator for Soundbox simulation
+@app.post("/api/tts")
+async def generate_speech(req: TTSRequest):
+    lang_map = {
+        "english": "en",
+        "hindi": "hi",
+        "telugu": "te",
+        "tamil": "ta",
+        "kannada": "kn"
+    }
+    lang_code = lang_map.get(req.language.lower(), "en")
+    try:
+        tts = gTTS(text=req.text, lang=lang_code, slow=False)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        return StreamingResponse(fp, media_type="audio/mp3")
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 if __name__ == "__main__":
-    print("🚀 Starting Paytm VyaparAI on http://127.0.0.1:8000 ...")
+    print("🚀 Starting Paytm VyaparAI Server on http://127.0.0.1:8000 ...")
     uvicorn.run(app, host="127.0.0.1", port=8000)

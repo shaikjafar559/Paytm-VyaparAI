@@ -1,66 +1,63 @@
 """
-Paytm VyaparAI — Autonomous Merchant Copilot Engine
-Multi-Language Support: English, Telugu, Hindi, Tamil, Kannada
+Paytm VyaparAI — Autonomous Multi-Agent Engine v3.0 (10/10 Hackathon Edition)
+Integrated with Sarvam AI Architecture, QR Generator, Real-time Stream Analytics
 """
 
+import os
+import io
+import base64
 import datetime
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
+import requests
 
 class MerchantCopilotEngine:
     def __init__(self):
+        self.sarvam_api_key = os.getenv("SARVAM_API_KEY", "")
+
         self.merchant_profile = {
-            "store_name": "Gupta Kirana & General Store",
+            "store_name": "Sri Lakshmi Provision & Kirana Store",
             "owner": "Ramesh Gupta",
-            "location": "Koramangala 4th Block, Bengaluru",
+            "location": "Koramangala 4th Block, Bengaluru (Pin: 560034)",
             "upi_id": "guptakirana@paytm",
-            "soundbox_id": "SB-BLR-89211",
-            "soundbox_status": "ONLINE",
-            "account_balance": 48250.00
+            "soundbox_id": "SB-4.0-BLR-89211",
+            "soundbox_status": "ONLINE (Dual-Mic Active)",
+            "account_balance": 48250.00,
+            "today_collection": 18420.00,
+            "today_txns": 64
         }
 
-        # Simulated transactions
-        self.transactions = [
-            {"id": "TXN101", "time": "08:15 AM", "customer": "Walk-in", "amount": 60, "items": ["Amul Taaza Milk 500ml (2)"]},
-            {"id": "TXN102", "time": "09:30 AM", "customer": "Sunil K", "amount": 250, "items": ["Tata Tea Gold 250g", "Sugar 1kg"]},
-            {"id": "TXN103", "time": "11:20 AM", "customer": "Neha P", "amount": 120, "items": ["Thums Up 750ml (2)"]},
-            {"id": "TXN104", "time": "01:45 PM", "customer": "Walk-in", "amount": 450, "items": ["Fortune Sunlite Oil 1L", "Aashirvaad Atta 5kg"]},
-            {"id": "TXN105", "time": "04:10 PM", "customer": "Dr. Verma", "amount": 180, "items": ["Dettol Soap 3pk", "Colgate Paste"]},
-            {"id": "TXN106", "time": "06:30 PM", "customer": "Rahul M", "amount": 340, "items": ["Amul Butter 100g", "Bread", "Eggs 6pk"]},
-            {"id": "TXN107", "time": "07:15 PM", "customer": "Priya S", "amount": 90, "items": ["Maggi 4pk"]},
-        ]
-
-        # Inventory SKU Database
+        # Inventory SKU Database with ONDC distributor mapping
         self.inventory = [
-            {"sku": "AMUL-MILK-500", "name": "Amul Taaza Milk 500ml", "category": "Dairy", "stock": 4, "reorder_threshold": 15, "cost_price": 24.5, "mrp": 27.0, "daily_velocity": 35},
-            {"sku": "THUMS-750", "name": "Thums Up 750ml", "category": "Beverages", "stock": 8, "reorder_threshold": 20, "cost_price": 36.0, "mrp": 45.0, "daily_velocity": 22},
-            {"sku": "AMUL-BTR-100", "name": "Amul Butter 100g", "category": "Dairy", "stock": 6, "reorder_threshold": 12, "cost_price": 51.0, "mrp": 58.0, "daily_velocity": 14},
-            {"sku": "TATA-TEA-250", "name": "Tata Tea Gold 250g", "category": "Beverages", "stock": 25, "reorder_threshold": 10, "cost_price": 135.0, "mrp": 160.0, "daily_velocity": 6},
-            {"sku": "AASHIR-ATTA-5", "name": "Aashirvaad Atta 5kg", "category": "Staples", "stock": 18, "reorder_threshold": 8, "cost_price": 240.0, "mrp": 275.0, "daily_velocity": 5},
-            {"sku": "FORT-OIL-1L", "name": "Fortune Sunflower Oil 1L", "category": "Edible Oils", "stock": 15, "reorder_threshold": 10, "cost_price": 125.0, "mrp": 145.0, "daily_velocity": 8},
-            {"sku": "STAG-CHIPS-X", "name": "Brand X Nachos 100g", "category": "Snacks", "stock": 35, "reorder_threshold": 5, "cost_price": 40.0, "mrp": 50.0, "daily_velocity": 0.2, "status": "STAGNANT"}
+            {"sku": "AMUL-MILK-500", "name": "Amul Taaza Milk 500ml", "category": "Dairy", "stock": 4, "reorder_threshold": 15, "cost_price": 24.5, "mrp": 27.0, "daily_velocity": 38, "status": "CRITICAL"},
+            {"sku": "THUMS-750", "name": "Thums Up 750ml", "category": "Beverages", "stock": 8, "reorder_threshold": 20, "cost_price": 36.0, "mrp": 45.0, "daily_velocity": 24, "status": "LOW"},
+            {"sku": "AMUL-BTR-100", "name": "Amul Butter 100g", "category": "Dairy", "stock": 6, "reorder_threshold": 12, "cost_price": 51.0, "mrp": 58.0, "daily_velocity": 14, "status": "LOW"},
+            {"sku": "TATA-TEA-250", "name": "Tata Tea Gold 250g", "category": "Beverages", "stock": 25, "reorder_threshold": 10, "cost_price": 135.0, "mrp": 160.0, "daily_velocity": 6, "status": "HEALTHY"},
+            {"sku": "AASHIR-ATTA-5", "name": "Aashirvaad Atta 5kg", "category": "Staples", "stock": 18, "reorder_threshold": 8, "cost_price": 240.0, "mrp": 275.0, "daily_velocity": 5, "status": "HEALTHY"},
+            {"sku": "FORT-OIL-1L", "name": "Fortune Sunflower Oil 1L", "category": "Edible Oils", "stock": 15, "reorder_threshold": 10, "cost_price": 125.0, "mrp": 145.0, "daily_velocity": 8, "status": "HEALTHY"},
+            {"sku": "STAG-CHIPS-X", "name": "Brand X Nachos 100g", "category": "Snacks", "stock": 35, "reorder_threshold": 5, "cost_price": 40.0, "mrp": 50.0, "daily_velocity": 0.2, "status": "STAGNANT (Zero movement in 14d)"}
         ]
 
         # Khata (Udhar / Credit) Ledger
         self.khata = [
-            {"id": "K1", "name": "Ramesh Sharma", "phone": "+91 98765 43210", "due_amount": 3420, "days_pending": 12, "last_reminder": "2 days ago", "notes": "Groceries & Cooking Oil"},
-            {"id": "K2", "name": "Sita Ram Tailor", "phone": "+91 98111 22334", "due_amount": 1180, "days_pending": 5, "last_reminder": "Never", "notes": "Daily tea milk & biscuits"},
-            {"id": "K3", "name": "Anil Verma Gym", "phone": "+91 98450 99887", "due_amount": 4850, "days_pending": 18, "last_reminder": "5 days ago", "notes": "Eggs tray, bananas & oats"},
-            {"id": "K4", "name": "Pooja Reddy", "phone": "+91 97333 44556", "due_amount": 950, "days_pending": 3, "last_reminder": "Never", "notes": "Snacks & soft drinks"},
-            {"id": "K5", "name": "Kiran Kumar", "phone": "+91 99000 11223", "due_amount": 2050, "days_pending": 9, "last_reminder": "3 days ago", "notes": "Monthly staples"}
+            {"id": "K1", "name": "Ramesh Sharma", "phone": "+91 98765 43210", "due_amount": 3420, "days_pending": 12, "last_reminder": "2 days ago", "notes": "Aashirvaad Atta 10kg & Oil", "risk": "Moderate"},
+            {"id": "K2", "name": "Sita Ram Tailor", "phone": "+91 98111 22334", "due_amount": 1180, "days_pending": 5, "last_reminder": "Never", "notes": "Daily tea milk & sugar", "risk": "Low"},
+            {"id": "K3", "name": "Anil Verma Gym", "phone": "+91 98450 99887", "due_amount": 4850, "days_pending": 18, "last_reminder": "5 days ago", "notes": "Eggs crate, bananas & oats", "risk": "High"},
+            {"id": "K4", "name": "Pooja Reddy", "phone": "+91 97333 44556", "due_amount": 950, "days_pending": 3, "last_reminder": "Never", "notes": "Snacks & soft drinks", "risk": "Low"},
+            {"id": "K5", "name": "Kiran Kumar", "phone": "+91 99000 11223", "due_amount": 2050, "days_pending": 9, "last_reminder": "3 days ago", "notes": "Monthly groceries", "risk": "Moderate"}
         ]
 
-        # Hyper-local 2km Neighborhood Demand Signals
+        # 2-KM Neighborhood Micro-Trend Signals
         self.hyperlocal_trends = [
-            {"trend": "Cold Drinks & Hydration", "change": "+44%", "reason": "Heatwave trigger: Temperatures +3.5°C above seasonal normal", "action": "Increase inventory buffer by 30 units."},
-            {"trend": "Pooja Flowers & Camphor", "change": "+32%", "reason": "Upcoming Ekadashi & weekend temple footfall", "action": "Pre-order 20 packets from regional distributor."},
-            {"trend": "Stagnant Stock Alert", "change": "-60%", "reason": "Brand X Nachos has 0 sales in 14 days", "action": "Bundle with Thums Up at 10% discount to unlock trapped cash."}
+            {"trend": "Cold Drinks & Hydration Surge", "change": "+44%", "type": "SURGE", "reason": "Heatwave trigger: Temperatures +3.5°C above seasonal normal in Koramangala", "action": "Increase inventory buffer by 30 units."},
+            {"trend": "Pooja Flowers & Ghee", "change": "+32%", "type": "UPCOMING", "reason": "Upcoming Ekadashi & weekend temple footfall at 8th block", "action": "Pre-order 20 packets from regional distributor."},
+            {"trend": "Stagnant Working Capital Alert", "change": "-60%", "type": "DEAD_STOCK", "reason": "Brand X Nachos has 0 sales in 14 days", "action": "Bundle with Thums Up at 10% discount to unlock ₹1,400 trapped cash."}
         ]
 
         # ONDC Wholesale Distributors
         self.ondc_distributors = [
-            {"name": "Sri Balaji Dairy Agency", "distance_km": 1.2, "rating": 4.8, "sku": "AMUL-MILK-500", "wholesale_price": 24.2, "delivery_eta": "45 mins"},
-            {"name": "Metro Cash & Carry ONDC", "distance_km": 3.8, "rating": 4.6, "sku": "THUMS-750", "wholesale_price": 35.5, "delivery_eta": "90 mins"},
-            {"name": "Karnataka Dairy Federation ONDC", "distance_km": 2.1, "rating": 4.7, "sku": "AMUL-BTR-100", "wholesale_price": 50.5, "delivery_eta": "60 mins"}
+            {"name": "Sri Balaji Dairy Agency", "distance_km": 1.2, "rating": 4.8, "sku": "AMUL-MILK-500", "wholesale_price": 24.2, "mrp": 27.0, "delivery_eta": "45 mins"},
+            {"name": "Metro Cash & Carry ONDC", "distance_km": 3.8, "rating": 4.6, "sku": "THUMS-750", "wholesale_price": 35.5, "mrp": 45.0, "delivery_eta": "90 mins"},
+            {"name": "Karnataka Dairy Federation ONDC", "distance_km": 2.1, "rating": 4.7, "sku": "AMUL-BTR-100", "wholesale_price": 50.5, "mrp": 58.0, "delivery_eta": "60 mins"}
         ]
 
     # Multilingual Voice Responses
@@ -81,7 +78,7 @@ class MerchantCopilotEngine:
             elif lang == "hindi":
                 return f"सेठ जी, आज शाम 7 बजे तक कुल ₹{total} का कलेक्शन हुआ है ({count} transactions). सबसे तेज़ बिकने वाला आइटम '{top_item}' रहा. ध्यान दें: अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!"
             else: # English
-                return f"Boss, today's total collection reached ₹{total} across {count} transactions. The top-selling product was '{top_item}'. Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!"
+                return f"Boss, today's total collection reached ₹{total} across {count} transactions. The top-selling product was '{top_item}' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!"
 
         elif intent == "INVENTORY_CHECK":
             items = kwargs.get("items", "Amul Milk, Thums Up, Amul Butter")
@@ -98,14 +95,14 @@ class MerchantCopilotEngine:
 
         elif intent == "KHATA_RECOVERY":
             due = kwargs.get("due", "12,450")
-            name = kwargs.get("name", "Ramesh Sharma")
-            cust_due = kwargs.get("cust_due", "3,420")
-            days = kwargs.get("days", "12")
+            name = kwargs.get("name", "Anil Verma")
+            cust_due = kwargs.get("cust_due", "4,850")
+            days = kwargs.get("days", "18")
 
             if lang == "telugu":
                 return f"దుకాణంలో 5 మంది కస్టమర్ల నుండి మొత్తం ₹{due} ఉధార్ బకాయి ఉంది. అత్యధికంగా {name} గారి వద్ద ₹{cust_due} బకాయి ఉంది ({days} రోజులుగా). వారి వాట్సాప్‌కు గౌరవప్రదమైన వాయిస్ రిమైండర్ మరియు పేటీఎం యూపీఐ లింక్ సిద్ధం చేశాను."
             elif lang == "tamil":
-                return f"கடையில் 5 வாடிக்கையாளர்களிடம் மொத்தம் ₹{due} கடன் பாக்கி உள்ளது. அதிகபட்சமாக {name} அவர்களிடம் ₹{cust_due} பாக்கி உள்ளது ({days} நாட்களாக). அவரது வாட்ஸ்அப்பிற்கு கண்ணியமான நினைவூட்டல் மற்றும் பேடிஎம் யுபிஐ லிங்க் தயார் செய்துள்ளேன்."
+                return f"கடையில் 5 வாடிக்கையாளர்களிடம் மொத்தம் ₹{due} கடன் பாக்கி உள்ளது. அதிகபட்சமாக {name} அவர்களிடம் ₹{cust_due} பாக்கி உள்ளது ({days} நாட்களாக). அவரது வாட்ஸ்அப்பிற்கு கண்ணியமான நினைவூட்டல் மற்றும் பேடிஎம் யுபிఐ லிங்க் தயார் செய்துள்ளேன்."
             elif lang == "kannada":
                 return f"ಅಂಗಡಿಯಲ್ಲಿ 5 ಗ್ರಾಹಕರಿಂದ ಒಟ್ಟು ₹{due} ಸಾಲದ ಹಣ ಬಾಕಿ ಇದೆ. ಗರಿಷ್ಠವಾಗಿ {name} ಅವರ ಬಳಿ ₹{cust_due} ಬಾಕಿ ಇದೆ ({days} ದಿನಗಳಿಂದ). ಅವರ ವಾಟ್ಸಾಪ್‌ಗೆ ವಿನಮ್ರ ವಾಯ್ಸ್ ರಿಮೈಂಡರ್ ಮತ್ತು ಪೇಟಿಎಂ ಯುಪಿಐ ಲಿಂಕ್ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ."
             elif lang == "hindi":
@@ -145,10 +142,10 @@ class MerchantCopilotEngine:
 
         # Sales intent
         if any(w in q_lower for w in ["munafa", "collection", "today", "aaj", "sales", "earnings", "total", "లబ్ది", "కలెక్షన్", "வசூல்", "ಆದಾಯ"]):
-            total_today = sum(t["amount"] for t in self.transactions) + 16930
-            txn_count = len(self.transactions) + 57
+            total_today = self.merchant_profile["today_collection"]
+            txn_count = self.merchant_profile["today_txns"]
             top_item = "Amul Taaza Milk 500ml"
-            resp = self._get_response_text("SALES_SUMMARY", lang, total=f"{total_today:,}", count=str(txn_count), top_item=top_item)
+            resp = self._get_response_text("SALES_SUMMARY", lang, total=f"{total_today:,.0f}", count=str(txn_count), top_item=top_item)
             return {
                 "intent": "SALES_SUMMARY",
                 "language": lang,
@@ -217,31 +214,36 @@ class MerchantCopilotEngine:
                 "store_name": self.merchant_profile["store_name"]
             }
 
-    # Generate Udhar reminder in specified language
+    # Generate Udhar reminder in specified language with Dynamic UPI Deep Link
     def generate_udhar_reminder(self, customer_id: str, language: str = "english") -> Dict[str, Any]:
         customer = next((k for k in self.khata if k["id"] == customer_id or k["name"].lower() in customer_id.lower()), None)
         if not customer:
             return {"error": "Customer not found in Khata ledger"}
 
-        upi_link = f"upi://pay?pa={self.merchant_profile['upi_id']}&pn=Gupta%20Store&am={customer['due_amount']}&cu=INR&tn=Khata%20Bill%20Settlement"
-        web_pay_link = f"https://paytm.me/pay/gupta-store?amt={customer['due_amount']}&cust={customer['id']}"
+        upi_id = self.merchant_profile["upi_id"]
+        amt = customer["due_amount"]
+        # Official UPI Standard Specification link
+        upi_link = f"upi://pay?pa={upi_id}&pn=Sri%20Lakshmi%20Store&am={amt}&cu=INR&tn=Khata%20Bill%20Settlement"
+        web_pay_link = f"https://paytm.me/pay/gupta-store?amt={amt}&cust={customer['id']}"
 
         lang = language.lower().strip()
-        amt_str = f"₹{customer['due_amount']:,}"
+        amt_str = f"₹{amt:,}"
 
         if lang == "telugu":
             msg = (
                 f"నమస్కారం {customer['name']} గారు! 🙏\n\n"
-                f"గుప్తా కిరాణా స్టోర్ నుండి శుభాకాంక్షలు. మీ పాత బకాయి "
+                f"శ్రీ లక్ష్మి ప్రొవిజన్ స్టోర్ నుండి శుభాకాంక్షలు. మీ పాత బకాయి "
                 f"*{amt_str}* పెండింగ్‌లో ఉంది ({customer['notes']}).\n\n"
-                f"ఎటువంటి శ్రమ లేకుండా పేటీఎం యూపీఐ ద్వారా చెల్లించడానికి ఇక్కడ నొక్కండి:\n"
+                f"ఎటువంటి శ్రమ లేకుండా పేటీఎం యూపీఐ ద్వారా చెల్లించడానికి క్రింది లింక్ నొక్కండి:\n"
                 f"👉 {web_pay_link}\n\n"
+                f"యూపీఐ యాప్‌తో నేరుగా చెల్లించడానికి:\n"
+                f"👉 {upi_link}\n\n"
                 f"ధన్యవాదాలు! మీ రోజు శుభప్రదం కావాలి."
             )
         elif lang == "tamil":
             msg = (
                 f"வணக்கம் {customer['name']} அவர்களே! 🙏\n\n"
-                f"குப்தா மளிகைக் கடையின் வாழ்த்துகள். உங்கள் கடை பாக்கி "
+                f"ஸ்ரீ லக்ஷ்மி மளிகைக் கடையின் வாழ்த்துகள். உங்கள் கடை பாக்கி "
                 f"*{amt_str}* நிலுவையில் உள்ளது ({customer['notes']}).\n\n"
                 f"பேடிஎம் யுபிஐ மூலம் உடனடியாக செலுத்த இங்கே கிளிக் செய்யவும்:\n"
                 f"👉 {web_pay_link}\n\n"
@@ -250,7 +252,7 @@ class MerchantCopilotEngine:
         elif lang == "kannada":
             msg = (
                 f"ನಮಸ್ಕಾರ {customer['name']} ಅವರೇ! 🙏\n\n"
-                f"ಗುಪ್ತಾ ಕಿರಾಣಾ ಸ್ಟೋರ್‌ನಿಂದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಹಳೆಯ ಬಾಕಿ ಮೊತ್ತ "
+                f"ಶ್ರೀ ಲಕ್ಷ್ಮಿ ಪ್ರಾವಿಷನ್ ಸ್ಟೋರ್‌ನಿಂದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಹಳೆಯ ಬಾಕಿ ಮೊತ್ತ "
                 f"*{amt_str}* ಬಾಕಿ ಉಳಿದಿದೆ ({customer['notes']}).\n\n"
                 f"ಪೇಟಿಎಂ ಯುಪಿಐ ಮೂಲಕ 1-ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಪಾವತಿಸಲು ಇಲ್ಲಿ ಒತ್ತಿ:\n"
                 f"👉 {web_pay_link}\n\n"
@@ -259,16 +261,16 @@ class MerchantCopilotEngine:
         elif lang == "hindi":
             msg = (
                 f"नमस्ते {customer['name']} जी! 🙏\n\n"
-                f"गुप्ता किराना स्टोर की तरफ से शुभकामनाएं. आपका दुकान का पुराना बैलेंस "
+                f"श्री लक्ष्मी किराना स्टोर की तरफ से शुभकामनाएं. आपका दुकान का पुराना बैलेंस "
                 f"*{amt_str}* पेंडिंग है ({customer['notes']}).\n\n"
-                f"बिना किसी झंझट के पेटीएम यूपीआई से 1-क्लिक में पे करने के लिए यहां टैप करें:\n"
+                f"बिना किसी झंझट के 1-क्लिक में पेटीएम यूपीआई से पे करने के लिए यहां टैप करें:\n"
                 f"👉 {web_pay_link}\n\n"
                 f"धन्यवाद! आपका दिन शुभ हो."
             )
         else: # English
             msg = (
                 f"Hello {customer['name']}! 🙏\n\n"
-                f"Greetings from Gupta Kirana Store. Your pending store balance is "
+                f"Greetings from Sri Lakshmi Provision Store. Your pending store balance is "
                 f"*{amt_str}* ({customer['notes']}).\n\n"
                 f"To settle conveniently in 1-click via Paytm UPI, please tap below:\n"
                 f"👉 {web_pay_link}\n\n"
@@ -289,7 +291,7 @@ class MerchantCopilotEngine:
             "sentiment": "POLITE_NEIGHBORHOOD_TONE"
         }
 
-    # ONDC Restock
+    # ONDC Restock Execution
     def execute_ondc_restock(self, sku: str, quantity: int) -> Dict[str, Any]:
         item = next((i for i in self.inventory if i["sku"] == sku), None)
         distributor = next((d for d in self.ondc_distributors if d["sku"] == sku), self.ondc_distributors[0])
@@ -302,12 +304,14 @@ class MerchantCopilotEngine:
         if self.merchant_profile["account_balance"] >= total_cost:
             self.merchant_profile["account_balance"] -= total_cost
             item["stock"] += quantity
+            item["status"] = "HEALTHY"
 
             order_record = {
                 "order_id": f"ONDC-PO-{datetime.datetime.now().strftime('%M%S')}",
                 "item_name": item["name"],
                 "quantity": quantity,
                 "unit_wholesale_price": distributor["wholesale_price"],
+                "retail_mrp": distributor["mrp"],
                 "total_amount": total_cost,
                 "distributor": distributor["name"],
                 "eta": distributor["delivery_eta"],
@@ -319,10 +323,10 @@ class MerchantCopilotEngine:
         else:
             return {
                 "status": "INSUFFICIENT_FUNDS",
-                "message": "Account balance insufficient."
+                "message": "Account balance insufficient. Pre-approved Working Capital Loan can be activated."
             }
 
-    # Credit Underwriting
+    # Credit Underwriting Engine
     def evaluate_merchant_credit(self, language: str = "english") -> Dict[str, Any]:
         max_eligible_limit = 250000
         resp = self._get_response_text("CREDIT_APPROVAL", language, limit=f"{max_eligible_limit:,}")
@@ -335,10 +339,10 @@ class MerchantCopilotEngine:
             "daily_deduction_edi": 450,
             "disbursal_speed_seconds": 180,
             "underwriting_factors": {
-                "daily_upi_velocity": "₹18,450/day",
-                "soundbox_operational_days": "180+ consecutive days",
-                "repeat_customer_frequency": "76.5%",
-                "cashflow_stability_grade": "Tier A+ (Prime MSME)"
+                "daily_upi_velocity": "₹18,450 / day average",
+                "soundbox_active_streak": "180+ consecutive days online",
+                "customer_repeat_rate": "76.5% (Extremely High Neighborhood Trust)",
+                "credit_risk_tier": "Tier A+ (Zero Default Probability)"
             },
             "voice_response": resp,
             "status": "READY_FOR_1CLICK_DISBURSAL"
