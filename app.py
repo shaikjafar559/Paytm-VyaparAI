@@ -66,6 +66,13 @@ async def serve_dashboard():
             return f.read()
     return "<h1>Paytm VyaparAI Server Running.</h1>"
 
+@app.get("/manifest.json")
+async def get_manifest():
+    manifest_path = os.path.join(os.path.dirname(__file__), "manifest.json")
+    if os.path.exists(manifest_path):
+        return FileResponse(manifest_path, media_type="application/manifest+json")
+    return JSONResponse({})
+
 @app.get("/api/profile")
 async def get_profile():
     return engine.merchant_profile

@@ -1,9 +1,9 @@
 @echo off
-title Paytm VyaparAI - Merchant Growth Copilot
+title Paytm VyaparAI - Autonomous Merchant Business Copilot
 echo ========================================================
-echo   Paytm VyaparAI - Autonomous Business Copilot
+echo   Paytm VyaparAI - Standalone Desktop App Launcher
 echo   Serving at http://127.0.0.1:8000
 echo ========================================================
 cd /d "%~dp0"
-python run.py
+python launch_app.py
 pause
