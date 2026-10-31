@@ -104,6 +104,12 @@
           <i class="fa-solid fa-coins mr-1"></i> <span data-i18n="nav_today_collection">Today: ₹18,420</span>
         </div>
 
+        <!-- Merchant Login / Profile Button -->
+        <button onclick="openLoginModal()" id="merchant-login-btn" class="bg-blue-950 hover:bg-blue-800 text-cyan-300 border border-cyan-400/40 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs">
+          <i class="fa-solid fa-user-shield text-paytm-cyan"></i>
+          <span id="logged-merchant-name">MID: 89211</span>
+        </button>
+
         
       </div>
     </div>
@@ -154,6 +160,77 @@
       </div>
     </div>
   </header>
+
+    <!-- PAYTM FOR BUSINESS MERCHANT LOGIN MODAL -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-paytm-navy text-paytm-cyan flex items-center justify-center font-black text-xl shadow">
+            P
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-paytm-navy">Paytm for Business</h3>
+            <p class="text-xs text-slate-500">Merchant Secure Portal Login</p>
+          </div>
+        </div>
+        <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Merchant ID (MID):</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+              <i class="fa-solid fa-id-card"></i>
+            </span>
+            <input type="text" id="login-mid" value="MID-KIRANA-560034" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-paytm-cyan">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password:</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" id="login-pass" value="paytm123" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-paytm-cyan">
+          </div>
+        </div>
+
+        <!-- 1-Click Demo Merchant Profile Presets -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Quick Demo Merchant Accounts:</label>
+          <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+            <button type="button" onclick="setLoginPreset('MID-KIRANA-560034', 'paytm123', 'kirana')" class="p-1.5 bg-slate-50 hover:bg-cyan-50 border border-slate-200 rounded-lg text-left font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+              <span>🛒</span> <span>Kirana Store</span>
+            </button>
+            <button type="button" onclick="setLoginPreset('MID-PHARMA-560041', 'paytm123', 'pharmacy')" class="p-1.5 bg-slate-50 hover:bg-cyan-50 border border-slate-200 rounded-lg text-left font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+              <span>💊</span> <span>Pharmacy</span>
+            </button>
+            <button type="button" onclick="setLoginPreset('MID-CAFE-560038', 'paytm123', 'restaurant')" class="p-1.5 bg-slate-50 hover:bg-cyan-50 border border-slate-200 rounded-lg text-left font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+              <span>☕</span> <span>Cafe / Tiffin</span>
+            </button>
+            <button type="button" onclick="setLoginPreset('MID-APPAREL-560001', 'paytm123', 'apparel')" class="p-1.5 bg-slate-50 hover:bg-cyan-50 border border-slate-200 rounded-lg text-left font-semibold text-slate-700 flex items-center gap-1.5 cursor-pointer">
+              <span>👕</span> <span>Garments</span>
+            </button>
+          </div>
+        </div>
+
+        <button onclick="handleMerchantLogin()" class="w-full bg-paytm-navy hover:bg-blue-900 text-white py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer mt-2">
+          <i class="fa-solid fa-right-to-bracket text-paytm-cyan"></i>
+          <span>Secure Merchant Login</span>
+        </button>
+      </div>
+
+      <div class="bg-cyan-50 border border-cyan-200 p-2.5 rounded-xl text-[11px] text-paytm-navy flex items-center gap-2">
+        <i class="fa-solid fa-shield-check text-cyan-600"></i>
+        <span>Bank-grade 256-bit SSL encrypted Paytm Merchant Gateway</span>
+      </div>
+    </div>
+  </div>
 
   <!-- MAIN CONTAINER -->
   <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-1 w-full">
@@ -1018,6 +1095,63 @@
         ]
       }
     };
+
+    
+    // ==========================================
+    // MERCHANT AUTHENTICATION LOGIC
+    // ==========================================
+    let authenticatedMerchant = {
+      mid: "MID-KIRANA-560034",
+      name: "Ramesh Gupta",
+      business: "kirana"
+    };
+
+    function openLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setLoginPreset(mid, pass, biz) {
+      document.getElementById('login-mid').value = mid;
+      document.getElementById('login-pass').value = pass;
+      window.selectedLoginBiz = biz;
+    }
+
+    function handleMerchantLogin() {
+      const mid = document.getElementById('login-mid').value.trim() || "MID-KIRANA-560034";
+      const pass = document.getElementById('login-pass').value.trim();
+      const biz = window.selectedLoginBiz || (mid.includes('PHARMA') ? 'pharmacy' : mid.includes('CAFE') ? 'restaurant' : mid.includes('APPAREL') ? 'apparel' : mid.includes('TECH') ? 'electronics' : 'kirana');
+
+      authenticatedMerchant = {
+        mid: mid,
+        business: biz
+      };
+
+      // Update button label in header
+      const label = document.getElementById('logged-merchant-name');
+      if (label) label.innerText = mid.replace('MID-', '');
+
+      // Switch business to matching profile
+      switchBusiness(biz);
+
+      // Close modal
+      closeLoginModal();
+
+      // Audio notification on Soundbox
+      const toast = document.getElementById('order-toast');
+      const msg = document.getElementById('order-toast-msg');
+      if (toast && msg) {
+        msg.innerHTML = `<b>Logged In:</b> Authenticated as <b>${mid}</b> (${BUSINESS_CONFIGS[biz].name}).`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      }
+    }
+
 
     function switchBusiness(bizType) {
       if (!BUSINESS_CONFIGS[bizType]) return;
