@@ -495,6 +495,10 @@
           <i class="fa-solid fa-boxes-stacked text-emerald-400"></i>
           <span data-i18n="hero_btn_racks">🏬 DMart 3D Racks</span>
         </button>
+        <button onclick="switchTab('orders')" class="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 font-semibold px-5 py-3 rounded-xl border border-cyan-400/30 transition flex items-center justify-center space-x-2 shrink-0">
+          <i class="fa-solid fa-bag-shopping text-cyan-400"></i>
+          <span data-i18n="hero_btn_orders">🛍️ Takeaway Orders (2)</span>
+        </button>
       </div>
     </div>
 
@@ -521,10 +525,40 @@
         <span data-i18n="tab_5">5. 🏬 DMart 3D Smart Racks</span>
         <span class="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">CINEMATIC</span>
       </button>
+      <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-bag-shopping text-cyan-600"></i>
+        <span data-i18n="tab_6">6. 🛍️ Customer Voice Orders & Takeaway</span>
+        <span id="orders-badge-count" class="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white animate-pulse">2 NEW</span>
+      </button>
     </div>
 
     <!-- TAB 1: VOICE COPILOT -->
     <div id="content-voice" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Incoming Customer Voice Orders Banner in Tab 1 -->
+      <div id="tab1-orders-alert" onclick="switchTab('orders')" class="col-span-1 lg:col-span-3 bg-gradient-to-r from-cyan-900 via-slate-900 to-blue-950 p-4 rounded-2xl border border-cyan-400/40 text-white flex flex-wrap items-center justify-between gap-4 cursor-pointer hover:border-cyan-300 shadow-md transition">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl shrink-0 border border-cyan-400/30">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-black uppercase tracking-wider text-cyan-300">Live Customer Voice Orders</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white animate-pulse">2 WAITING TO PACK</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-0.5">
+              Priya Sharma sent a WhatsApp Voice Note: <i>"Bhaiya pack 2 Amul Milk, 1 Butter, 1 Maggi (Arriving in 10 mins)"</i>
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black flex items-center space-x-1.5 shadow">
+            <span>📦 Open Packing Checklist</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
       
       <!-- Virtual Soundbox Hardware Simulation -->
       <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
@@ -1125,6 +1159,160 @@
             </button>
           </div>
         </div>
+      </div>
+
+    </div>
+
+  
+    <!-- TAB 6: CUSTOMER VOICE ORDERS & TAKEAWAY HUB (BOPIS) -->
+    <div id="content-orders" class="tab-content hidden space-y-6">
+
+      <!-- Top HUD Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-paytm-navy to-slate-900 p-6 rounded-3xl text-white shadow-xl border border-cyan-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-2 max-w-xl z-10">
+          <div class="flex items-center space-x-2.5">
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-cyan-400 text-slate-950 uppercase tracking-wider flex items-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-bag-shopping"></i>
+              <span>Customer Takeaway Hub (BOPIS)</span>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-cyan-300 border border-white/15 flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>AI Voice-to-Order Active</span>
+            </span>
+          </div>
+          <h2 class="text-2xl font-black tracking-tight" data-i18n="orders_title">
+            Customer WhatsApp Voice Orders & Takeaway
+          </h2>
+          <p class="text-xs text-slate-300 leading-relaxed" data-i18n="orders_sub">
+            AI automatically extracts shopping items from customer WhatsApp voice notes and chats, prepares the packing checklist, and sends 1-click WhatsApp pickup alerts with dynamic Paytm UPI QR when packed!
+          </p>
+        </div>
+
+        <!-- 4 Top Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto z-10">
+          <div class="bg-rose-500/20 backdrop-blur-md p-3.5 rounded-2xl border border-rose-400/30 text-center">
+            <p class="text-[11px] text-rose-200 font-semibold mb-0.5">Waiting to Pack</p>
+            <p id="metric-waiting-orders" class="text-xl font-black text-rose-300 animate-pulse">2 Orders</p>
+            <p class="text-[10px] text-rose-200 font-medium">Immediate Action</p>
+          </div>
+          <div class="bg-amber-500/20 backdrop-blur-md p-3.5 rounded-2xl border border-amber-400/30 text-center">
+            <p class="text-[11px] text-amber-200 font-semibold mb-0.5">In Packing</p>
+            <p id="metric-packing-orders" class="text-xl font-black text-amber-300">1 Order</p>
+            <p class="text-[10px] text-amber-200 font-medium">Counter Staff</p>
+          </div>
+          <div class="bg-emerald-500/20 backdrop-blur-md p-3.5 rounded-2xl border border-emerald-400/30 text-center">
+            <p class="text-[11px] text-emerald-200 font-semibold mb-0.5">Ready for Pickup</p>
+            <p id="metric-ready-orders" class="text-xl font-black text-emerald-400">1 Order</p>
+            <p class="text-[10px] text-emerald-300 font-medium">Notified on WhatsApp</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15 text-center">
+            <p class="text-[11px] text-slate-300 font-semibold mb-0.5">Takeaway Revenue</p>
+            <p id="metric-takeaway-revenue" class="text-xl font-black text-white">₹1,840</p>
+            <p class="text-[10px] text-cyan-300 font-bold">14 Completed Today</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Active Incoming Orders Feed (8 cols) -->
+        <div class="lg:col-span-8 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+              <i class="fa-solid fa-list-check text-paytm-cyan"></i>
+              <span>Active Customer Takeaway Queue</span>
+            </h3>
+            <span class="text-xs text-slate-500 font-mono">AUTO-SYNC WITH WHATSAPP LIVE</span>
+          </div>
+
+          <!-- Dynamic Orders Feed Container -->
+          <div id="customer-orders-container" class="space-y-4">
+            <!-- Rendered dynamically by renderCustomerOrders() -->
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Order Simulator & Preset Voice Notes (4 cols) -->
+        <div class="lg:col-span-4 space-y-4">
+          
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+                <i class="fa-solid fa-microphone text-rose-500"></i>
+                <span>Simulate Customer Order</span>
+              </h4>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800">INTERACTIVE</span>
+            </div>
+            <p class="text-xs text-slate-500">
+              Test how Paytm VyaparAI listens to customer voice notes or WhatsApp chat messages, parses items, and generates the packing list automatically.
+            </p>
+
+            <!-- Customer Name & Phone -->
+            <div class="space-y-2 text-xs">
+              <div>
+                <label class="font-bold text-slate-700">Customer Name:</label>
+                <input id="sim-customer-name" type="text" value="Anil Verma" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-paytm-cyan">
+              </div>
+              <div>
+                <label class="font-bold text-slate-700">Phone Number:</label>
+                <input id="sim-customer-phone" type="text" value="+91 98450 99887" class="w-full mt-1 px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-paytm-cyan">
+              </div>
+            </div>
+
+            <!-- Preset Voice Notes in 5 Languages -->
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-slate-700">Pick Voice Note Language Preset:</label>
+              <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+                <button onclick="loadOrderVoicePreset('hindi')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left text-slate-800">
+                  <span class="block font-bold">🇮🇳 हिंदी (Hindi)</span>
+                  <span class="text-[10px] text-slate-500">2 दूध, 1 मक्खन, 1 मैगी</span>
+                </button>
+                <button onclick="loadOrderVoicePreset('telugu')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left text-slate-800">
+                  <span class="block font-bold">🇮🇳 తెలుగు (Telugu)</span>
+                  <span class="text-[10px] text-slate-500">1 గోధుమపిండి, 1 నూనె</span>
+                </button>
+                <button onclick="loadOrderVoicePreset('english')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left text-slate-800">
+                  <span class="block font-bold">🌐 English</span>
+                  <span class="text-[10px] text-slate-500">2 Milk, 1 Bread, 1 Butter</span>
+                </button>
+                <button onclick="loadOrderVoicePreset('tamil')" class="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left text-slate-800">
+                  <span class="block font-bold">🇮🇳 தமிழ் (Tamil)</span>
+                  <span class="text-[10px] text-slate-500">2 பால், 1 வெண்ணெய்</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Voice / Text Input Box -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-700">Customer Message / Audio Transcript:</label>
+              <textarea id="sim-order-text" rows="3" class="w-full p-2.5 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-paytm-cyan resize-none">भैया 2 पैकेट अमूल दूध और 1 पैकेट मक्खन पैक कर दो, मैं 10 मिनट में आ रहा हूँ।</textarea>
+            </div>
+
+            <!-- Action: Submit Simulated Order -->
+            <button onclick="submitSimulatedCustomerOrder()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-paytm-navy to-slate-900 hover:from-slate-900 hover:to-paytm-navy text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-2 transition">
+              <i class="fa-solid fa-paper-plane text-cyan-400"></i>
+              <span>Simulate Customer Sending Order</span>
+            </button>
+          </div>
+
+          <!-- Soundbox BOPIS Pickup Speaker Simulation -->
+          <div class="bg-gradient-to-br from-cyan-950 to-slate-900 p-5 rounded-3xl border border-cyan-400/30 text-white space-y-3">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-volume-high"></i>
+              </div>
+              <div>
+                <h5 class="text-xs font-bold">Paytm Soundbox 4.0 Pickup Announcer</h5>
+                <p class="text-[10.5px] text-slate-300">Plays live audio when an order is packed & collected</p>
+              </div>
+            </div>
+            <div class="p-3 bg-black/40 rounded-xl border border-white/10 font-mono text-[11px] text-cyan-300 leading-snug">
+              "📢 Order #1042 Packed! Takeaway alert sent to Priya Sharma via WhatsApp."
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -1986,6 +2174,10 @@
 
     const UI_TRANSLATIONS = {
       'english': {
+        tab_6: "6. 🛍️ Customer Voice Orders & Takeaway",
+        hero_btn_orders: "🛍️ Takeaway Orders (2)",
+        orders_title: "Customer WhatsApp Voice Orders & Takeaway",
+        orders_sub: "AI automatically parses incoming customer voice notes and chats, creates the smart packing checklist, and notifies customers with Paytm UPI QR when ready for pickup.",
         tab_5: "5. 🏬 DMart 3D Smart Racks (Cinematic)",
         hero_btn_racks: "🏬 DMart 3D Racks",
         rack_store_title: "DMart-Style Hypermarket Smart Racks",
@@ -2100,6 +2292,10 @@
         credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
       },
       'telugu': {
+        tab_6: "6. 🛍️ కస్టమర్ వాయిస్ ఆర్డర్లు & టేక్‌అవే",
+        hero_btn_orders: "🛍️ టేక్‌అవే ఆర్డర్లు (2)",
+        orders_title: "కస్టమర్ వాట్సాప్ వాయిస్ ఆర్డర్లు & టేక్‌అవే హబ్",
+        orders_sub: "కస్టమర్ పంపిన వాయిస్ నోట్‌లను ఏఐ ఆటోమేటిక్‌గా ఆర్డర్‌గా మారుస్తుంది, ప్యాకింగ్ లిస్ట్ ఇస్తుంది, ప్యాక్ అయిన వెంటనే వాట్సాప్ ద్వారా తెలియజేస్తుంది.",
         tab_5: "5. 🏬 డీమార్ట్ 3D స్మార్ట్ ర్యాక్స్ (సినిమాటిక్)",
         hero_btn_racks: "🏬 డీమార్ట్ 3D ర్యాక్స్",
         rack_store_title: "డీమార్ట్ తరహా హైపర్‌మార్కెట్ స్మార్ట్ ర్యాక్స్",
@@ -2214,6 +2410,10 @@
         credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
       },
       'hindi': {
+        tab_6: "6. 🛍️ कस्टमर वॉइस आर्डर व टेकअवे",
+        hero_btn_orders: "🛍️ टेकअवे आर्डर्स (2)",
+        orders_title: "कस्टमर व्हाट्सएप वॉइस आर्डर व टेकअवे हब",
+        orders_sub: "व्हाट्सएप वॉइस नोट से एआई तुरंत सामान की लिस्ट बनाता है, पैकिंग चेकलिस्ट देता है, और पैक होते ही कस्टमर को पिकअप अलर्ट भेजता है।",
         tab_5: "5. 🏬 डीमार्ट 3D स्मार्ट रैक्स (सिनेमैटिक)",
         hero_btn_racks: "🏬 डीमार्ट 3D रैक्स",
         rack_store_title: "डीमार्ट स्टाइल हाइपरमार्केट स्मार्ट रैक्स",
@@ -2328,6 +2528,10 @@
         credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
       },
       'tamil': {
+        tab_6: "6. 🛍️ வாடிக்கையாளர் வாய்ஸ் ஆர்டர்கள் & டேக்அவே",
+        hero_btn_orders: "🛍️ டேக்அவே ஆர்டர்கள் (2)",
+        orders_title: "வாடிக்கையாளர் வாட்ஸ்அப் வாய்ஸ் ஆர்டர்கள் & டேக்அவே",
+        orders_sub: "வாட்ஸ்அப் வாய்ஸ் நோட்டுகளை AI தானாகவே ஆர்டராக மாற்றி, பேக்கிங் பட்டியலை வழங்கி, பேக் ஆனவுடன் வாடிக்கையாளருக்கு தெரிவிக்கும்.",
         tab_5: "5. 🏬 டிமார்ட் 3D ஸ்மார்ட் ரேக்குகள் (சினிமாட்டிக்)",
         hero_btn_racks: "🏬 டிமார்ட் 3D ரேக்குகள்",
         rack_store_title: "டிமார்ட் பாணி ஹைப்பர்மார்க்கெட் ஸ்மார்ட் ரேக்குகள்",
@@ -2442,6 +2646,10 @@
         credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
       },
       'kannada': {
+        tab_6: "6. 🛍️ ಗ್ರಾಹಕರ ವಾಯ್ಸ್ ಆರ್ಡರ್‌ಗಳು & ಟೇಕ್‌ಅವೇ",
+        hero_btn_orders: "🛍️ ಟೇಕ್‌ಅವೇ ಆರ್ಡರ್‌ಗಳು (2)",
+        orders_title: "ಗ್ರಾಹಕರ ವಾಟ್ಸಾಪ್ ವಾಯ್ಸ್ ಆರ್ಡರ್‌ಗಳು & ಟೇಕ್‌ಅವೇ",
+        orders_sub: "ಗ್ರಾಹಕರು ಕಳುಹಿಸಿದ ವಾಯ್ಸ್ ನೋಟ್‌ಗಳನ್ನು AI ಪಾರ್ಸ್ ಮಾಡಿ, ಪ್ಯಾಕಿಂಗ್ ಪಟ್ಟಿ ಸಿದ್ಧಪಡಿಸಿ, ಪ್ಯಾಕ್ ಆದ ತಕ್ಷಣ ವಾಟ್ಸಾಪ್ ನೋಟಿಫಿಕೇಶನ್ ಕಳುಹಿಸುತ್ತದೆ.",
         tab_5: "5. 🏬 ಡಿಮಾರ್ಟ್ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ (ಸಿನಿಮ್ಯಾಟಿಕ್)",
         hero_btn_racks: "🏬 ಡಿಮಾರ್ಟ್ 3D ರ‍್ಯಾಕ್ಸ್",
         rack_store_title: "ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ ಸೂಪರ್‌ಮಾರ್ಕೆಟ್ ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್",
@@ -3476,6 +3684,395 @@
     }
 
 
+    
+    // ==========================================
+    // CUSTOMER VOICE ORDERS & TAKEAWAY JAVASCRIPT
+    // ==========================================
+    let customerOrdersList = [
+      {
+        id: 'ORD-1042',
+        customer_name: 'Priya Sharma',
+        phone: '+91 98450 12345',
+        order_type: 'voice_note',
+        time: '5m ago',
+        distance: '800m away • ETA 8 mins',
+        voice_transcript: 'भैया 2 पैकेट अमूल दूध, 1 पैकेट अमूल मक्खन, और 1 मैगी 4-पैक पैक करके रखना, 10 मिनट में स्कूटी से आकर ले लूँगी।',
+        language: 'hindi',
+        items: [
+          { name: 'Amul Taaza Milk 500ml', qty: 2, price: 24.50, packed: false },
+          { name: 'Amul Salted Butter 100g', qty: 1, price: 51.00, packed: false },
+          { name: 'Maggi 2-Min Noodles 4-Pack', qty: 1, price: 48.00, packed: false }
+        ],
+        total_amt: 148.00,
+        status: 'WAITING_TO_PACK'
+      },
+      {
+        id: 'ORD-1043',
+        customer_name: 'Ramesh Naidu',
+        phone: '+91 98765 67890',
+        order_type: 'voice_note',
+        time: '12m ago',
+        distance: '1.2 km away • ETA 15 mins',
+        voice_transcript: 'సేత్ గారూ, 1 ఆశీర్వాద్ గోధుమపిండి 5kg, 1 లీటర్ సన్‌ఫ్లవర్ ఆయిల్ ప్యాక్ చేసి ఉంచండి, ఆఫీస్ నుంచి వచ్చేటప్పుడు తీసుకుంటాను.',
+        language: 'telugu',
+        items: [
+          { name: 'Aashirvaad Chakki Atta 5kg', qty: 1, price: 232.00, packed: false },
+          { name: 'Fortune Sunflower Oil 1L', qty: 1, price: 124.00, packed: false }
+        ],
+        total_amt: 356.00,
+        status: 'WAITING_TO_PACK'
+      },
+      {
+        id: 'ORD-1041',
+        customer_name: 'Suresh Kumar',
+        phone: '+91 98111 22334',
+        order_type: 'chat',
+        time: '25m ago',
+        distance: '450m away • Arrived at counter',
+        voice_transcript: 'Bhaiya please pack 2 Thums Up 750ml and 1 Parle-G 250g fast.',
+        language: 'english',
+        items: [
+          { name: 'Thums Up Charged 750ml', qty: 2, price: 36.00, packed: true },
+          { name: 'Parle-G Gold Biscuits 250g', qty: 1, price: 25.00, packed: true }
+        ],
+        total_amt: 97.00,
+        status: 'READY_FOR_PICKUP'
+      }
+    ];
+
+    // Render Customer Orders Queue
+    function renderCustomerOrders() {
+      const container = document.getElementById('customer-orders-container');
+      if (!container) return;
+
+      let waitingCount = 0;
+      let packingCount = 0;
+      let readyCount = 0;
+
+      let htmlCards = '';
+
+      customerOrdersList.forEach((order) => {
+        if (order.status === 'WAITING_TO_PACK') waitingCount++;
+        if (order.status === 'PACKING') packingCount++;
+        if (order.status === 'READY_FOR_PICKUP') readyCount++;
+
+        const isWaiting = order.status === 'WAITING_TO_PACK';
+        const isPacking = order.status === 'PACKING';
+        const isReady = order.status === 'READY_FOR_PICKUP';
+        const isCompleted = order.status === 'COMPLETED';
+
+        let statusBadge = '';
+        if (isWaiting) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">WAITING TO PACK</span>';
+        else if (isPacking) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500 text-slate-950">PACKING IN PROGRESS</span>';
+        else if (isReady) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500 text-slate-950">READY FOR PICKUP</span>';
+        else if (isCompleted) statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-slate-200 text-slate-700">COMPLETED & PAID</span>';
+
+        // Checklist of items
+        let itemsHtml = '';
+        order.items.forEach((it, idx) => {
+          itemsHtml += `
+            <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100 last:border-b-0">
+              <label class="flex items-center space-x-2 text-slate-800 cursor-pointer">
+                <input type="checkbox" ${it.packed ? 'checked' : ''} onchange="toggleItemPacked('${order.id}', ${idx})" class="rounded text-paytm-navy focus:ring-paytm-cyan">
+                <span class="${it.packed ? 'line-through text-slate-400' : 'font-semibold'}">${it.qty}x ${it.name}</span>
+              </label>
+              <span class="font-mono font-bold text-slate-700">₹${(it.qty * it.price).toFixed(2)}</span>
+            </div>
+          `;
+        });
+
+        // Action Buttons based on state
+        let actionButtonsHtml = '';
+        if (isWaiting) {
+          actionButtonsHtml = `
+            <button onclick="startPackingOrder('${order.id}')" class="w-full py-2.5 rounded-xl bg-paytm-navy hover:bg-slate-900 text-white font-extrabold text-xs shadow flex items-center justify-center space-x-2 transition active:scale-95">
+              <i class="fa-solid fa-boxes-packing text-cyan-400"></i>
+              <span>Start Packing (${order.items.length} items)</span>
+            </button>
+          `;
+        } else if (isPacking) {
+          actionButtonsHtml = `
+            <button onclick="packAndNotifyCustomer('${order.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-2 transition active:scale-95">
+              <i class="fa-solid fa-circle-check text-yellow-300"></i>
+              <span>Mark Packed & Send WhatsApp Takeaway Alert</span>
+            </button>
+          `;
+        } else if (isReady) {
+          actionButtonsHtml = `
+            <div class="space-y-2">
+              <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between">
+                <span><i class="fa-brands fa-whatsapp text-emerald-600 text-sm mr-1"></i> WhatsApp Takeaway Alert Sent</span>
+                <span class="font-bold">Awaiting Pickup</span>
+              </div>
+              <button onclick="completeOrderHandover('${order.id}')" class="w-full py-2.5 rounded-xl bg-paytm-navy hover:bg-slate-900 text-white font-extrabold text-xs shadow flex items-center justify-center space-x-2 transition active:scale-95">
+                <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i>
+                <span>Customer Arrived • Handover & Collect ₹${order.total_amt.toFixed(2)}</span>
+              </button>
+            </div>
+          `;
+        } else {
+          actionButtonsHtml = `
+            <div class="p-2.5 bg-slate-100 rounded-xl text-center text-xs text-slate-600 font-bold">
+              ✅ Picked Up & Paid via Paytm UPI
+            </div>
+          `;
+        }
+
+        htmlCards += `
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3.5 transition-all hover:shadow-md">
+            
+            <!-- Order Header -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl ${order.order_type === 'voice_note' ? 'bg-cyan-100 text-cyan-800' : 'bg-emerald-100 text-emerald-800'} flex items-center justify-center text-lg font-bold shrink-0">
+                  <i class="fa-solid ${order.order_type === 'voice_note' ? 'fa-microphone' : 'fa-comment-dots'}"></i>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h4 class="font-bold text-slate-900 text-sm">${order.customer_name}</h4>
+                    <span class="text-[10.5px] font-mono text-slate-400 font-semibold">${order.id}</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500">
+                    <i class="fa-solid fa-location-dot text-rose-500 mr-0.5"></i> ${order.distance} • ${order.time}
+                  </p>
+                </div>
+              </div>
+              <div>${statusBadge}</div>
+            </div>
+
+            <!-- Customer Audio Voice Note Bar -->
+            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold uppercase tracking-wide text-slate-500 flex items-center space-x-1">
+                  <i class="fa-brands fa-whatsapp text-emerald-600 text-xs"></i>
+                  <span>${order.order_type === 'voice_note' ? 'Incoming Voice Note' : 'WhatsApp Chat Order'}</span>
+                </span>
+                <button onclick="playCustomerVoiceNote('${order.voice_transcript}', '${order.id}')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-paytm-cyan text-paytm-navy hover:bg-cyan-300 flex items-center space-x-1 transition">
+                  <i class="fa-solid fa-play text-[9px]"></i>
+                  <span>Play Voice Note</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-700 italic">
+                "${order.voice_transcript}"
+              </p>
+            </div>
+
+            <!-- Packing Checklist Items -->
+            <div class="space-y-1 bg-white p-3 rounded-2xl border border-slate-100">
+              <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1 flex justify-between">
+                <span>Packing Checklist</span>
+                <span>Bill Amount</span>
+              </div>
+              ${itemsHtml}
+              <div class="flex items-center justify-between pt-2 border-t border-slate-200 text-xs font-black text-slate-900">
+                <span>Total Amount:</span>
+                <span class="text-emerald-600 font-mono text-sm">₹${order.total_amt.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <!-- Action Area -->
+            ${actionButtonsHtml}
+
+          </div>
+        `;
+      });
+
+      container.innerHTML = htmlCards;
+
+      // Update Metrics Badges
+      const mWait = document.getElementById('metric-waiting-orders');
+      if (mWait) mWait.innerText = `${waitingCount} Orders`;
+
+      const mPack = document.getElementById('metric-packing-orders');
+      if (mPack) mPack.innerText = `${packingCount} Order`;
+
+      const mReady = document.getElementById('metric-ready-orders');
+      if (mReady) mReady.innerText = `${readyCount} Orders`;
+
+      const badgeCount = document.getElementById('orders-badge-count');
+      if (badgeCount) {
+        if (waitingCount > 0) {
+          badgeCount.innerText = `${waitingCount} NEW`;
+          badgeCount.classList.remove('hidden');
+        } else {
+          badgeCount.classList.add('hidden');
+        }
+      }
+    }
+
+    // Toggle single item packed checkbox
+    function toggleItemPacked(orderId, itemIdx) {
+      const order = customerOrdersList.find(o => o.id === orderId);
+      if (order && order.items[itemIdx]) {
+        order.items[itemIdx].packed = !order.items[itemIdx].packed;
+        renderCustomerOrders();
+      }
+    }
+
+    // Start Packing Order
+    function startPackingOrder(orderId) {
+      const order = customerOrdersList.find(o => o.id === orderId);
+      if (order) {
+        order.status = 'PACKING';
+        renderCustomerOrders();
+        if (typeof speakFallbackSpeech === 'function') {
+          speakFallbackSpeech(`Started packing order for ${order.customer_name}.`);
+        }
+      }
+    }
+
+    // Mark as Packed & Send WhatsApp Takeaway Alert
+    async function packAndNotifyCustomer(orderId) {
+      const order = customerOrdersList.find(o => o.id === orderId);
+      if (!order) return;
+
+      order.status = 'READY_FOR_PICKUP';
+      order.items.forEach(it => it.packed = true);
+
+      const dict = UI_TRANSLATIONS[currentLanguage] || UI_TRANSLATIONS['english'];
+      const storeName = (BUSINESS_CONFIGS[currentBusinessType] && BUSINESS_CONFIGS[currentBusinessType].name) || 'Sri Lakshmi Kirana';
+
+      // Send to server if available
+      try {
+        await fetch('/api/orders/pack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: orderId, language: currentLanguage })
+        });
+      } catch (err) {
+        console.log('Client-side pack fallback active');
+      }
+
+      // Voice notification via Soundbox
+      const msgs = {
+        'english': `Order #${order.id} packed! WhatsApp takeaway alert sent to ${order.customer_name}.`,
+        'telugu': `ఆర్డర్ #${order.id} ప్యాక్ చేయబడింది! ${order.customer_name} గారికి వాట్సాప్ టేక్‌అవే మెసేజ్ పంపబడింది.`,
+        'hindi': `आर्डर #${order.id} पैक हो गया! ${order.customer_name} को व्हाट्सएप टेकअवे मैसेज भेज दिया गया है।`,
+        'tamil': `ஆர்டர் #${order.id} பேக் செய்யப்பட்டது! ${order.customer_name} க்கு வாட்ஸ்அப் டேக்அவே மெசேஜ் அனுப்பப்பட்டது.`,
+        'kannada': `ಆರ್ಡರ್ #${order.id} ಪ್ಯಾಕ್ ಆಗಿದೆ! ${order.customer_name} ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ಟೇಕ್‌ಅವೇ ಸಂದೇಶ ಕಳುಹಿಸಲಾಗಿದೆ.`
+      };
+
+      if (typeof speakFallbackSpeech === 'function') {
+        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
+      }
+
+      renderCustomerOrders();
+    }
+
+    // Complete Order Handover
+    async function completeOrderHandover(orderId) {
+      const order = customerOrdersList.find(o => o.id === orderId);
+      if (!order) return;
+
+      order.status = 'COMPLETED';
+
+      try {
+        await fetch('/api/orders/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: orderId })
+        });
+      } catch (e) {}
+
+      if (typeof speakFallbackSpeech === 'function') {
+        const msgs = {
+          'english': `₹${order.total_amt.toFixed(0)} received via Paytm QR from ${order.customer_name}. Order completed!`,
+          'telugu': `${order.customer_name} గారి నుంచి పేటీఎం క్యూఆర్ ద్వారా ₹${order.total_amt.toFixed(0)} వచ్చాయి. ఆర్డర్ పూర్తయింది!`,
+          'hindi': `${order.customer_name} से पेटीएम क्यूआर पर ₹${order.total_amt.toFixed(0)} प्राप्त हुए। आर्डर संपन्न!`,
+          'tamil': `${order.customer_name} அவர்களிடமிருந்து பேடிஎம் மூலம் ₹${order.total_amt.toFixed(0)} பெறப்பட்டது!`,
+          'kannada': `${order.customer_name} ಅವರಿಂದ ಪೇಟಿಎಂ ಕ್ಯೂಆರ್ ಮೂಲಕ ₹${order.total_amt.toFixed(0)} ಸ್ವೀಕರಿಸಲಾಗಿದೆ!`
+        };
+        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
+      }
+
+      renderCustomerOrders();
+    }
+
+    // Play Voice Note simulation
+    function playCustomerVoiceNote(text, orderId) {
+      if (typeof speakFallbackSpeech === 'function') {
+        speakFallbackSpeech(text);
+      }
+    }
+
+    // Preset voice note filler
+    function loadOrderVoicePreset(lang) {
+      const presets = {
+        'hindi': 'भैया 2 पैकेट अमूल दूध, 1 पैकेट मक्खन और 1 मैगी पैक कर दो, मैं 10 मिनट में आ रहा हूँ।',
+        'telugu': 'సేత్ గారూ, 1 ఆశీర్వాద్ గోధుమపిండి 5kg, 1 లీటర్ సన్‌ఫ్లవర్ ఆయిల్ ప్యాక్ చేసి ఉంచండి, వచ్చేటప్పుడు తీసుకుంటాను.',
+        'english': 'Hello Bhaiya, please pack 2 packets of milk, 1 butter and 1 bread. I will pick up in 15 minutes.',
+        'tamil': 'வணக்கம் அண்ணா, 2 பாக்கெட் பால், 1 பாக்கெட் வெண்ணெய் எடுத்து வையுங்கள், 10 நிமிடத்தில் வருகிறேன்.'
+      };
+      const el = document.getElementById('sim-order-text');
+      if (el && presets[lang]) {
+        el.value = presets[lang];
+      }
+    }
+
+    // Submit Simulated Customer Order
+    async function submitSimulatedCustomerOrder() {
+      const name = document.getElementById('sim-customer-name').value || 'Customer';
+      const phone = document.getElementById('sim-customer-phone').value || '+91 98450 99887';
+      const text = document.getElementById('sim-order-text').value || '';
+
+      if (!text.trim()) return;
+
+      const newId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+      
+      // Auto parse items
+      let items = [];
+      const lower = text.toLowerCase();
+      if (lower.includes('milk') || lower.includes('दूध') || lower.includes('పాలు') || lower.includes('பால்')) {
+        items.push({ name: 'Amul Taaza Milk 500ml', qty: 2, price: 24.50, packed: false });
+      }
+      if (lower.includes('butter') || lower.includes('मक्खन') || lower.includes('వెన్న') || lower.includes('வெண்ணெய்')) {
+        items.push({ name: 'Amul Salted Butter 100g', qty: 1, price: 51.00, packed: false });
+      }
+      if (lower.includes('atta') || lower.includes('आटा') || lower.includes('పిండి')) {
+        items.push({ name: 'Aashirvaad Chakki Atta 5kg', qty: 1, price: 232.00, packed: false });
+      }
+      if (lower.includes('oil') || lower.includes('तेल') || lower.includes('నూనె')) {
+        items.push({ name: 'Fortune Sunflower Oil 1L', qty: 1, price: 124.00, packed: false });
+      }
+      if (items.length === 0) {
+        items.push({ name: 'Store Packaged Essentials', qty: 1, price: 95.00, packed: false });
+      }
+
+      const totalAmt = items.reduce((s, it) => s + (it.qty * it.price), 0);
+
+      const newOrder = {
+        id: newId,
+        customer_name: name,
+        phone: phone,
+        order_type: 'voice_note',
+        time: 'Just now',
+        distance: '600m away • ETA 6 mins',
+        voice_transcript: text,
+        language: currentLanguage,
+        items: items,
+        total_amt: totalAmt,
+        status: 'WAITING_TO_PACK'
+      };
+
+      customerOrdersList.unshift(newOrder);
+
+      // Announce arrival via Soundbox
+      if (typeof speakFallbackSpeech === 'function') {
+        const msgs = {
+          'english': `New customer voice order received from ${name}! Total ₹${totalAmt.toFixed(0)}. Please start packing.`,
+          'telugu': `${name} గారి నుంచి కొత్త వాయిస్ ఆర్డర్ వచ్చింది! మొత్తం ₹${totalAmt.toFixed(0)}. దయచేసి ప్యాక్ చేయండి.`,
+          'hindi': `${name} से नया वॉइस आर्डर प्राप्त हुआ! कुल ₹${totalAmt.toFixed(0)}। कृपया पैकिंग शुरू करें।`,
+          'tamil': `${name} அவர்களிடமிருந்து புதிய வாய்ஸ் ஆர்டர் வந்துள்ளது! ₹${totalAmt.toFixed(0)}. பேக் செய்யவும்.`,
+          'kannada': `${name} ಅವರಿಂದ ಹೊಸ ವಾಯ್ಸ್ ಆರ್ಡರ್ ಬಂದಿದೆ! ₹${totalAmt.toFixed(0)}. ದಯವಿಟ್ಟು ಪ್ಯಾಕ್ ಮಾಡಿ.`
+        };
+        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
+      }
+
+      renderCustomerOrders();
+      switchTab('orders');
+    }
+
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('border-paytm-cyan', 'text-paytm-navy');
@@ -3493,6 +4090,10 @@
 
       if (tabId === 'racks') {
         renderDmartRacks(currentBusinessType);
+      }
+
+      if (tabId === 'orders') {
+        renderCustomerOrders();
       }
     }
 

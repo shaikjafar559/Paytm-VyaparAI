@@ -172,3 +172,123 @@ async def merchant_login(req: LoginRequest):
         "business_type": biz,
         "profile": profile
     })
+
+
+# -------------------------------------------------------------
+# CUSTOMER TAKEAWAY & VOICE NOTE ORDERS API
+# -------------------------------------------------------------
+@app.get("/api/orders")
+async def get_orders(business_type: Optional[str] = None):
+    biz = business_type or engine.current_biz
+    orders = engine.CUSTOMER_SAMPLE_ORDERS.get(biz, engine.CUSTOMER_SAMPLE_ORDERS.get("kirana", []))
+    return {"orders": orders, "business_type": biz}
+
+class CustomerOrderRequest(BaseModel):
+    customer_name: str
+    phone: str
+    order_text: str
+    order_type: Optional[str] = "voice_note"
+    language: Optional[str] = "english"
+    business_type: Optional[str] = "kirana"
+
+@app.post("/api/orders/create")
+async def create_order(req: CustomerOrderRequest):
+    # Create simple structured item parse
+    order_id = f"ORD-{int(time.time()) % 10000}"
+    items = []
+    text_lower = req.order_text.lower()
+    
+    # Auto-extract common items
+    if "milk" in text_lower or "दूध" in text_lower or "పాలు" in text_lower:
+        items.append({"name": "Amul Taaza Milk 500ml", "qty": 2, "price": 24.50, "packed": False})
+    if "butter" in text_lower or "मक्खन" in text_lower or "వెన్న" in text_lower:
+        items.append({"name": "Amul Salted Butter 100g", "qty": 1, "price": 51.00, "packed": False})
+    if "atta" in text_lower or "आटा" in text_lower or "పిండి" in text_lower:
+        items.append({"name": "Aashirvaad Chakki Atta 5kg", "qty": 1, "price": 232.00, "packed": False})
+    if "oil" in text_lower or "तेल" in text_lower or "నూనె" in text_lower:
+        items.append({"name": "Fortune Sunflower Oil 1L", "qty": 1, "price": 124.00, "packed": False})
+    if not items:
+        items.append({"name": "General Provisions Pack", "qty": 1, "price": 120.00, "packed": False})
+        
+    total_amt = sum(it["qty"] * it["price"] for it in items)
+    new_order = {
+        "id": order_id,
+        "customer_name": req.customer_name or "Valued Customer",
+        "phone": req.phone or "+91 98450 99887",
+        "order_type": req.order_type,
+        "time": "Just now",
+        "distance": "600m away (ETA 6 mins)",
+        "voice_transcript": req.order_text,
+        "language": req.language,
+        "items": items,
+        "total_amt": total_amt,
+        "status": "WAITING_TO_PACK"
+    }
+    
+    biz = req.business_type or engine.current_biz
+    if biz not in engine.CUSTOMER_SAMPLE_ORDERS:
+        engine.CUSTOMER_SAMPLE_ORDERS[biz] = []
+    engine.CUSTOMER_SAMPLE_ORDERS[biz].insert(0, new_order)
+    return {"status": "SUCCESS", "order": new_order}
+
+class PackOrderRequest(BaseModel):
+    order_id: str
+    language: Optional[str] = "english"
+
+@app.post("/api/orders/pack")
+async def pack_order(req: PackOrderRequest):
+    lang = (req.language or "english").lower()
+    biz = engine.current_biz
+    orders = engine.CUSTOMER_SAMPLE_ORDERS.get(biz, engine.CUSTOMER_SAMPLE_ORDERS.get("kirana", []))
+    target = next((o for o in orders if o["id"] == req.order_id), None)
+    if not target:
+        return JSONResponse({"status": "ERROR", "message": "Order not found"}, status_code=404)
+        
+    target["status"] = "READY_FOR_PICKUP"
+    for it in target["items"]:
+        it["packed"] = True
+        
+    cust_name = target["customer_name"]
+    amt = target["total_amt"]
+    store_name = engine.merchant_profile.get("store_name", "Shop")
+    
+    # Generate localized WhatsApp Pickup Notification
+    wa_msgs = {
+        "english": f"Namaste {cust_name} ji! 🙏\nYour order ({len(target['items'])} items) is packed & ready for takeaway at {store_name}!\nTotal: ₹{amt:.2f}\nQuick Paytm UPI QR: paytm.me/qr/{target['id']}?amt={amt:.0f}\nPlease collect from the counter. Thank you! ✨",
+        "telugu": f"నమస్కారం {cust_name} గారూ! 🙏\nమీ ఆర్డర్ ({len(target['items'])} వస్తువులు) ప్యాక్ చేయబడింది, {store_name} వద్ద సిద్ధంగా ఉంది!\nమొత్తం: ₹{amt:.2f}\nపేటీఎం UPI పే లింక్: paytm.me/qr/{target['id']}?amt={amt:.0f}\nకౌంటర్ వద్ద తీసుకోవచ్చు. ధన్యవాదాలు! ✨",
+        "hindi": f"नमस्ते {cust_name} जी! 🙏\nआपका आर्डर ({len(target['items'])} सामान) पैक हो चुका है और {store_name} काउंटर पर तैयार है!\nकुल बिल: ₹{amt:.2f}\nPaytm UPI QR लिंक: paytm.me/qr/{target['id']}?amt={amt:.0f}\nआप आकर काउंटर से ले सकते हैं। धन्यवाद! ✨",
+        "tamil": f"வணக்கம் {cust_name} அவர்களே! 🙏\nஉங்கள் ஆர்டர் ({len(target['items'])} பொருட்கள்) பேக் செய்யப்பட்டு {store_name} கடையில் தயாராக உள்ளது!\nமொத்த தொகை: ₹{amt:.2f}\nPaytm UPI லிங்க்: paytm.me/qr/{target['id']}?amt={amt:.0f}\nநேரில் வந்து பெற்றுக்கொள்ளலாம். நன்றி! ✨",
+        "kannada": f"ನಮಸ್ಕಾರ {cust_name} ಅವರೇ! 🙏\nನಿಮ್ಮ ಆರ್ಡರ್ ({len(target['items'])} ವಸ್ತುಗಳು) ಪ್ಯಾಕ್ ಆಗಿದ್ದು, {store_name} ಅಂಗಡಿಯಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ!\nಒಟ್ಟು ಬಿಲ್: ₹{amt:.2f}\nPaytm UPI ಲಿಂಕ್: paytm.me/qr/{target['id']}?amt={amt:.0f}\nಕೌಂಟರ್‌ನಿಂದ ಕಲೆಕ್ಟ್ ಮಾಡಿಕೊಳ್ಳಿ. ಧನ್ಯವಾದಗಳು! ✨"
+    }
+    
+    wa_text = wa_msgs.get(lang, wa_msgs["english"])
+    soundbox_announcement = f"Order #{req.order_id} Packed! Takeaway WhatsApp alert sent to {cust_name}."
+    
+    return {
+        "status": "SUCCESS",
+        "order": target,
+        "whatsapp_message": wa_text,
+        "soundbox_announcement": soundbox_announcement
+    }
+
+class CompleteOrderRequest(BaseModel):
+    order_id: str
+
+@app.post("/api/orders/complete")
+async def complete_order(req: CompleteOrderRequest):
+    biz = engine.current_biz
+    orders = engine.CUSTOMER_SAMPLE_ORDERS.get(biz, engine.CUSTOMER_SAMPLE_ORDERS.get("kirana", []))
+    target = next((o for o in orders if o["id"] == req.order_id), None)
+    if not target:
+        return JSONResponse({"status": "ERROR", "message": "Order not found"}, status_code=404)
+        
+    target["status"] = "COMPLETED"
+    engine.merchant_profile["today_collection"] += target["total_amt"]
+    engine.merchant_profile["today_txns"] += 1
+    
+    return {
+        "status": "SUCCESS",
+        "order": target,
+        "today_collection": engine.merchant_profile["today_collection"],
+        "today_txns": engine.merchant_profile["today_txns"]
+    }

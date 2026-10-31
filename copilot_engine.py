@@ -334,6 +334,10 @@ class MerchantCopilotEngine:
 
         # Inventory intent
         # DMart Smart Racks / Shelves intent
+        # Customer Takeaway & Voice Orders intent
+        elif any(w in q_lower for w in ["customer order", "pack", "takeaway", "voice note", "whatsapp order", "packing", "ఆర్డర్", "ప్యాక్", "टेकअवे", "पैक", "ऑर्डर", "ஆர்டர்", "பேக்", "ಆರ್ಡರ್", "ಪ್ಯಾಕ್"]):
+            return self.get_customer_orders_summary(lang)
+
         elif any(w in q_lower for w in ["rack", "racks", "shelf", "shelves", "dmart", "????", "??????", "??????", "????????", "????????", "??????", "???????", "???", "??????", "???????", "?????", "????? ???", "????", "??????", "????????", "?????????", "???????", "?????", "????????", "?????????", "????????"]):
             return self.get_dmart_racks_status(lang)
 
@@ -489,4 +493,87 @@ class MerchantCopilotEngine:
                 "tab": "racks"
             },
             "voice_response": resp
+        }
+
+    # -------------------------------------------------------------
+    # CUSTOMER VOICE & CHAT ORDERS (TAKEAWAY / BOPIS LIFECYCLE)
+    # -------------------------------------------------------------
+    CUSTOMER_SAMPLE_ORDERS = {
+        "kirana": [
+            {
+                "id": "ORD-1042",
+                "customer_name": "Priya Sharma",
+                "phone": "+91 98450 12345",
+                "order_type": "voice_note",
+                "time": "5m ago",
+                "distance": "800m away (ETA 8 mins)",
+                "voice_transcript": "भैया 2 पैकेट अमूल दूध, 1 पैकेट अमूल मक्खन, और 1 मैगी 4-पैक पैक करके रखना, 10 मिनट में स्कूटी से आकर ले लूँगी।",
+                "language": "hindi",
+                "items": [
+                    {"name": "Amul Taaza Milk 500ml", "qty": 2, "price": 24.50, "packed": False},
+                    {"name": "Amul Salted Butter 100g", "qty": 1, "price": 51.00, "packed": False},
+                    {"name": "Maggi 2-Min Noodles 4-Pack", "qty": 1, "price": 48.00, "packed": False}
+                ],
+                "total_amt": 148.00,
+                "status": "WAITING_TO_PACK"
+            },
+            {
+                "id": "ORD-1043",
+                "customer_name": "Ramesh Naidu",
+                "phone": "+91 98765 67890",
+                "order_type": "voice_note",
+                "time": "12m ago",
+                "distance": "1.2 km away (ETA 15 mins)",
+                "voice_transcript": "సేత్ గారూ, 1 ఆశీర్వాద్ గోధుమపిండి 5kg, 1 లీటర్ సన్‌ఫ్లవర్ ఆయిల్ ప్యాక్ చేసి ఉంచండి, ఆఫీస్ నుంచి వచ్చేటప్పుడు తీసుకుంటాను.",
+                "language": "telugu",
+                "items": [
+                    {"name": "Aashirvaad Chakki Atta 5kg", "qty": 1, "price": 232.00, "packed": False},
+                    {"name": "Fortune Sunflower Oil 1L", "qty": 1, "price": 124.00, "packed": False}
+                ],
+                "total_amt": 356.00,
+                "status": "WAITING_TO_PACK"
+            },
+            {
+                "id": "ORD-1041",
+                "customer_name": "Suresh Kumar",
+                "phone": "+91 98111 22334",
+                "order_type": "chat",
+                "time": "25m ago",
+                "distance": "450m away (Arrived at counter)",
+                "voice_transcript": "Bhaiya please pack 2 Thums Up 750ml and 1 Parle-G 250g fast.",
+                "language": "english",
+                "items": [
+                    {"name": "Thums Up Charged 750ml", "qty": 2, "price": 36.00, "packed": True},
+                    {"name": "Parle-G Gold Biscuits 250g", "qty": 1, "price": 25.00, "packed": True}
+                ],
+                "total_amt": 97.00,
+                "status": "READY_FOR_PICKUP"
+            }
+        ]
+    }
+
+    def get_customer_orders_summary(self, language: str = "english") -> Dict[str, Any]:
+        lang = language.lower().strip()
+        orders = self.CUSTOMER_SAMPLE_ORDERS.get(self.current_biz, self.CUSTOMER_SAMPLE_ORDERS["kirana"])
+        waiting_count = len([o for o in orders if o["status"] == "WAITING_TO_PACK"])
+        
+        responses = {
+            "english": f"Boss, you have {waiting_count} new customer voice orders waiting to be packed! Priya Sharma ordered Amul milk & butter. Opening Customer Takeaway Hub.",
+            "telugu": f"సేత్ గారూ, ప్యాక్ చేయడానికి {waiting_count} కొత్త కస్టమర్ వాయిస్ ఆర్డర్లు సిద్ధంగా ఉన్నాయి! ప్రియా శర్మ, రమేష్ నాయుడు వాయిస్ నోట్ పంపారు.",
+            "hindi": f"सेठ जी, पैक करने के लिए {waiting_count} नए कस्टमर वॉइस आर्डर आये हैं! प्रिया शर्मा ने दूध व मक्खन का वॉइस नोट भेजा है।",
+            "tamil": f"சேத் அவர்களே, பேக் செய்ய {waiting_count} புதிய வாடிக்கையாளர் வாய்ஸ் ஆர்டர்கள் வந்துள்ளன! வாடிக்கையாளர் டேக்அவே பகுதி திறக்கப்பட்டது.",
+            "kannada": f"ಸೇಠ್ ಅವರೇ, ಪ್ಯಾಕ್ ಮಾಡಲು {waiting_count} ಹೊಸ ಗ್ರಾಹಕರ ವಾಯ್ಸ್ ಆರ್ಡರ್‌ಗಳು ಕಾಯುತ್ತಿವೆ! ಕಸ್ಟಮರ್ ಟೇಕ್‌ಅವೇ ಹಬ್ ತೆರೆಯಲಾಗಿದೆ."
+        }
+        
+        return {
+            "intent": "CUSTOMER_ORDERS",
+            "language": lang,
+            "business_type": self.current_biz,
+            "waiting_orders": waiting_count,
+            "orders": orders,
+            "action": {
+                "type": "SWITCH_TAB",
+                "tab": "orders"
+            },
+            "voice_response": responses.get(lang, responses["english"])
         }
