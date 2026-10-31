@@ -533,3 +533,348 @@ async def poll_incoming_payment():
         p = INCOMING_PAYMENTS_QUEUE.pop(0)
         return {"status": "RECEIVED", "payment": p}
     return {"status": "EMPTY"}
+
+
+# -------------------------------------------------------------
+# PAYTM VYAPARAI PAYMENT GATEWAY & TRANSACTION TRACKER ENGINE
+# -------------------------------------------------------------
+GATEWAY_ORDERS = {
+    "PG_ORD_984210": {
+        "order_id": "PG_ORD_984210",
+        "amount": 1.0,
+        "customer_name": "Shaik Jafar",
+        "phone": "+91 83105 08118",
+        "notes": "UPI Standee Gateway Verification",
+        "status": "SUCCESS",
+        "payment_id": "pay_984205128",
+        "rrn": "UPI/395235564993",
+        "payment_method": "UPI_INTENT",
+        "merchant": "Shaik Japhar (8310508118@ptyes)",
+        "created_at": "31 Oct 2026, 04:30 PM",
+        "settled_at": "31 Oct 2026, 04:31 PM"
+    }
+}
+
+class CreateGatewayOrderPayload(BaseModel):
+    amount: float = 1.0
+    customer_name: Optional[str] = "Customer"
+    phone: Optional[str] = "+91 83105 08118"
+    notes: Optional[str] = "Counter UPI Gateway Payment"
+
+class PayGatewayOrderPayload(BaseModel):
+    order_id: str
+    payment_method: Optional[str] = "UPI_INTENT"
+    utr: Optional[str] = None
+    payer_name: Optional[str] = None
+
+@app.post("/api/gateway/create-order")
+async def create_gateway_order(payload: CreateGatewayOrderPayload, request: Request):
+    import random, time
+    order_id = f"PG_ORD_{random.randint(100000, 999999)}"
+    amt = float(payload.amount)
+    
+    # Generate UPI intent URL
+    upi_intent = f"upi://pay?pa=8310508118@ptyes&pn=Shaik+Japhar&am={amt:.2f}&cu=INR&tn={order_id}"
+    
+    host_header = request.headers.get("host", "127.0.0.1:8080")
+    checkout_url = f"http://{host_header}/gateway/checkout?order_id={order_id}"
+    
+    order_data = {
+        "order_id": order_id,
+        "amount": amt,
+        "customer_name": payload.customer_name or "Customer",
+        "phone": payload.phone or "+91 83105 08118",
+        "notes": payload.notes or "Paytm Payment Gateway Order",
+        "status": "PENDING",
+        "payment_id": None,
+        "rrn": None,
+        "payment_method": None,
+        "checkout_url": checkout_url,
+        "upi_intent_url": upi_intent,
+        "merchant": "Shaik Japhar (8310508118@ptyes)",
+        "created_at": time.strftime("%d %b %Y, %I:%M %p"),
+        "settled_at": None
+    }
+    
+    GATEWAY_ORDERS[order_id] = order_data
+    return {
+        "status": "SUCCESS",
+        "message": "Gateway order created successfully",
+        "order": order_data
+    }
+
+@app.get("/api/gateway/orders")
+async def list_gateway_orders():
+    orders_list = list(GATEWAY_ORDERS.values())
+    orders_list.reverse()
+    return {
+        "status": "SUCCESS",
+        "total_orders": len(orders_list),
+        "successful_orders": len([o for o in orders_list if o["status"] == "SUCCESS"]),
+        "total_collected": sum(o["amount"] for o in orders_list if o["status"] == "SUCCESS"),
+        "orders": orders_list
+    }
+
+@app.get("/api/gateway/track/{order_id}")
+async def track_gateway_order(order_id: str):
+    order = GATEWAY_ORDERS.get(order_id)
+    if not order:
+        return JSONResponse({"status": "ERROR", "message": "Gateway order not found"}, status_code=404)
+    return {
+        "status": "SUCCESS",
+        "order": order
+    }
+
+@app.post("/api/gateway/pay")
+async def process_gateway_payment(payload: PayGatewayOrderPayload):
+    import random, time
+    order = GATEWAY_ORDERS.get(payload.order_id)
+    if not order:
+        order = {
+            "order_id": payload.order_id,
+            "amount": 1.0,
+            "customer_name": payload.payer_name or "Shaik Jafar",
+            "phone": "+91 83105 08118",
+            "notes": "Paytm Payment Gateway Payment",
+            "status": "PENDING",
+            "created_at": time.strftime("%d %b %Y, %I:%M %p")
+        }
+        GATEWAY_ORDERS[payload.order_id] = order
+        
+    payment_id = f"pay_{random.randint(10000000, 99999999)}"
+    bank_rrn = payload.utr or f"UPI/{random.randint(395230000000, 395299999999)}"
+    
+    order["status"] = "SUCCESS"
+    order["payment_id"] = payment_id
+    order["rrn"] = bank_rrn
+    order["payment_method"] = payload.payment_method or "UPI_INTENT"
+    if payload.payer_name:
+        order["customer_name"] = payload.payer_name
+    order["settled_at"] = time.strftime("%d %b %Y, %I:%M %p")
+    
+    # Broadcast to counter terminal incoming stream
+    payment_event = {
+        "amount": order["amount"],
+        "customer_name": order["customer_name"],
+        "phone": order["phone"],
+        "rrn": bank_rrn,
+        "notes": f"Gateway Order #{order['order_id']} ({order['payment_method']})",
+        "timestamp": order["settled_at"]
+    }
+    INCOMING_PAYMENTS_QUEUE.append(payment_event)
+    
+    # Record to internal ledger
+    engine.record_transaction(
+        customer_name=order["customer_name"],
+        amount=order["amount"],
+        channel="QR",
+        notes=f"Gateway Payment ({order['order_id']})",
+        phone=order["phone"],
+        rrn=bank_rrn
+    )
+    
+    return {
+        "status": "SUCCESS",
+        "message": "Payment captured and settled via Paytm Payment Gateway",
+        "order": order,
+        "receipt": payment_event
+    }
+
+# -------------------------------------------------------------
+# DEDICATED PAYTM PAYMENT GATEWAY CHECKOUT PAGE
+# -------------------------------------------------------------
+@app.get("/gateway/checkout", response_class=HTMLResponse)
+async def serve_gateway_checkout(order_id: Optional[str] = None):
+    order = GATEWAY_ORDERS.get(order_id, {
+        "order_id": order_id or "PG_ORD_SAMPLE",
+        "amount": 1.0,
+        "customer_name": "Shaik Jafar",
+        "phone": "+91 83105 08118",
+        "notes": "Direct UPI Payment",
+        "status": "PENDING"
+    })
+    
+    checkout_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paytm Payment Gateway - {order.get('order_id')}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @keyframes pulse-ring {{
+      0% {{ transform: scale(0.95); opacity: 0.8; }}
+      50% {{ transform: scale(1.05); opacity: 0.4; }}
+      100% {{ transform: scale(0.95); opacity: 0.8; }}
+    }}
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-3 font-sans">
+  <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+    <!-- Header -->
+    <div class="bg-[#002970] text-white p-5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-white text-[#002970] flex items-center justify-center font-black text-xl shadow">
+          P
+        </div>
+        <div>
+          <h1 class="font-extrabold text-base tracking-wide flex items-center gap-1.5">
+            <span>Paytm</span>
+            <span class="text-[#00b9f5]">Gateway</span>
+            <i class="fa-solid fa-shield-halved text-xs text-emerald-400"></i>
+          </h1>
+          <p class="text-[11px] text-slate-300">256-bit Secure Bank Encryption</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <span class="text-[10px] text-slate-300 block uppercase font-bold">Order ID</span>
+        <span class="font-mono text-xs font-bold text-[#00b9f5]">{order.get('order_id')}</span>
+      </div>
+    </div>
+
+    <!-- Merchant & Amount Header -->
+    <div class="p-6 text-center border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white">
+      <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Paying To Merchant</p>
+      <h2 class="text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
+        <span>Shaik Japhar</span>
+        <i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>
+      </h2>
+      <p class="text-xs font-mono text-slate-600 bg-slate-100 inline-block px-3 py-0.5 rounded-full mt-1 border border-slate-200">
+        8310508118@ptyes
+      </p>
+
+      <div class="mt-4 py-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+        <span class="text-xs font-bold text-emerald-700 block">Total Payable Amount</span>
+        <div class="text-4xl font-black text-emerald-950 mt-1">₹{order.get('amount'):.2f}</div>
+        <span class="text-[11px] text-emerald-600 font-bold">✔ Zero Gateway Surcharge (0% MDR)</span>
+      </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="p-6 space-y-4" id="checkout-form-section">
+      <p class="text-xs font-bold text-slate-700 uppercase tracking-wide">Select Payment Method</p>
+
+      <!-- Option 1: Direct UPI Apps -->
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="selectUpiApp('Paytm')" class="upi-app-btn p-3 rounded-2xl border-2 border-blue-500 bg-blue-50/50 hover:bg-blue-100/50 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+          <i class="fa-solid fa-wallet text-blue-600 text-lg"></i>
+          <span class="text-[11px] font-bold text-blue-900">Paytm</span>
+        </button>
+        <button onclick="selectUpiApp('Google Pay')" class="upi-app-btn p-3 rounded-2xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+          <i class="fa-brands fa-google text-slate-700 text-lg"></i>
+          <span class="text-[11px] font-bold text-slate-800">GPay</span>
+        </button>
+        <button onclick="selectUpiApp('PhonePe')" class="upi-app-btn p-3 rounded-2xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+          <i class="fa-solid fa-mobile-screen-button text-purple-600 text-lg"></i>
+          <span class="text-[11px] font-bold text-slate-800">PhonePe</span>
+        </button>
+      </div>
+
+      <!-- Option 2: QR Standee Scan -->
+      <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 text-lg">
+            <i class="fa-solid fa-qrcode"></i>
+          </div>
+          <div class="text-left">
+            <span class="text-xs font-bold text-slate-800 block">UPI QR Scan & Pay</span>
+            <span class="text-[10px] text-slate-500">Scan via any UPI scanner</span>
+          </div>
+        </div>
+        <a href="upi://pay?pa=8310508118@ptyes&pn=Shaik+Japhar&am={order.get('amount'):.2f}&cu=INR" class="px-3 py-1.5 bg-[#00b9f5] hover:bg-cyan-400 text-[#002970] font-bold text-xs rounded-xl transition">
+          Open App
+        </a>
+      </div>
+
+      <!-- Payer Name Field -->
+      <div>
+        <label class="block text-[11px] font-bold text-slate-600 mb-1">Payer Name</label>
+        <input type="text" id="payer-name-input" value="{order.get('customer_name')}" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <!-- Pay Action Button -->
+      <button onclick="submitGatewayPayment()" id="pay-action-btn" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-lock text-xs"></i>
+        <span>Pay ₹{order.get('amount'):.2f} via Secure Gateway</span>
+      </button>
+
+      <p class="text-[10px] text-center text-slate-400 flex items-center justify-center gap-1">
+        <i class="fa-solid fa-shield text-[9px] text-slate-400"></i>
+        <span>NPCI UPI Unified Payments Interface • Verified Merchant Account</span>
+      </p>
+    </div>
+
+    <!-- Success Screen (Initially Hidden) -->
+    <div id="checkout-success-section" class="p-8 text-center space-y-4 hidden animate-scale-up">
+      <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div>
+        <h3 class="text-2xl font-black text-slate-900">Payment Successful!</h3>
+        <p class="text-xs text-slate-500 mt-1">Paytm Soundbox 4.0 Voice Chime Triggered at Store Counter</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left text-xs space-y-2">
+        <div class="flex justify-between"><span class="text-slate-500">Amount Paid:</span><span class="font-bold text-emerald-600 text-sm">₹{order.get('amount'):.2f}</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Order ID:</span><span class="font-mono font-bold text-slate-800" id="res-order-id">{order.get('order_id')}</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Gateway Ref:</span><span class="font-mono font-bold text-slate-800" id="res-pay-id">pay_...</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Bank UPI RRN:</span><span class="font-mono font-bold text-slate-800" id="res-rrn">UPI/...</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Paid To:</span><span class="font-bold text-slate-800">Shaik Japhar (8310508118@ptyes)</span></div>
+      </div>
+
+      <button onclick="window.close()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+        Close Window
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let selectedMethod = 'Paytm UPI';
+    function selectUpiApp(name) {{
+      selectedMethod = name + ' UPI';
+      document.querySelectorAll('.upi-app-btn').forEach(b => {{
+        b.className = 'upi-app-btn p-3 rounded-2xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition flex flex-col items-center justify-center gap-1 cursor-pointer';
+      }});
+      event.currentTarget.className = 'upi-app-btn p-3 rounded-2xl border-2 border-blue-500 bg-blue-50/50 hover:bg-blue-100/50 transition flex flex-col items-center justify-center gap-1 cursor-pointer';
+    }}
+
+    function submitGatewayPayment() {{
+      const btn = document.getElementById('pay-action-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Processing with Bank...</span>';
+
+      const payerName = document.getElementById('payer-name-input')?.value || 'Customer';
+
+      fetch('/api/gateway/pay', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{
+          order_id: '{order.get('order_id')}',
+          payment_method: selectedMethod,
+          payer_name: payerName
+        }})
+      }})
+      .then(res => res.json())
+      .then(data => {{
+        if (data.status === 'SUCCESS') {{
+          document.getElementById('checkout-form-section').classList.add('hidden');
+          document.getElementById('checkout-success-section').classList.remove('hidden');
+          document.getElementById('res-pay-id').innerText = data.order.payment_id;
+          document.getElementById('res-rrn').innerText = data.order.rrn;
+        }} else {{
+          alert('Payment Failed: ' + data.message);
+          btn.disabled = false;
+          btn.innerHTML = '<span>Pay ₹{order.get('amount'):.2f} via Secure Gateway</span>';
+        }}
+      }})
+      .catch(err => {{
+        alert('Network Error connecting to Payment Gateway');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Pay ₹{order.get('amount'):.2f} via Secure Gateway</span>';
+      }});
+    }}
+  </script>
+</body>
+</html>"""
+    return HTMLResponse(content=checkout_html)

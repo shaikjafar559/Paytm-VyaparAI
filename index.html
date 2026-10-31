@@ -365,6 +365,13 @@
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         </button>
 
+        <!-- Payment Gateway Tracker Button -->
+        <button onclick="openGatewayModal()" id="gateway-modal-btn" class="bg-gradient-to-r from-emerald-950 to-teal-900 hover:from-emerald-900 hover:to-teal-800 text-emerald-300 border border-emerald-400/50 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm">
+          <i class="fa-solid fa-credit-card text-emerald-400"></i>
+          <span>Payment Gateway</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+        </button>
+
         <!-- Merchant Login / Profile Button -->
         <button onclick="openLoginModal()" id="merchant-login-btn" class="bg-blue-950 hover:bg-blue-800 text-cyan-300 border border-cyan-400/40 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-xs">
           <i class="fa-solid fa-user-shield text-paytm-cyan"></i>
@@ -1398,6 +1405,106 @@
 
       </div>
 
+    </div>
+
+    <!-- PAYTM PAYMENT GATEWAY & TRANSACTION TRACKER MODAL -->
+    <div id="gateway-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 relative animate-scale-up my-auto max-h-[92vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-paytm-navy text-[#00b9f5] flex items-center justify-center font-black text-xl shadow">
+              <i class="fa-solid fa-credit-card"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-paytm-navy flex items-center gap-1.5">
+                <span>Paytm Payment Gateway</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Live Tracker</span>
+              </h3>
+              <p class="text-xs text-slate-500">Track Orders, Payment Links & Real-Time Settlements</p>
+            </div>
+          </div>
+          <button onclick="closeGatewayModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <!-- Navigation Tabs: Generate Link vs Track Orders -->
+        <div class="flex border-b border-slate-200 gap-4 text-xs font-bold">
+          <button onclick="switchGatewayModalTab('generate')" id="gw-tab-gen-btn" class="pb-2 border-b-2 border-paytm-navy text-paytm-navy flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-link text-[#00b9f5]"></i> Generate Payment Link
+          </button>
+          <button onclick="switchGatewayModalTab('track')" id="gw-tab-track-btn" class="pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-list-check text-emerald-600"></i> Track Gateway Transactions (<span id="gw-orders-count">0</span>)
+          </button>
+        </div>
+
+        <!-- TAB 1: GENERATE & PAY LINK -->
+        <div id="gw-section-generate" class="space-y-3">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 p-4 rounded-2xl border border-blue-200 space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">Amount to Collect (₹)</label>
+                <div class="relative">
+                  <span class="absolute left-2.5 top-2 text-xs font-bold text-slate-400">₹</span>
+                  <input id="gw-input-amount" type="number" min="1" step="any" value="1" class="w-full pl-6 pr-2 py-2 bg-white border border-slate-300 rounded-xl text-xs font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-600 mb-1">Customer / Payer Name</label>
+                <input id="gw-input-customer" type="text" value="Shaik Jafar" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+            </div>
+
+            <button onclick="createGatewayLinkAction()" class="w-full py-2.5 bg-[#002970] hover:bg-blue-900 text-white font-black text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-bolt text-yellow-300"></i>
+              <span>Create Trackable Gateway Order & Link</span>
+            </button>
+          </div>
+
+          <!-- Active Gateway Order Output Card -->
+          <div id="gw-active-order-card" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-500 font-bold uppercase text-[10px]">Active Order:</span>
+              <span id="gw-active-order-id" class="font-mono font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">PG_ORD_SAMPLE</span>
+            </div>
+
+            <div class="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2">
+              <input id="gw-active-link-input" type="text" readonly class="text-xs font-mono text-slate-600 bg-transparent flex-1 truncate select-all" value="http://127.0.0.1:8080/gateway/checkout?order_id=PG_ORD_SAMPLE">
+              <button onclick="copyGatewayLink()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition shrink-0">
+                <i class="fa-solid fa-copy"></i> Copy
+              </button>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="grid grid-cols-2 gap-2">
+              <a id="gw-open-checkout-link" href="/gateway/checkout?order_id=PG_ORD_SAMPLE" target="_blank" class="py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                <span>Open Checkout Page</span>
+              </a>
+              <button onclick="simulateGatewayPayNow()" class="py-2.5 rounded-xl bg-[#00b9f5] hover:bg-cyan-400 text-paytm-navy font-black text-xs flex items-center justify-center gap-1.5 transition shadow cursor-pointer">
+                <i class="fa-solid fa-check"></i>
+                <span>Simulate Pay Now</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: TRACK GATEWAY TRANSACTIONS -->
+        <div id="gw-section-track" class="space-y-3 hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Live Gateway Settlement Ledger</span>
+            <button onclick="refreshGatewayOrders()" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+          </div>
+
+          <!-- Orders Feed Container -->
+          <div id="gw-orders-list-tbody" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+            <div class="p-4 text-center text-slate-400 text-xs font-bold">Loading gateway transactions...</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- OFFICIAL PAYTM MERCHANT QR STANDEE MODAL WITH REAL-TIME PAYMENT VERIFICATION -->
@@ -5917,7 +6024,8 @@ function switchTab(tabId) {
           .then(data => {
             if (data && data.status === 'RECEIVED' && data.payment) {
               const p = data.payment;
-              closeMerchantQrModal();
+              if (typeof closeGatewayModal === 'function') closeGatewayModal();
+              if (typeof closeMerchantQrModal === 'function') closeMerchantQrModal();
               showPaymentReceivedReceipt({
                 amount: '₹' + p.amount,
                 customerName: p.customer_name || 'Customer',
@@ -5930,6 +6038,139 @@ function switchTab(tabId) {
           .catch(() => {});
       }
     }, 2000);
+  
+// ==========================================
+    // PAYTM PAYMENT GATEWAY & TRACKER JS ENGINE
+    // ==========================================
+    let currentGatewayOrder = null;
+
+    function openGatewayModal() {
+      const modal = document.getElementById('gateway-modal');
+      if (modal) modal.classList.remove('hidden');
+      createGatewayLinkAction();
+      refreshGatewayOrders();
+    }
+
+    function closeGatewayModal() {
+      const modal = document.getElementById('gateway-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function switchGatewayModalTab(tab) {
+      const genSec = document.getElementById('gw-section-generate');
+      const trackSec = document.getElementById('gw-section-track');
+      const genBtn = document.getElementById('gw-tab-gen-btn');
+      const trackBtn = document.getElementById('gw-tab-track-btn');
+
+      if (tab === 'generate') {
+        genSec?.classList.remove('hidden');
+        trackSec?.classList.add('hidden');
+        if (genBtn) genBtn.className = "pb-2 border-b-2 border-paytm-navy text-paytm-navy flex items-center gap-1.5 cursor-pointer";
+        if (trackBtn) trackBtn.className = "pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 cursor-pointer";
+      } else {
+        genSec?.classList.add('hidden');
+        trackSec?.classList.remove('hidden');
+        if (trackBtn) trackBtn.className = "pb-2 border-b-2 border-emerald-600 text-emerald-800 flex items-center gap-1.5 cursor-pointer";
+        if (genBtn) genBtn.className = "pb-2 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-1.5 cursor-pointer";
+        refreshGatewayOrders();
+      }
+    }
+
+    function createGatewayLinkAction() {
+      const amtInput = document.getElementById('gw-input-amount');
+      const custInput = document.getElementById('gw-input-customer');
+      const amt = parseFloat(amtInput?.value) || 1;
+      const cust = (custInput?.value || '').trim() || 'Shaik Jafar';
+
+      fetch('/api/gateway/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: amt,
+          customer_name: cust,
+          phone: '+91 83105 08118'
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'SUCCESS' && data.order) {
+          currentGatewayOrder = data.order;
+          document.getElementById('gw-active-order-id').innerText = data.order.order_id;
+          document.getElementById('gw-active-link-input').value = data.order.checkout_url;
+          document.getElementById('gw-open-checkout-link').href = data.order.checkout_url;
+          showToastNotification(`💳 Created Gateway Order: ${data.order.order_id}`);
+        }
+      })
+      .catch(err => console.log('Gateway order error:', err));
+    }
+
+    function copyGatewayLink() {
+      const input = document.getElementById('gw-active-link-input');
+      if (input && navigator.clipboard) {
+        navigator.clipboard.writeText(input.value);
+        showToastNotification("Copied Payment Gateway Checkout Link!");
+      }
+    }
+
+    function simulateGatewayPayNow() {
+      if (!currentGatewayOrder) return;
+      fetch('/api/gateway/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: currentGatewayOrder.order_id,
+          payment_method: 'Paytm UPI Gateway',
+          payer_name: currentGatewayOrder.customer_name
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'SUCCESS') {
+          closeGatewayModal();
+          // Receipt modal will automatically open via the /api/payment/poll stream!
+          showToastNotification(`🎉 Gateway Payment Success: Order #${currentGatewayOrder.order_id}`);
+        }
+      })
+      .catch(err => console.log('Gateway pay simulation err:', err));
+    }
+
+    function refreshGatewayOrders() {
+      fetch('/api/gateway/orders')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'SUCCESS') {
+            const countEl = document.getElementById('gw-orders-count');
+            if (countEl) countEl.innerText = data.total_orders;
+
+            const listContainer = document.getElementById('gw-orders-list-tbody');
+            if (!listContainer) return;
+
+            let html = '';
+            data.orders.forEach(o => {
+              const isSuccess = o.status === 'SUCCESS';
+              const statusBadge = isSuccess 
+                ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">✔ SUCCESS</span>'
+                : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">⏳ PENDING</span>';
+
+              html += `
+                <div class="p-3 bg-white rounded-2xl border border-slate-200 hover:shadow-xs transition space-y-1.5">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-mono font-bold text-slate-900">${o.order_id}</span>
+                    <span class="font-black text-emerald-600 text-sm">₹${o.amount.toFixed(2)}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-[11px] text-slate-500">
+                    <span>${o.customer_name} (${o.phone})</span>
+                    ${statusBadge}
+                  </div>
+                  ${o.rrn ? `<div class="text-[10px] text-slate-400 font-mono flex items-center justify-between pt-1 border-t border-slate-100"><span>RRN: ${o.rrn}</span><span>${o.settled_at || ''}</span></div>` : ''}
+                </div>
+              `;
+            });
+            listContainer.innerHTML = html;
+          }
+        })
+        .catch(err => console.log('Refresh gateway orders err:', err));
+    }
   </script>
 </body>
 </html>
