@@ -467,21 +467,3 @@ async def get_transactions_summary():
         "avg_ticket": round(coll / max(1, txns), 2),
         "soundbox": "ONLINE_DUAL_BAND"
     }
-
-@app.get("/api/payments/tracker")
-async def legacy_payments_tracker():
-    res = engine.get_transactions()
-    coll = sum(t["amount"] for t in res["transactions"])
-    return {
-        "status": "SUCCESS",
-        "kpis": {
-            "total_collection": coll,
-            "total_transactions": len(res["transactions"]),
-            "upi_success_rate": "99.4%"
-        },
-        "transactions": res["transactions"],
-        "merchant": {
-            "name": "Shaik Japhar",
-            "upi_id": "8310508118@ptyes"
-        }
-    }
