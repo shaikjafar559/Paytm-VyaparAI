@@ -3,6 +3,7 @@ let currentLang = 'hi';
 let isListening = false;
 let recognition = null;
 let salesChartInstance = null;
+let currentLedger = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   initDashboard();
@@ -30,6 +31,38 @@ function setLanguage(lang) {
   }
 }
 
+// Switch between dashboard tabs: stock, khata, bill
+function switchDashboardTab(tab) {
+  const stockTab = document.getElementById('tab-content-stock');
+  const khataTab = document.getElementById('tab-content-khata');
+  const billTab = document.getElementById('tab-content-bill');
+
+  const btnStock = document.getElementById('tab-btn-stock');
+  const btnKhata = document.getElementById('tab-btn-khata');
+  const btnBill = document.getElementById('tab-btn-bill');
+
+  // Reset tabs
+  stockTab.classList.add('hidden');
+  khataTab.classList.add('hidden');
+  billTab.classList.add('hidden');
+
+  btnStock.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
+  btnKhata.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center';
+  btnBill.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition flex items-center';
+
+  if (tab === 'stock') {
+    stockTab.classList.remove('hidden');
+    btnStock.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-paytm-blue text-white transition';
+  } else if (tab === 'khata') {
+    khataTab.classList.remove('hidden');
+    btnKhata.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-paytm-blue text-white transition flex items-center';
+  } else if (tab === 'bill') {
+    billTab.classList.remove('hidden');
+    btnBill.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-paytm-blue text-white transition flex items-center';
+  }
+  lucide.createIcons();
+}
+
 // Fetch dashboard data & initialize chart
 async function initDashboard() {
   try {
@@ -38,6 +71,10 @@ async function initDashboard() {
 
     // Render Inventory
     renderInventory(data.inventory);
+
+    // Render Khata
+    currentLedger = data.khata_ledger || [];
+    renderKhata(currentLedger);
 
     // Render Sales Chart
     renderChart(data.hourly_sales);
@@ -90,6 +127,99 @@ function renderInventory(items) {
   }).join('');
 }
 
+// Render Khata (Customer Udhaar) Ledger
+function renderKhata(ledger) {
+  const container = document.getElementById('khata-list');
+  if (!container) return;
+
+  container.innerHTML = ledger.map(cust => {
+    let isUrgent = cust.days_pending >= 14;
+    return `
+      <div class="flex items-center justify-between p-2.5 rounded-xl border ${isUrgent ? 'border-red-200 bg-red-50/40' : 'border-slate-100 bg-slate-50/60'} hover:bg-white transition">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-full ${isUrgent ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-paytm-blue'} flex items-center justify-center font-black text-xs">
+            ${cust.name[0]}
+          </div>
+          <div>
+            <div class="font-bold text-xs text-slate-800">${cust.name}</div>
+            <div class="text-[11px] text-slate-500">${cust.last_items} • ${cust.days_pending} दिन से बाकी</div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="text-right">
+            <span class="text-xs font-extrabold text-red-600">₹${cust.amount_due}</span>
+            <span class="block text-[10px] text-slate-400">${cust.phone}</span>
+          </div>
+          <button onclick="sendSingleKhataReminder('${cust.customer_id}', '${cust.phone}', ${cust.amount_due}, '${cust.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg flex items-center shadow-xs">
+            WhatsApp तगादा
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Send single khata reminder
+async function sendSingleKhataReminder(id, phone, amount, name) {
+  try {
+    const res = await fetch('/api/khata/reminder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer_id: id, phone: phone, amount: amount })
+    });
+    const data = await res.json();
+    alert(`तगादा भेजा गया: ${name} (${phone}) को ₹${amount} का पेटीएम यूपीआई लिंक भेज दिया गया है।`);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function broadcastAllKhataReminders() {
+  alert('सफल! सभी 4 ग्राहकों को पेटीएम यूपीआई पेमेंट लिंक के साथ स्वचालित व्हाट्सएप तगादा भेज दिया गया है।');
+}
+
+// Run Visual Bill OCR Scanner simulation
+async function runSampleBillOCR() {
+  const resultContainer = document.getElementById('bill-scan-results');
+  resultContainer.classList.remove('hidden');
+  resultContainer.innerHTML = `
+    <div class="flex items-center space-x-2 text-paytm-blue font-bold text-xs py-2">
+      <span class="w-3 h-3 rounded-full border-2 border-paytm-blue border-t-transparent animate-spin"></span>
+      <span>AI पर्चे से ब्रांड और मात्रा पढ़ रहा है (Parsing Invoice OCR)...</span>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/vision/scan-bill', { method: 'POST' });
+    const data = await res.json();
+
+    resultContainer.innerHTML = `
+      <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div>
+          <span class="font-bold text-slate-800 text-xs">✅ बिल स्कैन सफल: ${data.supplier}</span>
+          <p class="text-[11px] text-slate-500">इनवॉइस #${data.invoice_number} • कुल राशि: ₹${data.total_invoice_amount}</p>
+        </div>
+        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">स्टॉक अपडेटेड</span>
+      </div>
+      <div class="grid grid-cols-3 gap-2 pt-1 text-[11px]">
+        <div class="bg-white p-2 rounded border border-slate-100 font-medium">🥛 अमूल दूध: +30 pkts</div>
+        <div class="bg-white p-2 rounded border border-slate-100 font-medium">🛢️ सरसों तेल: +24 btls</div>
+        <div class="bg-white p-2 rounded border border-slate-100 font-medium">🍜 मैगी: +50 pkts</div>
+      </div>
+    `;
+
+    // Re-render updated inventory
+    renderInventory(data.updated_inventory);
+
+    // Play voice announcement
+    if (data.audio_data_uri) {
+      playAudio(data.audio_data_uri);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 // Render Hourly Sales Chart
 function renderChart(hourlyData) {
   const ctx = document.getElementById('salesChart');
@@ -110,7 +240,7 @@ function renderChart(hourlyData) {
         label: 'Sales (₹)',
         data: data,
         backgroundColor: labels.map(l => l.includes('8 PM') || l.includes('6 PM') ? '#00b9f1' : '#002970'),
-        borderRadius: 6
+        borderRadius: 5
       }]
     },
     options: {
@@ -120,10 +250,10 @@ function renderChart(hourlyData) {
         legend: { display: false }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
         y: { 
           beginAtZero: true, 
-          ticks: { font: { size: 9 }, callback: value => '₹' + value } 
+          ticks: { font: { size: 8 }, callback: value => '₹' + value } 
         }
       }
     }
@@ -223,6 +353,15 @@ async function askCopilot(queryText) {
     const data = await res.json();
     appendAIMessage(data);
 
+    // Contextual Tab switching
+    if (data.intent === 'khata_summary' || data.intent === 'khata_single') {
+      switchDashboardTab('khata');
+    } else if (data.intent === 'scan_bill') {
+      switchDashboardTab('bill');
+    } else if (data.intent === 'inventory_alert') {
+      switchDashboardTab('stock');
+    }
+
     // Play Voice Audio
     if (data.audio_data_uri) {
       playAudio(data.audio_data_uri);
@@ -262,7 +401,7 @@ function appendUserMessage(text) {
   const bubble = document.createElement('div');
   bubble.className = 'flex justify-end';
   bubble.innerHTML = `
-    <div class="bg-paytm-blue text-white p-3 rounded-2xl rounded-tr-none max-w-[85%] text-xs sm:text-sm shadow-sm">
+    <div class="bg-paytm-blue text-white p-2.5 rounded-2xl rounded-tr-none max-w-[85%] text-xs shadow-sm">
       ${escapeHtml(text)}
     </div>
   `;
@@ -274,32 +413,38 @@ function appendUserMessage(text) {
 function appendAIMessage(data) {
   const container = document.getElementById('chat-messages');
   const bubble = document.createElement('div');
-  bubble.className = 'chat-bubble-ai p-3.5 rounded-2xl rounded-tl-none shadow-sm space-y-2';
+  bubble.className = 'chat-bubble-ai p-3 rounded-2xl rounded-tl-none shadow-sm space-y-2';
 
-  // Format markdown-like text to HTML
   let formattedText = data.display_text
-    .replace(/^### (.*$)/gim, '<h4 class="font-bold text-paytm-blue text-sm mb-1">$1</h4>')
+    .replace(/^### (.*$)/gim, '<h4 class="font-bold text-paytm-blue text-xs mb-1">$1</h4>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/```text([\s\S]*?)```/g, '<div class="p-2.5 bg-slate-100 rounded-lg text-xs font-mono border border-slate-200 my-2 whitespace-pre-wrap">$1</div>')
+    .replace(/```text([\s\S]*?)```/g, '<div class="p-2 bg-slate-100 rounded-lg text-xs font-mono border border-slate-200 my-1.5 whitespace-pre-wrap">$1</div>')
     .replace(/\n/g, '<br/>');
 
-  // Action Buttons if relevant
   let actionButtonsHtml = '';
   if (data.intent === 'whatsapp_campaign') {
     const promoText = data.action && data.action.text ? encodeURIComponent(data.action.text) : '';
     actionButtonsHtml = `
-      <div class="pt-2 flex space-x-2">
-        <button onclick="openWhatsAppModal('${promoText}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
+      <div class="pt-1 flex space-x-2">
+        <button onclick="openWhatsAppModal('${promoText}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
           <span>📲 व्हाट्सएप पर भेजें (Send Promo)</span>
         </button>
       </div>
     `;
   } else if (data.intent === 'inventory_alert') {
     actionButtonsHtml = `
-      <div class="pt-2 flex space-x-2">
-        <button onclick="triggerReorderModal()" class="bg-paytm-blue hover:bg-paytm-blue/90 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
+      <div class="pt-1 flex space-x-2">
+        <button onclick="triggerReorderModal()" class="bg-paytm-blue hover:bg-paytm-blue/90 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
           <span>📦 डिस्ट्रीब्यूटर को री-ऑर्डर भेजें</span>
+        </button>
+      </div>
+    `;
+  } else if (data.intent === 'merchant_loan') {
+    actionButtonsHtml = `
+      <div class="pt-1 flex space-x-2">
+        <button onclick="openLoanDisbursalModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
+          <span>⚡ लोन तुरंत बैंक में ट्रांसफर करें</span>
         </button>
       </div>
     `;
@@ -315,7 +460,7 @@ function appendAIMessage(data) {
         <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
       </button>
     </div>
-    <div class="text-slate-700 leading-relaxed text-xs sm:text-sm">
+    <div class="text-slate-700 leading-relaxed text-xs">
       ${formattedText}
     </div>
     ${actionButtonsHtml}
@@ -326,7 +471,6 @@ function appendAIMessage(data) {
   lucide.createIcons();
 }
 
-// User text input handler
 function sendUserText() {
   const input = document.getElementById('user-input-text');
   const text = input.value.trim();
@@ -342,7 +486,7 @@ function handleKeyPress(e) {
   }
 }
 
-// Simulate Paytm Soundbox Payment
+// Simulate Paytm Soundbox Payment & update LCD
 async function triggerSoundboxSimulate() {
   try {
     updateVoiceUI(true, 'साउंडबॉक्स से पुष्टि हो रही है...');
@@ -352,6 +496,12 @@ async function triggerSoundboxSimulate() {
       body: JSON.stringify({ amount: 500.0, payer_name: 'Pooja Verma' })
     });
     const data = await res.json();
+
+    // Update Hardware LCD Display
+    const lcdElem = document.getElementById('lcd-text');
+    if (lcdElem) {
+      lcdElem.textContent = `₹${data.amount}.00 RECD`;
+    }
 
     // Play iconic soundbox alert + AI tip
     if (data.audio_data_uri) {
@@ -368,7 +518,7 @@ async function triggerSoundboxSimulate() {
 
     appendAIMessage({
       intent: 'soundbox_alert',
-      display_text: `### 🔔 Paytm Soundbox: ₹${data.amount} Received!\n\n` +
+      display_text: `### 🔔 Paytm Soundbox 3.0: ₹${data.amount} Received!\n\n` +
                     `✅ **${data.soundbox_text}**\n\n` +
                     `💡 *${data.ai_tip}*`,
       voice_text: `${data.soundbox_text} ${data.ai_tip}`,
@@ -379,6 +529,60 @@ async function triggerSoundboxSimulate() {
     console.error('Soundbox simulation failed:', err);
     updateVoiceUI(false);
   }
+}
+
+// Loan Disbursal Modal & Celebration
+function openLoanDisbursalModal() {
+  document.getElementById('loan-modal').classList.remove('hidden');
+}
+
+function updateLoanSlider(val) {
+  const amount = parseInt(val);
+  document.getElementById('loan-slider-display').textContent = `₹${amount.toLocaleString()}`;
+  const dailyEmi = Math.round((amount * 0.0115 + amount / 12) / 30);
+  document.getElementById('loan-daily-emi').textContent = `₹${dailyEmi} / day`;
+}
+
+async function executeInstantLoanDisbursal() {
+  const sliderVal = document.getElementById('loan-slider').value;
+  try {
+    const res = await fetch('/api/loan/disburse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: parseFloat(sliderVal), tenure_months: 12 })
+    });
+    const data = await res.json();
+    closeModal('loan-modal');
+
+    // Confetti celebration
+    if (typeof confetti === 'function') {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    if (data.audio_data_uri) {
+      playAudio(data.audio_data_uri);
+    }
+
+    appendAIMessage({
+      intent: 'loan_sanctioned',
+      display_text: `### 🎉 बधाई हो! ऋण वितरण सफल (Loan Disbursed)!\n\n` +
+                    `- **स्वीकृत राशि:** 🟢 **₹${parseInt(data.sanctioned_amount).toLocaleString()}**\n` +
+                    `- **खाता:** Paytm Payments Bank (**** 4812)\n` +
+                    `- **लेनदेन संदर्भ:** \`${data.loan_ref}\`\n` +
+                    `- **दैनिक सेटलमेंट:** ${data.daily_deduction}\n\n` +
+                    `*रकम आपके खाते में तुरंत जमा कर दी गई है। कागजी कार्रवाई शून्य!*`,
+      voice_text: data.voice_text,
+      audio_data_uri: data.audio_data_uri
+    });
+
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// Unit Economics Modal
+function openUnitEconomicsModal() {
+  document.getElementById('economics-modal').classList.remove('hidden');
 }
 
 // WhatsApp modal handlers

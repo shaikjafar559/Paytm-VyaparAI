@@ -1,385 +1,1568 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paytm Vyapar AI (पेटीएम व्यापार एआई) - Merchant Growth Copilot</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Paytm VyaparAI — 100% Fully Localized Multilingual Business Copilot</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Google Fonts: Inter & Hind -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            paytm: {
-              blue: '#002970',
-              cyan: '#00b9f1',
-              light: '#f5f7fc',
-              dark: '#011942',
-              gold: '#ffb703',
-              green: '#10b981'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'Hind', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="static/audio_bundle.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      font-family: 'Inter', 'Hind', sans-serif;
-      background-color: #f3f6fb;
+    :root {
+      --paytm-navy: #002970;
+      --paytm-cyan: #00BAF2;
+      --paytm-dark: #0A192F;
     }
-    .wave-bar {
-      animation: wave 1.2s ease-in-out infinite alternate;
+    .bg-paytm-navy { background-color: var(--paytm-navy); }
+    .text-paytm-navy { color: var(--paytm-navy); }
+    .bg-paytm-cyan { background-color: var(--paytm-cyan); }
+    .text-paytm-cyan { color: var(--paytm-cyan); }
+    .border-paytm-cyan { border-color: var(--paytm-cyan); }
+    .soundbox-wave {
+      animation: pulse-ring 1.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
-    @keyframes wave {
-      0% { height: 6px; }
-      100% { height: 28px; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.18); opacity: 0.25; }
+      100% { transform: scale(0.95); opacity: 0.85; }
     }
-    .pulse-glow {
-      box-shadow: 0 0 25px rgba(0, 185, 241, 0.6);
-      animation: pulseGlow 1.8s infinite;
-    }
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 185, 241, 0.4); }
-      50% { transform: scale(1.04); box-shadow: 0 0 30px rgba(0, 185, 241, 0.85); }
-    }
-    .chat-bubble-ai {
-      background: linear-gradient(135deg, #ffffff 0%, #f7faff 100%);
-      border-left: 4px solid #00b9f1;
+    .lang-pill.active {
+      background-color: #00BAF2;
+      color: #002970;
+      font-weight: 800;
+      box-shadow: 0 0 12px rgba(0, 186, 242, 0.55);
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-  <!-- TOP PAYTM BRANDED HEADER -->
-  <header class="bg-paytm-blue text-white shadow-lg sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+  <!-- TOP NAVBAR -->
+  <header class="bg-paytm-navy text-white sticky top-0 z-50 shadow-lg border-b border-blue-900">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-md">
-          <svg viewBox="0 0 100 32" class="w-full h-auto fill-current text-paytm-blue">
-            <path d="M12 2h8c6 0 10 4 10 9.5s-4 9.5-10 9.5H16v9H12V2zm4 15h4c3.5 0 6-2 6-5.5S23.5 6 20 6h-4v11zM32 10h4v20h-4zM34 2a3 3 0 100 6 3 3 0 000-6zM46 10h4v2.5c1.2-1.8 3.2-2.9 5.5-2.9 4.2 0 7.5 3.5 7.5 8.2v12.2h-4V18c0-2.8-1.8-4.5-4.2-4.5-2.4 0-4.8 1.8-4.8 5v11.5h-4V10z" />
-          </svg>
+        <div class="w-10 h-10 rounded-xl bg-paytm-cyan flex items-center justify-center font-black text-paytm-navy text-xl shadow-md">
+          P
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-xl font-bold tracking-tight text-white flex items-center">
-              Paytm Vyapar <span class="text-paytm-cyan ml-1 font-extrabold">AI</span>
-            </h1>
-            <span class="bg-paytm-cyan/20 border border-paytm-cyan/50 text-paytm-cyan text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
-              Track 1 • Merchant Copilot
-            </span>
+            <h1 class="text-xl font-extrabold tracking-tight">Paytm <span class="text-paytm-cyan">VyaparAI</span></h1>
+            <span class="bg-blue-900 text-paytm-cyan text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-blue-700" data-i18n="tag_copilot">Live Multi-Agent</span>
           </div>
-          <p class="text-xs text-blue-200">व्यापारी विकास साथी • Sharma Super Store (Noida)</p>
+          <p class="text-xs text-slate-300" data-i18n="tag_subtitle">Autonomous Business Copilot for 40M+ Bharat Merchants</p>
         </div>
       </div>
 
-      <!-- SOUNDBOX STATUS & ACTIONS -->
-      <div class="flex items-center space-x-3">
-        <div class="hidden md:flex items-center bg-white/10 border border-white/15 px-3 py-1.5 rounded-full text-xs">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping mr-2"></span>
-          <span class="text-blue-100">Soundbox 2.0: <strong class="text-white">Connected</strong> (SBOX-4091)</span>
-        </div>
+      <!-- 5-LANGUAGE SELECTOR -->
+      <div class="flex items-center bg-blue-950 p-1 rounded-xl border border-blue-800 space-x-1 text-xs shadow-inner">
+        <span class="text-slate-300 px-2 font-bold flex items-center gap-1">
+          <i class="fa-solid fa-language text-paytm-cyan"></i> <span data-i18n="nav_lang_label">Lang:</span>
+        </span>
+        <button onclick="changeLanguage('english')" id="lang-english" class="lang-pill active px-3 py-1 rounded-lg text-slate-300 hover:text-white transition">English</button>
+        <button onclick="changeLanguage('telugu')" id="lang-telugu" class="lang-pill px-3 py-1 rounded-lg text-slate-300 hover:text-white transition">తెలుగు</button>
+        <button onclick="changeLanguage('hindi')" id="lang-hindi" class="lang-pill px-3 py-1 rounded-lg text-slate-300 hover:text-white transition">हिंदी</button>
+        <button onclick="changeLanguage('tamil')" id="lang-tamil" class="lang-pill px-3 py-1 rounded-lg text-slate-300 hover:text-white transition">தமிழ்</button>
+        <button onclick="changeLanguage('kannada')" id="lang-kannada" class="lang-pill px-3 py-1 rounded-lg text-slate-300 hover:text-white transition">ಕನ್ನಡ</button>
+      </div>
 
-        <button onclick="triggerSoundboxSimulate()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg flex items-center space-x-1.5 shadow transition active:scale-95">
-          <i data-lucide="volume-2" class="w-4 h-4"></i>
-          <span>Simulate Payment (₹500)</span>
-        </button>
+      <!-- Soundbox Live Status -->
+      <div class="flex items-center space-x-3 text-sm">
+        <div class="hidden sm:flex items-center space-x-2 bg-blue-950 px-3 py-1.5 rounded-lg border border-blue-800">
+          <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>
+          <span class="text-xs text-slate-200" data-i18n="nav_soundbox_status">Soundbox 4.0: <b>Live (Bengaluru)</b></span>
+        </div>
+        <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold">
+          <i class="fa-solid fa-coins mr-1"></i> <span data-i18n="nav_today_collection">Today: ₹18,420</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- MAIN APP CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-1 w-full">
 
-    <!-- LEFT COLUMN: LIVE MERCHANT DASHBOARD (7 Cols) -->
-    <div class="lg:col-span-7 space-y-6">
+    <!-- HERO PROTOTYPE BANNER -->
+    <div class="bg-gradient-to-r from-[#002970] via-[#003875] to-[#0A192F] text-white p-6 rounded-3xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-blue-800">
+      <div class="space-y-2 max-w-2xl">
+        <div class="flex items-center space-x-2">
+          <span class="text-[10px] uppercase tracking-wider font-extrabold bg-paytm-cyan text-paytm-navy px-2.5 py-0.5 rounded-md" data-i18n="hero_badge">LIVE AUTONOMOUS AGENT CONSOLE</span>
+          <span class="text-xs text-cyan-300 font-semibold" data-i18n="hero_sub_badge">• Sarvam AI + ONDC Enabled</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-black" data-i18n="hero_title">Empowering 40M+ Merchants Beyond Payments</h2>
+        <p class="text-sm text-slate-200 leading-relaxed" data-i18n="hero_desc">
+          Test the four full-loop autonomous pillars: <b>Acoustic Voice Copilot</b>, <b>Predictive ONDC Restocking</b>, <b>Polite WhatsApp Udhar Recovery with Dynamic QR</b>, and <b>180-Second Cashflow Loans</b>.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <button onclick="triggerSampleVoice('sales')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-black px-5 py-3 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-microphone text-base"></i>
+          <span data-i18n="hero_btn_ask">Ask Voice Copilot</span>
+        </button>
+        <button onclick="switchTab('udhar')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-3 rounded-xl border border-white/20 transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-book-open"></i>
+          <span data-i18n="hero_btn_khata">Smart Khata (₹12.4k Due)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="flex border-b border-slate-200 overflow-x-auto space-x-4 text-sm font-bold">
+      <button onclick="switchTab('voice')" id="tab-voice" class="tab-btn pb-3 border-b-2 border-paytm-cyan text-paytm-navy flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-headset text-paytm-cyan"></i>
+        <span data-i18n="tab_1">1. Voice-First Soundbox Copilot</span>
+      </button>
+      <button onclick="switchTab('demand')" id="tab-demand" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-chart-line text-emerald-500"></i>
+        <span data-i18n="tab_2">2. 2-KM Demand & ONDC Reorder</span>
+      </button>
+      <button onclick="switchTab('udhar')" id="tab-udhar" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-hand-holding-dollar text-amber-500"></i>
+        <span data-i18n="tab_3">3. Automated Udhar + Dynamic QR</span>
+      </button>
+      <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-bolt text-indigo-500"></i>
+        <span data-i18n="tab_4">4. 180s Instant Cashflow Credit</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: VOICE COPILOT -->
+    <div id="content-voice" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <!-- STORE HEADER BANNER -->
-      <div class="bg-gradient-to-r from-paytm-blue to-paytm-dark rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
-        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-paytm-cyan/10 rounded-full blur-2xl"></div>
+      <!-- Virtual Soundbox Hardware Simulation -->
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+        <div class="flex items-center justify-between w-full mb-3">
+          <span class="text-xs font-extrabold text-slate-400 uppercase tracking-widest" data-i18n="sb_moat_title">Hardware Moat</span>
+          <span class="text-[10px] bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded-full" data-i18n="sb_mic_badge">Dual-Mic ANC</span>
+        </div>
+        
+        <!-- Soundbox Visual -->
+        <div class="relative w-44 h-52 bg-gradient-to-b from-[#002970] via-[#001c4e] to-[#0A192F] rounded-3xl p-4 shadow-2xl flex flex-col items-center justify-between border-4 border-cyan-400">
+          <div class="w-full flex justify-between items-center px-1">
+            <span class="text-[11px] text-cyan-300 font-black">Paytm 4.0</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          </div>
+          <!-- Speaker grille -->
+          <div class="relative w-24 h-24 rounded-full border-2 border-dashed border-cyan-400/60 flex items-center justify-center">
+            <div id="soundbox-mic-icon" class="w-14 h-14 rounded-full bg-cyan-400/20 text-cyan-300 flex items-center justify-center text-2xl cursor-pointer hover:scale-110 transition shadow-inner" onclick="triggerMic()">
+              <i class="fa-solid fa-microphone"></i>
+            </div>
+            <div id="soundbox-speaker-waves" class="hidden absolute -inset-2 rounded-full border-2 border-cyan-300 animate-ping pointer-events-none"></div>
+          </div>
+          <div class="text-[11px] text-white font-semibold bg-black/50 px-3.5 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
+            <span id="sb-pulse-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="speaker-status" data-i18n="sb_ready_status">Tap Mic or Query Below</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-500 mt-4 leading-relaxed" data-i18n="sb_instructions">
+          Powered by <b>Sarvam AI (Saaras + Bulbul)</b> for ambient counter acoustics. Click any sample in your language:
+        </p>
+
+        <!-- Dynamic Prompts by Language -->
+        <!-- Dynamic Prompts by Language -->
+        <div class="w-full space-y-2 mt-4 text-left" id="sample-prompts-container">
+          <!-- Dynamically populated in the selected language with audio simulation -->
+        </div>
+      </div>
+
+      <!-- Real-Time Agent Dialogue & Reasoning Console -->
+      <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-cyan-500"></span>
+              <h3 class="font-bold text-slate-800" data-i18n="chat_header">Agentic Multilingual Audio & Reasoning Stream</h3>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span id="active-lang-badge" class="text-xs bg-paytm-cyan/20 text-paytm-navy font-bold px-2.5 py-1 rounded-lg">Language: English</span>
+            </div>
+          </div>
+
+          <!-- Chat log -->
+          <div id="chat-stream" class="space-y-4 max-h-[380px] overflow-y-auto pr-2 text-sm">
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0" data-i18n="user_tag">You</div>
+              <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 max-w-lg">
+                <p class="font-semibold text-xs text-slate-500 mb-0.5" data-i18n="chat_spoken_label">Spoken Soundbox Input</p>
+                <p id="initial-user-msg">"Boss, how much is today's total collection and what is the fastest selling item?"</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-3 justify-end">
+              <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl rounded-tr-none text-slate-800 max-w-lg space-y-2 shadow-sm">
+                <div class="flex items-center justify-between text-xs text-paytm-navy font-bold">
+                  <span data-i18n="ai_name_tag">Paytm VyaparAI (Audio Response)</span>
+                  <button onclick="speakLastResponse()" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span data-i18n="btn_replay_voice">Replay Voice</span>
+                  </button>
+                </div>
+                <p class="text-slate-800 leading-relaxed" id="last-ai-text">
+                  "Boss, today's total collection reached ₹18,420 across 64 transactions. The top-selling product was 'Amul Taaza Milk 500ml' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!"
+                </p>
+                <div class="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
+                  <span class="text-slate-600"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> <span data-i18n="stock_alert_text">Stock Alert: Amul Taaza (< 15% threshold)</span></span>
+                  <button onclick="switchTab('demand')" class="text-xs bg-paytm-navy text-white px-3 py-1 rounded-lg font-bold hover:bg-blue-900 transition" data-i18n="btn_approve_restock">
+                    Approve Restock
+                  </button>
+                </div>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-paytm-navy text-paytm-cyan flex items-center justify-center font-bold text-xs shrink-0">AI</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Query Input -->
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-2">
+          <input type="text" id="custom-prompt-input" placeholder="Ask anything in your language..." onkeydown="if(event.key==='Enter') handleCustomInput()" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-paytm-cyan">
+          <button onclick="handleCustomInput()" class="bg-paytm-navy hover:bg-blue-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center space-x-1 shadow">
+            <span data-i18n="btn_send">Send</span>
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Dynamic Multi-Language Query Suggestions Below -->
+        <div class="mt-2.5 pt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 font-semibold text-[11px] flex items-center gap-1 shrink-0" data-i18n="quick_suggestions_label">
+            <i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:
+          </span>
+          <div id="bottom-quick-suggestions" class="flex flex-wrap items-center gap-1.5">
+            <!-- Dynamically populated in selected language -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: HYPER-LOCAL DEMAND & ONDC -->
+    <div id="content-demand" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <div class="flex items-center space-x-2">
-              <span class="text-xs uppercase tracking-wider text-paytm-cyan font-semibold">पेटीएम मर्चेंट स्टोर</span>
-              <span class="bg-emerald-500/30 text-emerald-300 text-[11px] px-2 py-0.5 rounded-full">QR & Soundbox Verified</span>
-            </div>
-            <h2 class="text-2xl font-bold mt-1">शर्मा सुपर स्टोर (Sharma Super Store)</h2>
-            <p class="text-xs text-blue-200 mt-0.5">सेक्टर 18, नोएडा • UPI: <code class="bg-black/20 px-1.5 py-0.5 rounded text-blue-100 font-mono">sharmastore@paytm</code></p>
+            <h3 class="font-bold text-slate-800" data-i18n="demand_radar_title">2-KM Neighborhood Radar</h3>
+            <p class="text-xs text-slate-500" data-i18n="demand_radar_subtitle">Aggregated Paytm Transaction Velocity</p>
           </div>
-          <div class="text-right">
-            <span class="text-xs text-blue-200">आज की कुल बिक्री</span>
-            <div id="metric-total-rev" class="text-3xl font-extrabold text-paytm-cyan">₹28,450</div>
-            <span class="text-[11px] text-emerald-400 font-medium">↑ +18.4% पिछले सप्ताह से</span>
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full" data-i18n="demand_live_tag">Live Trends</span>
+        </div>
+
+        <div class="space-y-3">
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item1_title">Cold Drinks & Juices</span>
+              <span class="text-xs font-bold text-emerald-600">+44% Surge</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item1_desc">Heatwave trigger: Temperatures +3.5°C above normal. Area kiranas restocking 2x volume.</p>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item2_title">Pooja Ghee & Flowers</span>
+              <span class="text-xs font-bold text-indigo-600">+32% Ahead</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item2_desc">Weekend temple footfall: Local stores building inventory buffers before Friday rush.</p>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item3_title">Stagnant Working Capital</span>
+              <span class="text-xs font-bold text-rose-600" data-i18n="trend_item3_badge">3 SKUs Dead</span>
+            </div>
+            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item3_desc">Brand X Nachos has 0 sales in 14 days. Recommending 10% bundle promotion with Thums Up.</p>
           </div>
         </div>
 
-        <!-- 3 KPI PILLS -->
-        <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-white/10 text-center">
-          <div class="bg-white/5 rounded-xl p-2.5">
-            <span class="text-[11px] text-blue-200 block">Paytm UPI / QR</span>
-            <span id="metric-upi-rev" class="text-base font-bold text-white">₹24,250</span>
-          </div>
-          <div class="bg-white/5 rounded-xl p-2.5">
-            <span class="text-[11px] text-blue-200 block">Soundbox Txns</span>
-            <span id="metric-txns" class="text-base font-bold text-emerald-300">128 पेमेंट्स</span>
-          </div>
-          <div class="bg-white/5 rounded-xl p-2.5">
-            <span class="text-[11px] text-blue-200 block">Avg Bill</span>
-            <span class="text-base font-bold text-white">₹191</span>
-          </div>
+        <div class="bg-blue-50 p-3.5 rounded-2xl border border-blue-200 text-xs text-paytm-navy">
+          <i class="fa-solid fa-lightbulb text-paytm-cyan mr-1"></i>
+          <span data-i18n="demand_tip"><b>VyaparAI Pro Tip:</b> Stocking 15 units of coconut water before 11:00 AM can capture estimated ₹1,200 additional daily margin.</span>
         </div>
       </div>
 
-      <!-- INVENTORY ALERT RADAR CARD -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center space-x-2">
-            <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
-              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-800 text-base">स्टॉक अलर्ट रडार (Stock Depletion Radar)</h3>
-              <p class="text-xs text-slate-500">AI predicts fast-depleting goods before they run out</p>
-            </div>
-          </div>
-          <button onclick="triggerReorderModal()" class="text-xs font-semibold bg-paytm-blue hover:bg-paytm-blue/90 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>1-Click Reorder PO</span>
-          </button>
-        </div>
-
-        <div id="inventory-list" class="space-y-2.5">
-          <!-- Dynamic inventory populated via JS -->
-        </div>
-      </div>
-
-      <!-- HOURLY SALES CHART & PRE-APPROVED LOAN CARD -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Chart -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between mb-2">
-            <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider flex items-center">
-              <i data-lucide="trending-up" class="w-4 h-4 mr-1.5 text-paytm-cyan"></i> Peak Hour Sales
-            </h4>
-            <span class="text-[11px] font-semibold text-paytm-blue bg-blue-50 px-2 py-0.5 rounded">7-9 PM Rush</span>
-          </div>
-          <div class="h-36">
-            <canvas id="salesChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Loan Pre-Approval Card -->
-        <div class="bg-gradient-to-br from-blue-900 to-paytm-blue text-white rounded-2xl p-4 shadow-sm border border-blue-800 flex flex-col justify-between">
+      <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-5">
+        <div class="flex items-center justify-between">
           <div>
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] uppercase tracking-wider font-semibold text-paytm-cyan">Paytm Merchant Loan</span>
-              <span class="bg-emerald-400 text-slate-900 text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase">Pre-Approved</span>
-            </div>
-            <div class="mt-2">
-              <span class="text-xs text-blue-200">Instant Working Capital Limit:</span>
-              <div class="text-2xl font-black text-amber-400">₹2,50,000</div>
-              <p class="text-[11px] text-blue-200 mt-1">Daily auto-settlement: ₹320 via Soundbox. Zero collateral.</p>
-            </div>
+            <h3 class="font-bold text-slate-800" data-i18n="ondc_title">ONDC Automated Wholesale Replenishment</h3>
+            <p class="text-xs text-slate-500" data-i18n="ondc_subtitle">Autonomous Price Comparison & B2B Settlement</p>
           </div>
-          <button onclick="askCopilot('मर्चेंट लोन की पात्रता और ब्याज दर बताओ')" class="mt-3 w-full bg-paytm-cyan hover:bg-paytm-cyan/90 text-paytm-dark font-bold text-xs py-2 rounded-xl text-center shadow transition">
-            Check Loan Terms via Voice AI →
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN: VERNACULAR VOICE COPILOT INTERACTION (5 Cols) -->
-    <div class="lg:col-span-5 flex flex-col space-y-4">
-
-      <!-- COPILOT CARD -->
-      <div class="bg-white rounded-2xl shadow-md border border-blue-100 flex-1 flex flex-col overflow-hidden min-h-[580px]">
-        
-        <!-- COPILOT HEADER -->
-        <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
-          <div class="flex items-center space-x-2.5">
-            <div class="relative">
-              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-paytm-cyan to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow">
-                <i data-lucide="bot" class="w-5 h-5"></i>
-              </div>
-              <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
-            </div>
-            <div>
-              <h3 class="font-bold text-sm text-white flex items-center">
-                पेटीएम आवाज़ (Paytm Voice Copilot)
-              </h3>
-              <p class="text-[11px] text-slate-400">Hindi & English Speech-to-Speech</p>
-            </div>
-          </div>
-
-          <!-- Language Selector -->
-          <div class="flex items-center space-x-1 bg-slate-800 p-1 rounded-lg text-xs">
-            <button id="lang-btn-hi" onclick="setLanguage('hi')" class="px-2 py-0.5 rounded font-medium bg-paytm-cyan text-slate-950 font-bold transition">हिंदी</button>
-            <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-medium text-slate-300 hover:text-white transition">EN</button>
-          </div>
-        </div>
-
-        <!-- VOICE STATUS & AUDIO WAVEFORM (Shows when listening or speaking) -->
-        <div id="voice-indicator-bar" class="hidden bg-paytm-cyan/10 border-b border-paytm-cyan/30 px-4 py-2.5 flex items-center justify-between transition-all">
-          <div class="flex items-center space-x-2">
-            <span id="voice-pulse-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-            <span id="voice-status-text" class="text-xs font-semibold text-paytm-blue">Listening (सुन रहा हूँ)...</span>
-          </div>
-          <!-- Waveform bars -->
-          <div class="flex items-center space-x-1 h-5">
-            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.1s"></div>
-            <div class="w-1 bg-paytm-blue rounded-full wave-bar" style="animation-delay: 0.3s"></div>
-            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.2s"></div>
-            <div class="w-1 bg-paytm-blue rounded-full wave-bar" style="animation-delay: 0.4s"></div>
-            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.15s"></div>
-          </div>
-        </div>
-
-        <!-- CHAT CONVERSATION LOG -->
-        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3.5 max-h-[380px] text-sm">
-          <!-- Initial Welcome Message -->
-          <div class="chat-bubble-ai p-3.5 rounded-2xl rounded-tl-none shadow-sm space-y-2">
-            <div class="flex items-center space-x-1.5 text-paytm-blue font-semibold text-xs">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-paytm-cyan"></i>
-              <span>Paytm Vyapar AI Business Partner</span>
-            </div>
-            <div class="text-slate-700 leading-relaxed text-xs sm:text-sm">
-              नमस्ते राजेश जी! मैं आपका व्यक्तिगत व्यापार साथी हूँ। नीचे दिए गए <strong>माइक बटन</strong> को दबाकर बोलें या किसी भी प्रश्न पर टैप करें।
-            </div>
-          </div>
-        </div>
-
-        <!-- QUICK VOICE PROMPTS CHIPS -->
-        <div class="p-3 bg-slate-50 border-t border-slate-100">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
-            🎙️ अक्सर पूछे जाने वाले सवाल (Quick Voice Prompts):
+          <span class="text-xs bg-paytm-cyan/20 text-paytm-navy font-bold px-3 py-1 rounded-full border border-paytm-cyan/30" data-i18n="ondc_gateway_active">
+            ONDC Gateway: Active
           </span>
-          <div class="flex flex-wrap gap-1.5">
-            <button onclick="askCopilot('आज की कुल बिक्री और यूपीआई कलेक्शन कितना है?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
-              💰 आज की कुल बिक्री?
-            </button>
-            <button onclick="askCopilot('कौन सा सामान खत्म होने वाला है और री-ऑर्डर चाहिए?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
-              ⚠️ कौन सा स्टॉक कम है?
-            </button>
-            <button onclick="askCopilot('दीवाली ऑफर का 10% डिस्काउंट वाला व्हाट्सएप मैसेज बनाओ')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
-              📢 10% छूट WhatsApp मैसेज
-            </button>
-            <button onclick="askCopilot('दुकान पर सबसे ज्यादा भीड़ किस समय होती है?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
-              ⏰ पीक आवर कब है?
-            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th class="p-3.5" data-i18n="th_item">Item / SKU</th>
+                <th class="p-3.5" data-i18n="th_stock">Current Stock</th>
+                <th class="p-3.5" data-i18n="th_distributor">Best ONDC Distributor</th>
+                <th class="p-3.5" data-i18n="th_rate">Wholesale Rate</th>
+                <th class="p-3.5" data-i18n="th_action">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-medium">
+              <tr>
+                <td class="p-3.5 font-bold text-slate-800" data-i18n="sku1_name">Amul Taaza Milk 500ml</td>
+                <td class="p-3.5 text-rose-600 font-bold" data-i18n="sku1_stock">4 pkts (Critical)</td>
+                <td class="p-3.5">Sri Balaji Dairy Agency (1.2 km)</td>
+                <td class="p-3.5 font-bold text-emerald-600">₹24.20 / pkt <span class="line-through text-slate-400 text-[10px]">₹25.50</span></td>
+                <td class="p-3.5">
+                  <button onclick="placeOrder('Amul Taaza Milk', '50 pkts', '₹1,210')" class="bg-paytm-navy hover:bg-blue-900 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition" data-i18n="btn_reorder_milk">
+                    Reorder (50 pkts)
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-800" data-i18n="sku2_name">Thums Up 750ml</td>
+                <td class="p-3.5 text-amber-600 font-bold" data-i18n="sku2_stock">8 bottles (Low)</td>
+                <td class="p-3.5">Metro Cash & Carry ONDC</td>
+                <td class="p-3.5 font-bold text-emerald-600">₹35.50 / bot</td>
+                <td class="p-3.5">
+                  <button onclick="placeOrder('Thums Up 750ml', '24 bottles', '₹852')" class="bg-paytm-navy hover:bg-blue-900 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition" data-i18n="btn_reorder_soda">
+                    Reorder (24 bots)
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-800" data-i18n="sku3_name">Amul Butter 100g</td>
+                <td class="p-3.5 text-amber-600 font-bold" data-i18n="sku3_stock">6 pkts (Low)</td>
+                <td class="p-3.5">Karnataka Dairy Federation ONDC</td>
+                <td class="p-3.5 font-bold text-emerald-600">₹50.50 / pkt</td>
+                <td class="p-3.5">
+                  <button onclick="placeOrder('Amul Butter 100g', '20 pkts', '₹1,010')" class="bg-paytm-navy hover:bg-blue-900 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition" data-i18n="btn_reorder_butter">
+                    Reorder (20 pkts)
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="order-toast" class="hidden p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl flex items-center justify-between shadow-sm">
+          <span id="order-toast-msg"><b>Success:</b> Purchase order routed over ONDC!</span>
+          <span class="text-xs bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-mono" data-i18n="toast_balance_deducted">Deducted from Paytm Merchant Balance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SMART UDHAR RECOVERY + DYNAMIC QR -->
+    <div id="content-udhar" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+        <h3 class="font-bold text-slate-800" data-i18n="udhar_analytics_title">Udhar Recovery Analytics</h3>
+        
+        <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200 space-y-1">
+          <span class="text-xs text-amber-700 font-bold uppercase" data-i18n="udhar_trapped_label">Total Trapped Credit</span>
+          <div class="text-3xl font-black text-amber-900">₹12,450</div>
+          <p class="text-xs text-amber-700" data-i18n="udhar_trapped_desc">Across 5 regular customers (avg. 11 days pending)</p>
+        </div>
+
+        <div class="space-y-2.5 text-xs">
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" data-i18n="udhar_rate_label">Recovery Rate (AI reminders):</span>
+            <span class="font-bold text-emerald-600">88.4% within 48 hrs</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" data-i18n="udhar_sentiment_label">Politeness Sentiment Score:</span>
+            <span class="font-bold text-indigo-600">99.2% (zero awkwardness)</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-slate-500" data-i18n="udhar_cycle_label">Avg. Recovery Cycle:</span>
+            <span class="font-bold text-slate-800" data-i18n="udhar_cycle_val">2.4 Days (vs 14 manual)</span>
           </div>
         </div>
 
-        <!-- VOICE MIC & INPUT BAR -->
-        <div class="p-3.5 bg-white border-t border-slate-200 flex items-center space-x-2.5">
-          <!-- Big Mic Button -->
-          <button id="mic-btn" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-full bg-paytm-blue hover:bg-paytm-cyan hover:text-slate-900 text-white flex items-center justify-center shadow-lg transition transform active:scale-90 flex-shrink-0">
-            <i id="mic-icon" data-lucide="mic" class="w-6 h-6"></i>
-          </button>
-
-          <!-- Text Input fallback -->
-          <div class="flex-1 relative">
-            <input 
-              id="user-input-text" 
-              type="text" 
-              placeholder="माइक दबाकर बोलें या यहाँ लिखें..." 
-              class="w-full pl-3.5 pr-10 py-2.5 text-xs sm:text-sm bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-paytm-cyan rounded-xl outline-none transition"
-              onkeypress="handleKeyPress(event)"
-            />
-            <button onclick="sendUserText()" class="absolute right-2 top-1/2 -translate-y-1/2 text-paytm-blue hover:text-paytm-cyan p-1">
-              <i data-lucide="send" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-
+        <button onclick="sendAllReminders()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl text-xs transition shadow flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span data-i18n="btn_send_all_reminders">Send Polite 1-Click WhatsApp Links</span>
+        </button>
       </div>
 
+      <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-slate-800" data-i18n="khata_ledger_title">Active Khata Ledger & Automated Chasers</h3>
+          <span class="text-xs text-slate-400" data-i18n="khata_upi_enabled">Dynamic 1-Click UPI Enabled</span>
+        </div>
+
+        <div class="space-y-3">
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800 text-sm">Ramesh Sharma (Flat 302)</span>
+                <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full" data-i18n="sharma_due_tag">12 Days Due</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="sharma_desc">Groceries & Cooking Oil • Last purchase: Oct 14</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="font-extrabold text-base text-rose-600">₹3,420</span>
+              <button onclick="sendUdharReminder('Ramesh Sharma', '₹3,420', '3420')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow" data-i18n="btn_send_qr">
+                Send WhatsApp & QR
+              </button>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800 text-sm">Sita Ram (Tailor Shop)</span>
+                <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full" data-i18n="sitaram_due_tag">5 Days Due</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="sitaram_desc">Daily milk & snacks • Last purchase: Oct 21</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="font-extrabold text-base text-amber-600">₹1,180</span>
+              <button onclick="sendUdharReminder('Sita Ram', '₹1,180', '1180')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow" data-i18n="btn_send_qr">
+                Send WhatsApp & QR
+              </button>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800 text-sm">Anil Verma (Gym Trainer)</span>
+                <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full" data-i18n="anil_due_tag">18 Days Due</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="anil_desc">Eggs tray, bananas & oats • Last purchase: Oct 08</p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="font-extrabold text-base text-rose-600">₹4,850</span>
+              <button onclick="sendUdharReminder('Anil Verma', '₹4,850', '4850')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow" data-i18n="btn_send_qr">
+                Send WhatsApp & QR
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generated WhatsApp Notification + Live Dynamic QR Modal / Card -->
+        <div id="udhar-preview-box" class="p-4 bg-slate-100 rounded-2xl border border-slate-200 text-xs hidden flex flex-col md:flex-row gap-4 items-center">
+          <div class="flex-1">
+            <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+              <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+              <span data-i18n="whatsapp_preview_title">Generated WhatsApp Message:</span>
+            </p>
+            <p id="udhar-msg-text" class="text-slate-700 leading-relaxed font-sans bg-white p-3 rounded-xl border border-slate-200">--</p>
+          </div>
+          <!-- Dynamic QR Container -->
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-sm">
+            <div id="qrcode-canvas" class="w-24 h-24 flex items-center justify-center"></div>
+            <span class="text-[10px] font-bold text-slate-500 mt-2" data-i18n="qr_caption">Scan & Pay via Paytm</span>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- TAB 4: REAL-TIME CREDIT UNDERWRITING -->
+    <div id="content-credit" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+        <h3 class="font-bold text-slate-800" data-i18n="credit_engine_title">Cash-Flow Underwriting Engine</h3>
+        
+        <div class="p-5 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-200 space-y-2">
+          <span class="text-xs font-bold text-indigo-700 uppercase" data-i18n="loan_preapproved_label">Pre-Approved Working Capital</span>
+          <div class="text-3xl font-black text-indigo-900">₹2,50,000</div>
+          <div class="flex items-center space-x-1 text-xs text-emerald-600 font-bold">
+            <i class="fa-solid fa-circle-check"></i>
+            <span data-i18n="loan_speed_tag">Instant Disbursal in 180s</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" data-i18n="credit_daily_label">Daily UPI Settlement:</span>
+            <span class="font-bold text-slate-800" data-i18n="credit_daily_val">₹18,450 avg/day</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" data-i18n="credit_repeat_label">Repeat Customer Rate:</span>
+            <span class="font-bold text-emerald-600" data-i18n="credit_repeat_val">76.5% (High Loyalty)</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" data-i18n="credit_uptime_label">Soundbox Uptime:</span>
+            <span class="font-bold text-slate-800" data-i18n="credit_uptime_val">99.8% (Active Counter)</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-slate-500" data-i18n="credit_paperwork_label">Paperwork Needed:</span>
+            <span class="font-bold text-emerald-600" data-i18n="credit_paperwork_val">ZERO (100% Digital)</span>
+          </div>
+        </div>
+
+        <button onclick="disburseCredit()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl text-xs transition shadow flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-bolt"></i>
+          <span data-i18n="btn_disburse_loan">Disburse Loan to Paytm Account</span>
+        </button>
+      </div>
+
+      <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-slate-800" data-i18n="chart_title">30-Day Verified Cash-Flow Velocity</h3>
+            <p class="text-xs text-slate-500" data-i18n="chart_subtitle">Deterministic signals driving risk-free micro-credit</p>
+          </div>
+          <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full" data-i18n="chart_risk_badge">Low Risk Tier A+</span>
+        </div>
+
+        <div class="h-64">
+          <canvas id="velocityChart"></canvas>
+        </div>
+
+        <div id="credit-success-toast" class="hidden p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs rounded-2xl flex items-center justify-between shadow-sm">
+          <span data-i18n="credit_toast_msg"><b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day.</span>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <!-- HIDDEN AUDIO PLAYER FOR EDGE-TTS REPLIES -->
-  <audio id="tts-audio-player" class="hidden"></audio>
-
-  <!-- MODAL: WHATSAPP CAMPAIGN BROADCAST -->
-  <div id="whatsapp-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in duration-200">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center space-x-2 text-emerald-600 font-bold">
-          <i data-lucide="message-circle" class="w-5 h-5"></i>
-          <span>1-Click WhatsApp Vyapar Broadcast</span>
-        </div>
-        <button onclick="closeModal('whatsapp-modal')" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-slate-500 mt-3">Ready to dispatch to 320 loyal Paytm QR shoppers:</p>
-
-      <div class="mt-2.5 p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-xs font-mono text-slate-800 whitespace-pre-wrap" id="whatsapp-preview-text">
-      </div>
-
-      <div class="mt-4 flex space-x-2">
-        <button onclick="dispatchWhatsAppWeb()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center space-x-1.5 shadow">
-          <i data-lucide="share-2" class="w-4 h-4"></i>
-          <span>Open in WhatsApp</span>
-        </button>
-        <button onclick="copyCampaignText()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs px-3.5 py-2.5 rounded-xl">
-          Copy
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: REORDER PO DISPATCH -->
-  <div id="reorder-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center space-x-2 text-paytm-blue font-bold">
-          <i data-lucide="truck" class="w-5 h-5"></i>
-          <span>Automated Restock Purchase Order</span>
-        </div>
-        <button onclick="closeModal('reorder-modal')" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="mt-4 space-y-3">
-        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 text-xs space-y-1">
-          <div class="font-bold text-paytm-blue">Supplier: M/s Gupta FMCG Wholesalers (Noida)</div>
-          <div class="text-slate-600">Items: Amul Milk (30 pkts), Fortune Oil (2 cartons), Maggi (50 pkts)</div>
-          <div class="font-semibold text-slate-800 mt-1">Est. Amount: ₹4,850 • Payment via Paytm Commercial UPI</div>
-        </div>
-      </div>
-
-      <div class="mt-5 flex space-x-2">
-        <button onclick="confirmReorderPO()" class="flex-1 bg-paytm-blue hover:bg-paytm-blue/90 text-white font-bold text-xs py-2.5 rounded-xl shadow">
-          Confirm & Dispatch PO to Wholesaler
-        </button>
-        <button onclick="closeModal('reorder-modal')" class="bg-slate-100 text-slate-600 text-xs px-3 py-2.5 rounded-xl">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script src="/static/app.js"></script>
+  <!-- JAVASCRIPT LOCALIZATION & APPLICATION LOGIC -->
   <script>
-    lucide.createIcons();
+    let currentLanguage = 'english';
+    let qrcodeInstance = null;
+
+    // Full 5-Language UI Dictionary
+    const UI_TRANSLATIONS = {
+      'english': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:',
+        tag_copilot: "Live Multi-Agent",
+        initial_user_msg: "\"Boss, how much is today's total collection and what is the fastest selling item?\"",
+        initial_ai_response: "\"Boss, today's total collection reached ₹18,420 across 64 transactions. The top-selling product was 'Amul Taaza Milk 500ml' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!\"",
+        tag_subtitle: "Autonomous Business Copilot for 40M+ Bharat Merchants",
+        nav_lang_label: "Lang:",
+        nav_soundbox_status: "Soundbox 4.0: <b>Live (Bengaluru)</b>",
+        nav_today_collection: "Today: ₹18,420",
+        hero_badge: "LIVE AUTONOMOUS AGENT CONSOLE",
+        hero_sub_badge: "• Sarvam AI + ONDC Enabled",
+        hero_title: "Empowering 40M+ Merchants Beyond Payments",
+        hero_desc: "Test the four full-loop autonomous pillars: <b>Acoustic Voice Copilot</b>, <b>Predictive ONDC Restocking</b>, <b>Polite WhatsApp Udhar Recovery with Dynamic QR</b>, and <b>180-Second Cashflow Loans</b>.",
+        hero_btn_ask: "Ask Voice Copilot",
+        hero_btn_khata: "Smart Khata (₹12.4k Due)",
+        tab_1: "1. Voice-First Soundbox Copilot",
+        tab_2: "2. 2-KM Demand & ONDC Reorder",
+        tab_3: "3. Automated Udhar + Dynamic QR",
+        tab_4: "4. 180s Instant Cashflow Credit",
+        sb_moat_title: "Hardware Moat",
+        sb_mic_badge: "Dual-Mic ANC",
+        sb_ready_status: "Tap Mic or Query Below",
+        sb_listening_status: "Listening...",
+        sb_speaking_status: "Speaking...",
+        sb_instructions: "Powered by <b>Sarvam AI (Saaras + Bulbul)</b> for ambient counter acoustics. Click any sample in your language:",
+        chat_header: "Agentic Multilingual Audio & Reasoning Stream",
+        active_lang_badge: "Language: English",
+        user_tag: "You",
+        chat_spoken_label: "Spoken Soundbox Input",
+        ai_name_tag: "Paytm VyaparAI (Audio Response)",
+        btn_replay_voice: "Replay Voice",
+        btn_play_sb_audio: "Play Soundbox Audio",
+        stock_alert_text: "Stock Alert: Amul Taaza (< 15% threshold)",
+        btn_approve_restock: "Approve Restock",
+        placeholder_ask: "Ask anything in English...",
+        btn_send: "Send",
+        demand_radar_title: "2-KM Neighborhood Radar",
+        demand_radar_subtitle: "Aggregated Paytm Transaction Velocity",
+        demand_live_tag: "Live Trends",
+        trend_item1_title: "Cold Drinks & Juices",
+        trend_item1_desc: "Heatwave trigger: Temperatures +3.5°C above normal. Area kiranas restocking 2x volume.",
+        trend_item2_title: "Pooja Ghee & Flowers",
+        trend_item2_desc: "Weekend temple footfall: Local stores building inventory buffers before Friday rush.",
+        trend_item3_title: "Stagnant Working Capital",
+        trend_item3_badge: "3 SKUs Dead",
+        trend_item3_desc: "Brand X Nachos has 0 sales in 14 days. Recommending 10% bundle promotion with Thums Up.",
+        demand_tip: "<b>VyaparAI Pro Tip:</b> Stocking 15 units of coconut water before 11:00 AM can capture estimated ₹1,200 additional daily margin.",
+        ondc_title: "ONDC Automated Wholesale Replenishment",
+        ondc_subtitle: "Autonomous Price Comparison & B2B Settlement",
+        ondc_gateway_active: "ONDC Gateway: Active",
+        th_item: "Item / SKU",
+        th_stock: "Current Stock",
+        th_distributor: "Best ONDC Distributor",
+        th_rate: "Wholesale Rate",
+        th_action: "Action",
+        sku1_name: "Amul Taaza Milk 500ml",
+        sku1_stock: "4 pkts (Critical)",
+        sku2_name: "Thums Up 750ml",
+        sku2_stock: "8 bottles (Low)",
+        sku3_name: "Amul Butter 100g",
+        sku3_stock: "6 pkts (Low)",
+        btn_reorder_milk: "Reorder (50 pkts)",
+        btn_reorder_soda: "Reorder (24 bots)",
+        btn_reorder_butter: "Reorder (20 pkts)",
+        toast_balance_deducted: "Deducted from Paytm Merchant Balance",
+        udhar_analytics_title: "Udhar Recovery Analytics",
+        udhar_trapped_label: "Total Trapped Credit",
+        udhar_trapped_desc: "Across 5 regular customers (avg. 11 days pending)",
+        udhar_rate_label: "Recovery Rate (AI reminders):",
+        udhar_sentiment_label: "Politeness Sentiment Score:",
+        udhar_cycle_label: "Avg. Recovery Cycle:",
+        udhar_cycle_val: "2.4 Days (vs 14 manual)",
+        btn_send_all_reminders: "Send Polite 1-Click WhatsApp Links",
+        khata_ledger_title: "Active Khata Ledger & Automated Chasers",
+        khata_upi_enabled: "Dynamic 1-Click UPI Enabled",
+        sharma_due_tag: "12 Days Due",
+        sharma_desc: "Groceries & Cooking Oil • Last purchase: Oct 14",
+        sitaram_due_tag: "5 Days Due",
+        sitaram_desc: "Daily milk & snacks • Last purchase: Oct 21",
+        anil_due_tag: "18 Days Due",
+        anil_desc: "Eggs tray, bananas & oats • Last purchase: Oct 08",
+        btn_send_qr: "Send WhatsApp & QR",
+        whatsapp_preview_title: "Generated WhatsApp Message:",
+        qr_caption: "Scan & Pay via Paytm",
+        credit_engine_title: "Cash-Flow Underwriting Engine",
+        loan_preapproved_label: "Pre-Approved Working Capital",
+        loan_speed_tag: "Instant Disbursal in 180s",
+        credit_daily_label: "Daily UPI Settlement:",
+        credit_daily_val: "₹18,450 avg/day",
+        credit_repeat_label: "Repeat Customer Rate:",
+        credit_repeat_val: "76.5% (High Loyalty)",
+        credit_uptime_label: "Soundbox Uptime:",
+        credit_uptime_val: "99.8% (Active Counter)",
+        credit_paperwork_label: "Paperwork Needed:",
+        credit_paperwork_val: "ZERO (100% Digital)",
+        btn_disburse_loan: "Disburse Loan to Paytm Account",
+        chart_title: "30-Day Verified Cash-Flow Velocity",
+        chart_subtitle: "Deterministic signals driving risk-free micro-credit",
+        chart_risk_badge: "Low Risk Tier A+",
+        credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
+      },
+      'telugu': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> అడగడానికి సూచనలు:',
+        tag_copilot: "లైవ్ మల్టీ-ఏజెంట్",
+        initial_user_msg: "\"సేత్ గారూ, ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?\"",
+        initial_ai_response: "\"సేత్ గారూ, ఈరోజు సాయంత్రం 7 గంటల వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది (64 లావాదేవీలు). అత్యధికంగా అమ్ముడైన వస్తువు 'అమూల్ తాజా పాలు 500ml' (38 ప్యాకెట్లు). హెచ్చరిక: అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, వెంటనే రీస్టాక్ చేయండి!\"",
+        tag_subtitle: "4 కోట్ల భారత్ వ్యాపారులకు స్వయంప్రతిపత్తి గల వ్యాపార భాగస్వామి",
+        nav_lang_label: "భాష:",
+        nav_soundbox_status: "సౌండ్‌బాక్స్ 4.0: <b>లైవ్ (బెంగళూరు)</b>",
+        nav_today_collection: "ఈరోజు: ₹18,420",
+        hero_badge: "లైవ్ అటానమస్ ఏజెంట్ కన్సోల్",
+        hero_sub_badge: "• సర్వం AI + ONDC ఆధారితం",
+        hero_title: "చెల్లింపులకు మించి 4 కోట్ల వ్యాపారుల సాధికారత",
+        hero_desc: "నాలుగు స్వయంప్రతిపత్తి గల స్తంభాలను పరీక్షించండి: <b>వాయిస్ కోపైలట్</b>, <b>ONDC రీస్టాకింగ్</b>, <b>డైనమిక్ క్యూఆర్ తో ఉధార్ రికవరీ</b>, మరియు <b>180 సెకన్ల రుణాలు</b>.",
+        hero_btn_ask: "వాయిస్ కోపైలట్ అడగండి",
+        hero_btn_khata: "స్మార్ట్ ఖాతా (₹12.4k బాకీ)",
+        tab_1: "1. వాయిస్ సౌండ్‌బాక్స్ కోపైలట్",
+        tab_2: "2. 2-కిమీ డిమాండ్ & ONDC రీ-ఆర్డర్",
+        tab_3: "3. ఆటోమేటెడ్ ఉధార్ + డైనమిక్ క్యూఆర్",
+        tab_4: "4. 180 సెకన్ల తక్షణ వర్కింగ్ క్యాపిటల్",
+        sb_moat_title: "హార్డ్‌వేర్ పట్టు",
+        sb_mic_badge: "డ్యూయల్-మైక్ ANC",
+        sb_ready_status: "మైక్ నొక్కండి లేదా మాట్లాడండి",
+        sb_listening_status: "వింటోంది...",
+        sb_speaking_status: "మాట్లాడుతోంది...",
+        sb_instructions: "సౌండ్‌బాక్స్ కౌంటర్ కోసం <b>సర్వం AI (సారస్ + బుల్‌బుల్)</b> ఆధారితం. తెలుగులో ప్రశ్నను ఎంచుకోండి:",
+        chat_header: "ఏజెంట్ బహుభాషా ఆడియో & రీజనింగ్ స్ట్రీమ్",
+        active_lang_badge: "భాష: తెలుగు",
+        user_tag: "మీరు",
+        chat_spoken_label: "సౌండ్‌బాక్స్ వాయిస్ ఇన్‌పుట్",
+        ai_name_tag: "పేటీఎం వ్యాపారAI (ఆడియో ప్రతిస్పందన)",
+        btn_replay_voice: "వాయిస్ రీప్లే చేయి",
+        btn_play_sb_audio: "సౌండ్‌బాక్స్ ఆడియో ప్లే చేయి",
+        stock_alert_text: "స్టాక్ అలర్ట్: అమూల్ తాజా (< 15% పరిమితి)",
+        btn_approve_restock: "రీస్టాక్ ఆమోదించు",
+        placeholder_ask: "తెలుగులో ఏదైనా అడగండి (ఉదా: కలెక్షన్ ఎంత?)...",
+        btn_send: "పంపు",
+        demand_radar_title: "2-కిమీ పరిసరాల డిమాండ్ రాడార్",
+        demand_radar_subtitle: "పేటీఎం ప్రత్యక్ష లావాదేవీల వేగం",
+        demand_live_tag: "లైవ్ ట్రెండ్స్",
+        trend_item1_title: "కూల్ డ్రింక్స్ & జ్యూస్‌లు",
+        trend_item1_desc: "ఎండల వేడిమి: ఉష్ణోగ్రత సాధారణం కంటే +3.5°C ఎక్కువ. స్థానిక దుకాణాలు 2 రెట్లు రీస్టాక్ చేస్తున్నాయి.",
+        trend_item2_title: "పూజా నెయ్యి & పువ్వులు",
+        trend_item2_desc: "వారాంతపు ఆలయ రద్దీ: శుక్రవారం పూజల కోసం స్థానిక దుకాణాలు స్టాక్ సిద్ధం చేసుకుంటున్నాయి.",
+        trend_item3_title: "నిలిచిపోయిన వర్కింగ్ క్యాపిటల్",
+        trend_item3_badge: "3 వస్తువులు డెడ్",
+        trend_item3_desc: "బ్రాండ్ X నాచోస్ 14 రోజులుగా అసలు అమ్మకం లేదు. థమ్స్ అప్‌తో కలిపి 10% డిస్కౌంట్ ఇవ్వండి.",
+        demand_tip: "<b>వ్యాపారAI ప్రో చిట్కా:</b> ఉదయం 11:00 గంటల లోపు 15 కొబ్బరిబోండాలు స్టాక్ చేయడం ద్వారా అదనంగా ₹1,200 లాభం పొందవచ్చు.",
+        ondc_title: "ONDC ఆటోమేటెడ్ హోల్‌సేల్ కొనుగోలు",
+        ondc_subtitle: "ధరల పోలిక & B2B ఆటో చెల్లింపు",
+        ondc_gateway_active: "ONDC గేట్‌వే: యాక్టివ్",
+        th_item: "వస్తువు / SKU",
+        th_stock: "ప్రస్తుత స్టాక్",
+        th_distributor: "ఉత్తమ ONDC డిస్ట్రిబ్యూటర్",
+        th_rate: "హోల్‌సేల్ ధర",
+        th_action: "చర్య",
+        sku1_name: "అమూల్ తాజా పాలు 500ml",
+        sku1_stock: "4 ప్యాకెట్లు (అత్యవసరం)",
+        sku2_name: "థమ్స్ అప్ 750ml",
+        sku2_stock: "8 బాటిళ్లు (తక్కువ)",
+        sku3_name: "అమూల్ వెన్న 100g",
+        sku3_stock: "6 ప్యాకెట్లు (తక్కువ)",
+        btn_reorder_milk: "రీ-ఆర్డర్ (50 ప్యాకెట్లు)",
+        btn_reorder_soda: "రీ-ఆర్డర్ (24 బాటిళ్లు)",
+        btn_reorder_butter: "రీ-ఆర్డర్ (20 ప్యాకెట్లు)",
+        toast_balance_deducted: "పేటీఎం బ్యాలెన్స్ నుండి చెల్లించబడింది",
+        udhar_analytics_title: "ఉధార్ రికవరీ విశ్లేషణ",
+        udhar_trapped_label: "మొత్తం చిక్కుకున్న అప్పు",
+        udhar_trapped_desc: "5 మంది కస్టమర్ల నుండి (సగటున 11 రోజులుగా పెండింగ్)",
+        udhar_rate_label: "రికవరీ రేటు (AI రిమైండర్లు):",
+        udhar_sentiment_label: "మర్యాదపూర్వక సెంటిమెంట్ స్కోరు:",
+        udhar_cycle_label: "సగటు రికవరీ సమయం:",
+        udhar_cycle_val: "2.4 రోజులు (14 రోజులకు బదులుగా)",
+        btn_send_all_reminders: "వాట్సాప్ ద్వారా 1-క్లిక్ లింకులు పంపు",
+        khata_ledger_title: "యాక్టివ్ ఖాతా లెడ్జర్ & ఆటోమేటెడ్ రిమైండర్లు",
+        khata_upi_enabled: "డైనమిక్ 1-క్లిక్ యూపీఐ ప్రారంభించబడింది",
+        sharma_due_tag: "12 రోజులు బాకీ",
+        sharma_desc: "సరుకులు & నూనె • చివరి కొనుగోలు: అక్టోబర్ 14",
+        sitaram_due_tag: "5 రోజులు బాకీ",
+        sitaram_desc: "రోజువారీ పాలు & బిస్కెట్లు • చివరి కొనుగోలు: అక్టోబర్ 21",
+        anil_due_tag: "18 రోజులు బాకీ",
+        anil_desc: "గుడ్లు, అరటిపండ్లు & ఓట్స్ • చివరి కొనుగోలు: అక్టోబర్ 08",
+        btn_send_qr: "వాట్సాప్ & క్యూఆర్ పంపు",
+        whatsapp_preview_title: "రూపొందించిన వాట్సాప్ సందేశం:",
+        qr_caption: "పేటీఎం ద్వారా స్కాన్ చేసి చెల్లించండి",
+        credit_engine_title: "క్యాష్-ఫ్లో అండర్‌రైటింగ్ ఇంజిన్",
+        loan_preapproved_label: "ముందస్తు ఆమోదం పొందిన వర్కింగ్ క్యాపిటల్",
+        loan_speed_tag: "180 సెకన్లలో తక్షణ జమ",
+        credit_daily_label: "రోజువారీ యూపీఐ సెటిల్‌మెంట్:",
+        credit_daily_val: "సగటున ₹18,450 / రోజు",
+        credit_repeat_label: "రిపీట్ కస్టమర్ రేటు:",
+        credit_repeat_val: "76.5% (అత్యధిక విశ్వసనీయత)",
+        credit_uptime_label: "సౌండ్‌బాక్స్ ఆన్‌లైన్ సమయం:",
+        credit_uptime_val: "99.8% (కౌంటర్ యాక్టివ్)",
+        credit_paperwork_label: "అవసరమైన కాగితాలు:",
+        credit_paperwork_val: "సున్నా (100% డిజిటల్)",
+        btn_disburse_loan: "పేటీఎం ఖాతాకు లోన్ జమ చేయి",
+        chart_title: "30 రోజుల ధృవీకరించబడిన నగదు ప్రవాహం",
+        chart_subtitle: "రిస్క్ లేని మైక్రో-క్రెడిట్ సంకేతాలు",
+        chart_risk_badge: "తక్కువ రిస్క్ టైర్ A+",
+        credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
+      },
+      'hindi': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> पूछने के लिए सुझाव:',
+        tag_copilot: "लाइव मल्टी-एजेंट",
+        initial_user_msg: "\"सेठ जी, आज का कुल मुनाफा और सबसे तेज बिकने वाला आइटम कौन सा है?\"",
+        initial_ai_response: "\"सेठ जी, आज शाम 7 बजे तक कुल ₹18,420 का कलेक्शन हुआ है (64 लेनदेन)। सबसे तेज़ बिकने वाला आइटम 'अमूल ताज़ा दूध 500ml' (38 पैकेट) रहा। चेतावनी: अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!\"",
+        tag_subtitle: "4 करोड़ भारत व्यापारियों के लिए स्वायत्त बिजनेस पार्टनर",
+        nav_lang_label: "भाषा:",
+        nav_soundbox_status: "साउंडबॉक्स 4.0: <b>लाइव (बेंगलुरु)</b>",
+        nav_today_collection: "आज: ₹18,420",
+        hero_badge: "लाइव स्वायत्त एजेंट कंसोल",
+        hero_sub_badge: "• सर्वम AI + ONDC सक्षम",
+        hero_title: "भुगतान से आगे 4 करोड़ व्यापारियों का सशक्तिकरण",
+        hero_desc: "चार स्वायत्त स्तंभों का परीक्षण करें: <b>ध्वनि वॉयस कोपायलट</b>, <b>ONDC रीस्टॉकिंग</b>, <b>डायनामिक क्यूआर के साथ उधार वसूली</b>, और <b>180 सेकंड में तत्काल ऋण</b>।",
+        hero_btn_ask: "वॉयस कोपायलट से पूछें",
+        hero_btn_khata: "स्मार्ट खाता (₹12.4k बकाया)",
+        tab_1: "1. वॉयस-फर्स्ट साउंडबॉक्स कोपायलट",
+        tab_2: "2. 2-किमी मांग और ONDC रीऑर्डर",
+        tab_3: "3. स्वचालित उधार + डायनामिक क्यूआर",
+        tab_4: "4. 180 सेकंड में तत्काल वर्किंग कैपिटल",
+        sb_moat_title: "हार्डवेयर की पकड़",
+        sb_mic_badge: "ड्यूल-माइक ANC",
+        sb_ready_status: "माइक दबाएं या नीचे से चुनें",
+        sb_listening_status: "सुन रहा है...",
+        sb_speaking_status: "बोल रहा है...",
+        sb_instructions: "दुकान के शोर में काम करने के लिए <b>सर्वम AI (सारस + बुलबुल)</b> सक्षम। हिंदी में सवाल चुनें:",
+        chat_header: "एजेंटिक बहुभाषी ऑडियो और तर्क स्ट्रीम",
+        active_lang_badge: "भाषा: हिंदी",
+        user_tag: "आप",
+        chat_spoken_label: "साउंडबॉक्स वॉयस इनपुट",
+        ai_name_tag: "पेटीएम व्यापारAI (ऑडियो प्रतिक्रिया)",
+        btn_replay_voice: "वॉयस दोबारा सुनें",
+        btn_play_sb_audio: "साउंडबॉक्स ऑडियो चलाएं",
+        stock_alert_text: "स्टॉक चेतावनी: अमूल ताज़ा (< 15% सीमा)",
+        btn_approve_restock: "रीस्टॉक स्वीकृत करें",
+        placeholder_ask: "हिंदी में कुछ भी पूछें (उदा: आज का मुनाफा कितना है?)...",
+        btn_send: "भेजें",
+        demand_radar_title: "2-किमी पड़ोस का मांग रडार",
+        demand_radar_subtitle: "पेटीएम रीयल-टाइम लेनदेन गति",
+        demand_live_tag: "लाइव ट्रेंड्स",
+        trend_item1_title: "कोल्ड ड्रिंक्स और जूस",
+        trend_item1_desc: "गर्मी का प्रभाव: तापमान सामान्य से +3.5°C अधिक। स्थानीय किराना 2 गुना माल मंगवा रहे हैं।",
+        trend_item2_title: "पूजा घी और फूल",
+        trend_item2_desc: "सप्ताहांत मंदिर की भीड़: शुक्रवार की पूजा के लिए स्थानीय दुकानें स्टॉक तैयार कर रही हैं।",
+        trend_item3_title: "फंसी हुई वर्किंग कैपिटल",
+        trend_item3_badge: "3 आइटम डेड",
+        trend_item3_desc: "ब्रांड X नाचोज़ की 14 दिनों से शून्य बिक्री है। थम्स अप के साथ 10% छूट में बंडल करें।",
+        demand_tip: "<b>व्यापारAI प्रो टिप:</b> सुबह 11:00 बजे से पहले 15 नारियल पानी रखने से लगभग ₹1,200 का अतिरिक्त दैनिक लाभ हो सकता है।",
+        ondc_title: "ONDC स्वचालित थोक खरीदारी",
+        ondc_subtitle: "मूल्य तुलना और B2B स्वचालित निपटान",
+        ondc_gateway_active: "ONDC गेटवे: सक्रिय",
+        th_item: "सामान / SKU",
+        th_stock: "वर्तमान स्टॉक",
+        th_distributor: "सर्वश्रेष्ठ ONDC डिस्ट्रीब्यूटर",
+        th_rate: "थोक भाव",
+        th_action: "कार्रवाई",
+        sku1_name: "अमूल ताज़ा दूध 500ml",
+        sku1_stock: "4 पैकेट (गंभीर)",
+        sku2_name: "थम्स अप 750ml",
+        sku2_stock: "8 बोतलें (कम)",
+        sku3_name: "अमूल बटर 100g",
+        sku3_stock: "6 पैकेट (कम)",
+        btn_reorder_milk: "रीऑर्डर (50 पैकेट)",
+        btn_reorder_soda: "रीऑर्डर (24 बोतलें)",
+        btn_reorder_butter: "रीऑर्डर (20 पैकेट)",
+        toast_balance_deducted: "पेटीएम मर्चेंट बैलेंस से काटा गया",
+        udhar_analytics_title: "उधार वसूली विश्लेषण",
+        udhar_trapped_label: "कुल फंसा हुआ उधार",
+        udhar_trapped_desc: "5 नियमित ग्राहकों से (औसतन 11 दिनों से लंबित)",
+        udhar_rate_label: "वसूली दर (AI रिमाइंडर):",
+        udhar_sentiment_label: "विनम्रता स्कोर:",
+        udhar_cycle_label: "औसत वसूली समय:",
+        udhar_cycle_val: "2.4 दिन (14 दिनों के मुकाबले)",
+        btn_send_all_reminders: "व्हाट्सएप पर 1-क्लिक लिंक भेजें",
+        khata_ledger_title: "सक्रिय खाता लेज़र और स्वचालित अनुस्मारक",
+        khata_upi_enabled: "डायनामिक 1-क्लिक यूपीआई सक्षम",
+        sharma_due_tag: "12 दिन बकाया",
+        sharma_desc: "राशन और खाना पकाने का तेल • अंतिम खरीद: 14 अक्टूबर",
+        sitaram_due_tag: "5 दिन बकाया",
+        sitaram_desc: "दैनिक चाय, दूध और बिस्कुट • अंतिम खरीद: 21 अक्टूबर",
+        anil_due_tag: "18 दिन बकाया",
+        anil_desc: "अंडे की क्रेट, केले और ओट्स • अंतिम खरीद: 08 अक्टूबर",
+        btn_send_qr: "व्हाट्सएप और क्यूआर भेजें",
+        whatsapp_preview_title: "तैयार किया गया व्हाट्सएप संदेश:",
+        qr_caption: "पेटीएम से स्कैन करके भुगतान करें",
+        credit_engine_title: "कैश-फ्लो अंडरराइटिंग इंजन",
+        loan_preapproved_label: "पूर्व-स्वीकृत वर्किंग कैपिटल",
+        loan_speed_tag: "180 सेकंड में तत्काल वितरण",
+        credit_daily_label: "दैनिक यूपीआई निपटान:",
+        credit_daily_val: "औसत ₹18,450 / दिन",
+        credit_repeat_label: "दोहराए गए ग्राहक:",
+        credit_repeat_val: "76.5% (अत्यधिक वफादारी)",
+        credit_uptime_label: "साउंडबॉक्स ऑनलाइन समय:",
+        credit_uptime_val: "99.8% (सक्रिय काउंटर)",
+        credit_paperwork_label: "आवश्यक कागजात:",
+        credit_paperwork_val: "शून्य (100% डिजिटल)",
+        btn_disburse_loan: "पेटीएम खाते में ऋण ट्रांसफर करें",
+        chart_title: "30 दिनों का सत्यापित नकदी प्रवाह",
+        chart_subtitle: "जोखिम मुक्त माइक्रो-क्रेडिट संकेत",
+        chart_risk_badge: "कम जोखिम टियर A+",
+        credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
+      },
+      'tamil': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> கேட்க பரிந்துரைகள்:',
+        tag_copilot: "நேரலை மல்டி-ஏஜென்ட்",
+        initial_user_msg: "\"முதலாளி, இன்று மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?\"",
+        initial_ai_response: "\"சேத் அவர்களே, இன்று மாலை 7 மணி வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது (64 பரிவர்த்தனைகள்). அதிகம் விற்பனையான பொருள் 'அமுல் தாசா பால் 500ml' (38 பாக்கெட்டுகள்). எச்சரிக்கை: அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!\"",
+        tag_subtitle: "4 கோடி இந்திய வணிகர்களுக்கான தன்னாட்சி வணிக உதவியாளர்",
+        nav_lang_label: "மொழி:",
+        nav_soundbox_status: "சவுண்ட்பாக்ஸ் 4.0: <b>ஆன்லைன் (பெங்களூரு)</b>",
+        nav_today_collection: "இன்று: ₹18,420",
+        hero_badge: "நேரலை தன்னாட்சி ஏஜென்ட் கன்சோல்",
+        hero_sub_badge: "• சர்வம் AI + ONDC இயக்கம்",
+        hero_title: "பணப்பரிவர்த்தனையை தாண்டி 4 கோடி வணிகர்களின் வளர்ச்சி",
+        hero_desc: "நான்கு தன்னாட்சி தூண்களை சோதிக்கவும்: <b>குரல் உதவியாளர்</b>, <b>ONDC மறுஇருப்பு</b>, <b>டைனமிக் QR உடன் கடன் வசூல்</b>, மற்றும் <b>180 வினாடி உடனடி கடன்</b>.",
+        hero_btn_ask: "குரல் உதவியாளரிடம் கேட்கவும்",
+        hero_btn_khata: "ஸ்மார்ட் கணக்கு (₹12.4k பாக்கி)",
+        tab_1: "1. குரல் வழி சவுண்ட்பாக்ஸ் கோபைலட்",
+        tab_2: "2. 2-கிமீ தேவை & ONDC ஆர்டர்",
+        tab_3: "3. தானியங்கி கடன் வசூல் + QR",
+        tab_4: "4. 180 வினாடி உடனடி கடன்",
+        sb_moat_title: "ஹார்டுவேர் பிடிப்பு",
+        sb_mic_badge: "இரட்டை மைக் ANC",
+        sb_ready_status: "மைக்கை அழுத்தவும் அல்லது பேசவும்",
+        sb_listening_status: "கேட்கிறது...",
+        sb_speaking_status: "பேசுகிறது...",
+        sb_instructions: "கடையின் சத்தத்திலும் துல்லியமாக இயங்கும் <b>சர்வம் AI (சாரஸ் + புல்புல்)</b>. தமிழில் கேள்வியை தேர்வு செய்யவும்:",
+        chat_header: "ஏஜென்ட் பன்மொழி ஆடியோ மற்றும் பகுப்பாய்வு",
+        active_lang_badge: "மொழி: தமிழ்",
+        user_tag: "நீங்கள்",
+        chat_spoken_label: "சவுண்ட்பாக்ஸ் குரல் உள்ளீடு",
+        ai_name_tag: "பேடிஎம் வியாபார்AI (ஆடியோ பதில்)",
+        btn_replay_voice: "குரலை மீண்டும் இயக்கு",
+        btn_play_sb_audio: "சவுண்ட்பாக்ஸ் ஆடியோவை இயக்கு",
+        stock_alert_text: "இருப்பு எச்சரிக்கை: அமுல் பால் (< 15% வரம்பு)",
+        btn_approve_restock: "மறுஇருப்புக்கு ஒப்புதல் அளி",
+        placeholder_ask: "தமிழில் எதையும் கேளுங்கள் (எ.கா: இன்று வசூல் எவ்வளவு?)...",
+        btn_send: "அனுப்பு",
+        demand_radar_title: "2-கிமீ சுற்றுவட்டார தேவை ரேடார்",
+        demand_radar_subtitle: "பேடிஎம் நேரடி பரிவர்த்தனை வேகம்",
+        demand_live_tag: "நேரலை போக்குகள்",
+        trend_item1_title: "குளிர்பானங்கள் & பழச்சாறுகள்",
+        trend_item1_desc: "வெப்ப அலை: வெப்பநிலை வழக்கத்தை விட +3.5°C அதிகம். உள்ளூர் கடைகள் 2 மடங்கு இருப்பு வைக்கின்றன.",
+        trend_item2_title: "பூஜை நெய் மற்றும் பூக்கள்",
+        trend_item2_desc: "வெள்ளிக்கிழமை கோவில் கூட்டம்: உள்ளூர் கடைகள் முன்கூட்டியே இருப்பை சேர்க்கின்றன.",
+        trend_item3_title: "முடங்கிய மூலதனம்",
+        trend_item3_badge: "3 பொருட்கள் விற்பனையின்றி உள்ளன",
+        trend_item3_desc: "பிராண்ட் X நாச்சோஸ் 14 நாட்களாக விற்பனையாகவில்லை. 10% தள்ளுபடி சலுகை பரிந்துரைக்கப்படுகிறது.",
+        demand_tip: "<b>வியாபார்AI பிரத்யேக குறிப்பு:</b> காலை 11:00 மணிக்குள் 15 இளநீர்களை வைப்பதன் மூலம் ₹1,200 கூடுதல் லாபம் பெறலாம்.",
+        ondc_title: "ONDC தானியங்கி மொத்த விற்பனை கொள்முதல்",
+        ondc_subtitle: "விலை ஒப்பீடு மற்றும் B2B தீர்வு",
+        ondc_gateway_active: "ONDC நுழைவாயில்: செயல்படுகிறது",
+        th_item: "பொருள் / SKU",
+        th_stock: "தற்போதைய இருப்பு",
+        th_distributor: "சிறந்த ONDC விநியோகஸ்தர்",
+        th_rate: "மொத்த விலை",
+        th_action: "நடவடிக்கை",
+        sku1_name: "அமுல் தாசா பால் 500ml",
+        sku1_stock: "4 பாக்கெட்டுகள் (அவசரம்)",
+        sku2_name: "தம்ஸ் அப் 750ml",
+        sku2_stock: "8 பாட்டில்கள் (குறைவு)",
+        sku3_name: "அமுல் வெண்ணெய் 100g",
+        sku3_stock: "6 பாக்கெட்டுகள் (குறைவு)",
+        btn_reorder_milk: "மீண்டும் ஆர்டர் (50 பாக்கெட்)",
+        btn_reorder_soda: "மீண்டும் ஆர்டர் (24 பாட்டில்)",
+        btn_reorder_butter: "மீண்டும் ஆர்டர் (20 பாக்கெட்)",
+        toast_balance_deducted: "பேடிஎம் வணிக கணக்கிலிருந்து செலுத்தப்பட்டது",
+        udhar_analytics_title: "கடன் வசூல் பகுப்பாய்வு",
+        udhar_trapped_label: "மொத்த முடங்கிய கடன்",
+        udhar_trapped_desc: "5 வாடிக்கையாளர்களிடம் (சராசரியாக 11 நாட்கள் நிலுவை)",
+        udhar_rate_label: "வசூல் விகிதம் (AI நினைவூட்டல்):",
+        udhar_sentiment_label: "மரியாதை உணர்வு மதிப்பீடு:",
+        udhar_cycle_label: "சராசரி வசூல் காலம்:",
+        udhar_cycle_val: "2.4 நாட்கள் (14 நாட்களுக்கு பதிலாக)",
+        btn_send_all_reminders: "வாட்ஸ்அப் மூலம் 1-கிளிக் லிங்க் அனுப்பு",
+        khata_ledger_title: "செயலில் உள்ள கடன் கணக்கு & நினைவூட்டல்கள்",
+        khata_upi_enabled: "டைனமிக் 1-கிளிக் யுபிஐ இயக்கப்பட்டது",
+        sharma_due_tag: "12 நாட்கள் பாக்கி",
+        sharma_desc: "மளிகை & சமையல் எண்ணெய் • கடைசி கொள்முதல்: அக் 14",
+        sitaram_due_tag: "5 நாட்கள் பாக்கி",
+        sitaram_desc: "பால் & தின்பண்டங்கள் • கடைசி கொள்முதல்: அக் 21",
+        anil_due_tag: "18 நாட்கள் பாக்கி",
+        anil_desc: "முட்டைகள், வாழைப்பழங்கள் & ஓட்ஸ் • கடைசி கொள்முதல்: அக் 08",
+        btn_send_qr: "வாட்ஸ்அப் & QR அனுப்பு",
+        whatsapp_preview_title: "உருவாக்கப்பட்ட வாட்ஸ்அப் செய்தி:",
+        qr_caption: "பேடிஎம் மூலம் ஸ்கேன் செய்து செலுத்தவும்",
+        credit_engine_title: "பணப்புழக்க கடன் ஒப்புதல் இயந்திரம்",
+        loan_preapproved_label: "முன்அனுமதிக்கப்பட்ட மூலதனக் கடன்",
+        loan_speed_tag: "180 வினாடிகளில் உடனடி வரவு",
+        credit_daily_label: "தினசரி யுபிஐ வரவு:",
+        credit_daily_val: "சராசரி ₹18,450 / நாள்",
+        credit_repeat_label: "தொடர் வாடிக்கையாளர் விகிதம்:",
+        credit_repeat_val: "76.5% (அதிக நம்பிக்கை)",
+        credit_uptime_label: "சவுண்ட்பாக்ஸ் இயங்கும் நேரம்:",
+        credit_uptime_val: "99.8% (கவுண்டர் ஆன்லைன்)",
+        credit_paperwork_label: "தேவையான ஆவணங்கள்:",
+        credit_paperwork_val: "பூஜ்ஜியம் (100% டிஜிட்டல்)",
+        btn_disburse_loan: "பேடிஎம் கணக்கில் கடன் தொகையை சேர்",
+        chart_title: "30 நாட்கள் சரிபார்க்கப்பட்ட பணப்புழக்கம்",
+        chart_subtitle: "பாதுகாப்பான கடன் மதிப்பீட்டு சமிக்ஞைகள்",
+        chart_risk_badge: "குறைந்த ஆபத்து நிலை A+",
+        credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
+      },
+      'kannada': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> ಕೇಳಲು ಸಲಹೆಗಳು:',
+        tag_copilot: "ಲೈವ್ ಮಲ್ಟಿ-ಏಜೆಂಟ್",
+        initial_user_msg: "\"ಸೇಠ್ ಅವರೇ, ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?\"",
+        initial_ai_response: "\"ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆ 7 ಗಂಟೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ (64 ವಹಿವಾಟುಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು 'ಅಮುಲ್ ತಾಜಾ ಹಾಲು 500ml' (38 ಪ್ಯಾಕೆಟ್‌ಗಳು). ಎಚ್ಚರಿಕೆ: ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ಮರುದಾಸ್ತಾನು ಮಾಡಿ!\"",
+        tag_subtitle: "4 ಕೋಟಿ ಭಾರತೀಯ ವ್ಯಾಪಾರಿಗಳಿಗೆ ಸ್ವಾಯತ್ತ ವ್ಯಾಪಾರ ಪಾಲುದಾರ",
+        nav_lang_label: "ಭಾಷೆ:",
+        nav_soundbox_status: "ಸೌಂಡ್‌ಬಾಕ್ಸ್ 4.0: <b>ಆನ್‌ಲೈನ್ (ಬೆಂಗಳೂರು)</b>",
+        nav_today_collection: "ಇಂದು: ₹18,420",
+        hero_badge: "ಲೈವ್ ಸ್ವಾಯತ್ತ ಏಜೆಂಟ್ ಕನ್ಸೋಲ್",
+        hero_sub_badge: "• ಸರ್ವಮ್ AI + ONDC ಚಾಲಿತ",
+        hero_title: "ಪಾವತಿಗಳನ್ನು ಮೀರಿ 4 ಕೋಟಿ ವ್ಯಾಪಾರಿಗಳ ಸಬಲೀಕರಣ",
+        hero_desc: "ನಾಲ್ಕು ಸ್ವಾಯತ್ತ ಸ್ತಂಭಗಳನ್ನು ಪರೀಕ್ಷಿಸಿ: <b>ಧ್ವನಿ ಕೋಪೈಲಟ್</b>, <b>ONDC ಮರುದಾಸ್ತಾನು</b>, <b>ಡೈನಾಮಿಕ್ ಕ್ಯೂಆರ್ ನೊಂದಿಗೆ ಸಾಲ ವಸೂಲಿ</b>, ಮತ್ತು <b>180 ಸೆಕೆಂಡಿನ ಸಾಲ</b>.",
+        hero_btn_ask: "ಧ್ವನಿ ಕೋಪೈಲಟ್ ಕೇಳಿ",
+        hero_btn_khata: "ಸ್ಮಾರ್ಟ್ ಖಾತೆ (₹12.4k ಬಾಕಿ)",
+        tab_1: "1. ಧ್ವನಿ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಕೋಪೈಲಟ್",
+        tab_2: "2. 2-ಕಿಮೀ ಬೇಡಿಕೆ & ONDC ಆರ್ಡರ್",
+        tab_3: "3. ಸ್ವಯಂಚಾಲಿತ ಸಾಲ ವಸೂಲಿ + QR",
+        tab_4: "4. 180 ಸೆಕೆಂಡಿನ ತ್ವರಿತ ಸಾಲ",
+        sb_moat_title: "ಹಾರ್ಡ್‌ವೇರ್ ಹಿಡಿತ",
+        sb_mic_badge: "ಡ್ಯುಯಲ್-ಮೈಕ್ ANC",
+        sb_ready_status: "ಮೈಕ್ ಒತ್ತಿ ಅಥವಾ ಮಾತನಾಡಿ",
+        sb_listening_status: "ಆಲಿಸುತ್ತಿದೆ...",
+        sb_speaking_status: "ಮಾತನಾಡುತ್ತಿದೆ...",
+        sb_instructions: "ಗದ್ದಲದ ಅಂಗಡಿಗಾಗಿ <b>ಸರ್ವಮ್ AI (ಸಾರಸ್ + ಬುಲ್‌ಬುಲ್)</b> ಆಧಾರಿತ ಧ್ವನಿ. ಕನ್ನಡದಲ್ಲಿ ಪ್ರಶ್ನೆಯನ್ನು ಆರಿಸಿ:",
+        chat_header: "ಏಜೆಂಟ್ ಬಹುಭಾಷಾ ಆಡಿಯೋ ಮತ್ತು ತರ್ಕ ಸ್ಟ್ರೀಮ್",
+        active_lang_badge: "ಭಾಷೆ: ಕನ್ನಡ",
+        user_tag: "ನೀವು",
+        chat_spoken_label: "ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಧ್ವನಿ ಇನ್‌ಪುಟ್",
+        ai_name_tag: "ಪೇಟಿಎಂ ವ್ಯಾಪಾರAI (ಆಡಿಯೋ ಉತ್ತರ)",
+        btn_replay_voice: "ಧ್ವನಿ ಮರುಪ್ಲೇ ಮಾಡಿ",
+        btn_play_sb_audio: "ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಡಿಯೋ ಪ್ಲೇ ಮಾಡಿ",
+        stock_alert_text: "ದಾಸ್ತಾನು ಎಚ್ಚರಿಕೆ: ಅಮುಲ್ ಹಾಲು (< 15% ಮಿತಿ)",
+        btn_approve_restock: "ಮರುದಾಸ್ತಾನು ಅನುಮೋದಿಸಿ",
+        placeholder_ask: "ಕನ್ನಡದಲ್ಲಿ ಏನಾದರೂ ಕೇಳಿ (ಉದಾ: ಇಂದಿನ ಕಲೆಕ್ಷನ್ ಎಷ್ಟು?)...",
+        btn_send: "ಕಳುಹಿಸಿ",
+        demand_radar_title: "2-ಕಿಮೀ ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ರಾಡಾರ್",
+        demand_radar_subtitle: "ಪೇಟಿಎಂ ಲೈವ್ ವಹಿವಾಟು ವೇಗ",
+        demand_live_tag: "ಲೈವ್ ಟ್ರೆಂಡ್‌ಗಳು",
+        trend_item1_title: "ತಂಪು ಪಾನೀಯಗಳು ಮತ್ತು ಜ್ಯೂಸ್‌ಗಳು",
+        trend_item1_desc: "ಬಿಸಿಲಿನ ಪ್ರಭಾವ: ತಾಪಮಾನ ಸಾಮಾನ್ಯಕ್ಕಿಂತ +3.5°C ಹೆಚ್ಚು. ಸ್ಥಳೀಯ ಅಂಗಡಿಗಳು 2 ಪಟ್ಟು ದಾಸ್ತಾನು ಮಾಡುತ್ತಿವೆ.",
+        trend_item2_title: "ಪೂಜಾ ತುಪ್ಪ ಮತ್ತು ಹೂವುಗಳು",
+        trend_item2_desc: "ಶುಕ್ರವಾರದ ದೇವಸ್ಥಾನದ ಜನಸಂದಣಿ: ಸ್ಥಳೀಯ ಅಂಗಡಿಗಳು ಮುಂಚಿತವಾಗಿ ಸಂಗ್ರಹಿಸುತ್ತಿವೆ.",
+        trend_item3_title: "ಬಾಕಿ ಉಳಿದ ಬಂಡವಾಳ",
+        trend_item3_badge: "3 ವಸ್ತುಗಳು ನಿಷ್ಕ್ರಿಯ",
+        trend_item3_desc: "ಬ್ರಾಂಡ್ X ನಾಚೋಸ್ 14 ದಿನಗಳಿಂದ ಮಾರಾಟವಾಗಿಲ್ಲ. ಥಮ್ಸ್ ಅಪ್ ಜೊತೆ 10% ರಿಯಾಯಿತಿ ನೀಡಿ.",
+        demand_tip: "<b>ವ್ಯಾಪಾರAI ಪ್ರೊ ಸಲಹೆ:</b> ಬೆಳಗ್ಗೆ 11:00 ಗಂಟೆಯೊಳಗೆ 15 ಎಳನೀರು ಸಂಗ್ರಹಿಸುವುದರಿಂದ ₹1,200 ಹೆಚ್ಚುವರಿ ದೈನಂದಿನ ಲಾಭ ಗಳಿಸಬಹುದು.",
+        ondc_title: "ONDC ಸ್ವಯಂಚಾಲಿತ ಸಗಟು ಖರೀದಿ",
+        ondc_subtitle: "ಬೆಲೆ ಹೋಲಿಕೆ ಮತ್ತು B2B ಸ್ವಯಂ ಪಾವತಿ",
+        ondc_gateway_active: "ONDC ಗೇಟ್‌ವೇ: ಸಕ್ರಿಯವಾಗಿದೆ",
+        th_item: "ವಸ್ತು / SKU",
+        th_stock: "ಪ್ರಸ್ತುತ ದಾಸ್ತಾನು",
+        th_distributor: "ಉತ್ತಮ ONDC ವಿತರಕರು",
+        th_rate: "ಸಗಟು ದರ",
+        th_action: "ಕ್ರಮ",
+        sku1_name: "ಅಮುಲ್ ತಾಜಾ ಹಾಲು 500ml",
+        sku1_stock: "4 ಪ್ಯಾಕೆಟ್‌ಗಳು (ತುರ್ತು)",
+        sku2_name: "ಥಮ್ಸ್ ಅಪ್ 750ml",
+        sku2_stock: "8 ಬಾಟಲಿಗಳು (ಕಡಿಮೆ)",
+        sku3_name: "ಅಮುಲ್ ಬೆಣ್ಣೆ 100g",
+        sku3_stock: "6 ಪ್ಯಾಕೆಟ್‌ಗಳು (ಕಡಿಮೆ)",
+        btn_reorder_milk: "ಮರು-ಆರ್ಡರ್ (50 ಪ್ಯಾಕೆಟ್)",
+        btn_reorder_soda: "ಮರು-ಆರ್ಡರ್ (24 ಬಾಟಲಿ)",
+        btn_reorder_butter: "ಮರು-ಆರ್ಡರ್ (20 ಪ್ಯಾಕೆಟ್)",
+        toast_balance_deducted: "ಪೇಟಿಎಂ ಬ್ಯಾಲೆನ್ಸ್‌ನಿಂದ ಕಡಿತಗೊಳಿಸಲಾಗಿದೆ",
+        udhar_analytics_title: "ಸಾಲ ವಸೂಲಿ ವಿಶ್ಲೇಷಣೆ",
+        udhar_trapped_label: "ಒಟ್ಟು ಬಾಕಿ ಉಳಿದ ಸಾಲದ ಹಣ",
+        udhar_trapped_desc: "5 ಗ್ರಾಹಕರಿಂದ (ಸರಾಸರಿ 11 ದಿನಗಳಿಂದ ಬಾಕಿ)",
+        udhar_rate_label: "ವಸೂಲಿ ದರ (AI ರಿಮೈಂಡರ್‌ಗಳು):",
+        udhar_sentiment_label: "ವಿನಮ್ರತೆಯ ಸ್ಕೋರ್:",
+        udhar_cycle_label: "ಸರಾಸರಿ ವಸೂಲಿ ಅವಧಿ:",
+        udhar_cycle_val: "2.4 ದಿನಗಳು (14 ದಿನಗಳ ಬದಲು)",
+        btn_send_all_reminders: "ವಾಟ್ಸಾಪ್ ಮೂಲಕ 1-ಕ್ಲಿಕ್ ಲಿಂಕ್ ಕಳುಹಿಸಿ",
+        khata_ledger_title: "ಸಕ್ರಿಯ ಖಾತೆ ಲೆಡ್ಜರ್ & ರಿಮೈಂಡರ್‌ಗಳು",
+        khata_upi_enabled: "ಡೈನಾಮಿಕ್ 1-ಕ್ಲಿಕ್ ಯುಪಿಐ ಸಕ್ರಿಯವಾಗಿದೆ",
+        sharma_due_tag: "12 ದಿನ ಬಾಕಿ",
+        sharma_desc: "ದವಸ ಧಾನ್ಯ & ಎಣ್ಣೆ • ಕೊನೆಯ ಖರೀದಿ: ಅಕ್ಟೋಬರ್ 14",
+        sitaram_due_tag: "5 ದಿನ ಬಾಕಿ",
+        sitaram_desc: "ಹಾಲು ಮತ್ತು ತಿಂಡಿಗಳು • ಕೊನೆಯ ಖರೀದಿ: ಅಕ್ಟೋಬರ್ 21",
+        anil_due_tag: "18 ದಿನ ಬಾಕಿ",
+        anil_desc: "ಮೊಟ್ಟೆ, ಬಾಳೆಹಣ್ಣು ಮತ್ತು ಓಟ್ಸ್ • ಕೊನೆಯ ಖರೀದಿ: ಅಕ್ಟೋಬರ್ 08",
+        btn_send_qr: "ವಾಟ್ಸಾಪ್ & QR ಕಳುಹಿಸಿ",
+        whatsapp_preview_title: "ರಚಿಸಲಾದ ವಾಟ್ಸಾಪ್ ಸಂದೇಶ:",
+        qr_caption: "ಪೇಟಿಎಂ ಮೂಲಕ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ ಪಾವತಿಸಿ",
+        credit_engine_title: "ನಗದು ಹರಿವು ಸಾಲ ಅನುಮೋದನೆ ಎಂಜಿನ್",
+        loan_preapproved_label: "ಮುಂಚಿತ ಅನುಮೋದಿತ ದುಡಿಯುವ ಬಂಡವಾಳ",
+        loan_speed_tag: "180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ತ್ವರಿತ ಜಮೆ",
+        credit_daily_label: "ದೈನಂದಿನ ಯುಪಿಐ ವಹಿವಾಟು:",
+        credit_daily_val: "ಸರಾಸರಿ ₹18,450 / ದಿನ",
+        credit_repeat_label: "ಮರುಬಳಕೆ ಗ್ರಾಹಕರ ದರ:",
+        credit_repeat_val: "76.5% (ಅತ್ಯಧಿಕ ನಂಬಿಕೆ)",
+        credit_uptime_label: "ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆನ್‌ಲೈನ್ ಸಮಯ:",
+        credit_uptime_val: "99.8% (ಕೌಂಟರ್ ಆನ್‌ಲೈನ್)",
+        credit_paperwork_label: "ಅಗತ್ಯ ದಾಖಲೆಗಳು:",
+        credit_paperwork_val: "ಶೂನ್ಯ (100% ಡಿಜಿಟಲ್)",
+        btn_disburse_loan: "ಪೇಟಿಎಂ ಖಾತೆಗೆ ಸಾಲ ಜಮೆ ಮಾಡಿ",
+        chart_title: "30 ದಿನಗಳ ಪರಿಶೀಲಿಸಿದ ನಗದು ಹರಿವು",
+        chart_subtitle: "ಸುರಕ್ಷಿತ ಸಾಲದ ಅರ್ಹತಾ ಸಂಕೇತಗಳು",
+        chart_risk_badge: "ಕಡಿಮೆ ಅಪಾಯ ಶ್ರೇಣಿ A+",
+        credit_toast_msg: "<b>🎉 ಸಾಲ ಜಮೆಯಾಗಿದೆ:</b> ₹2,50,000 ವ್ಯಾಪಾರಿಯ ಪೇಟಿಎಂ ಖಾತೆಗೆ 12 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಜಮೆಯಾಗಿದೆ. ದೈನಂದಿನ ಮರುಪಾವತಿ ₹450/ದಿನ."
+      }
+    };
+
+    const localizedPrompts = {
+      'english': [
+        { icon: "fa-chart-line", label: "Today's sales & total collection", query: "What is today's total collection and fastest selling item?" },
+        { icon: "fa-boxes-stacked", label: "Check low stock & reorder milk", query: "Which items are low in stock? Reorder Amul milk" },
+        { icon: "fa-receipt", label: "Anil Verma udhar & WhatsApp reminder", query: "Check pending udhar for Anil Verma and send reminder" },
+        { icon: "fa-building-columns", label: "Instant pre-approved loan limit", query: "What is my pre-approved working capital loan limit?" },
+        { icon: "fa-fire-flame-curved", label: "2-KM neighborhood demand trends", query: "What items are trending in my 2km neighborhood?" },
+        { icon: "fa-truck-fast", label: "Compare distributor prices on ONDC", query: "Show lowest ONDC distributor rates for restocking" }
+      ],
+      'telugu': [
+        { icon: "fa-chart-line", label: "ఈరోజు సేల్స్ & మొత్తం కలెక్షన్ ఎంత?", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+        { icon: "fa-boxes-stacked", label: "స్టాక్ చెక్ చేయి & పాలు రీ-ఆర్డర్ పెట్టు", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? అమూల్ పాలు ఆర్డర్ చేయి" },
+        { icon: "fa-receipt", label: "అనిల్ వర్మ గారి బాకీ ఎంత? వాట్సాప్ రిమైండర్ పంపు", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
+        { icon: "fa-building-columns", label: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత?" },
+        { icon: "fa-fire-flame-curved", label: "పరిసరాల్లో ఏ సరుకులు ఎక్కువ అమ్ముడవుతున్నాయి?", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+        { icon: "fa-truck-fast", label: "ONDC డిస్ట్రిబ్యూటర్ హోల్‌సేల్ ధరలు చూపించు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+      ],
+      'hindi': [
+        { icon: "fa-chart-line", label: "आज का कुल मुनाफा और बिक्री कलेक्शन", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+        { icon: "fa-boxes-stacked", label: "दुकान में कौन सा सामान खत्म है? दूध ऑर्डर करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? दूध आर्डर करो" },
+        { icon: "fa-receipt", label: "अनिल वर्मा का बकाया कितना है? व्हाट्सएप लिंक भेजो", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+        { icon: "fa-building-columns", label: "मेरी 180 सेकंड लोन लिमिट कितनी है?", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+        { icon: "fa-fire-flame-curved", label: "आस-पास के इलाके में कौन सा सामान ज्यादा बिक रहा है?", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+        { icon: "fa-truck-fast", label: "ONDC पर सबसे सस्ता थोक डिस्ट्रीब्यूटर ढूंढो", query: "ONDC थोक भाव दिखाओ" }
+      ],
+      'tamil': [
+        { icon: "fa-chart-line", label: "இன்றைய மொத்த விற்பனை மற்றும் வசூல் எவ்வளவு?", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+        { icon: "fa-boxes-stacked", label: "இருப்பு குறைவான பொருட்கள் & பால் மறுஆர்டர்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? அமுல் பால் ஆர்டர் செய்" },
+        { icon: "fa-receipt", label: "அனில் வர்மா கடன் பாக்கி நினைவூட்டல் அனுப்பு", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+        { icon: "fa-building-columns", label: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+        { icon: "fa-fire-flame-curved", label: "அருகிலுள்ள பகுதியில் அதிகம் விற்கும் பொருட்கள் எவை?", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+        { icon: "fa-truck-fast", label: "ONDC விநியோகஸ்தர் குறைந்த மொத்த விலை காட்டு", query: "ONDC மொத்த விலையை காட்டு" }
+      ],
+      'kannada': [
+        { icon: "fa-chart-line", label: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಮತ್ತು ಆದಾಯ ಎಷ್ಟು?", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+        { icon: "fa-boxes-stacked", label: "ದಾಸ್ತಾನು ಪರಿಶೀಲಿಸಿ & ಹಾಲು ಮರು-ಆರ್ಡರ್ ಮಾಡಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಅಮುಲ್ ಹಾಲು ಆರ್ಡರ್ ಮಾಡಿ" },
+        { icon: "fa-receipt", label: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಸಾಲದ ಹಣ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+        { icon: "fa-building-columns", label: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+        { icon: "fa-fire-flame-curved", label: "ಸುತ್ತಮುತ್ತಲಿನ ಪ್ರದೇಶದಲ್ಲಿ ಯಾವ ವಸ್ತುಗಳು ಹೆಚ್ಚು ಮಾರಾಟವಾಗುತ್ತಿವೆ?", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+        { icon: "fa-truck-fast", label: "ONDC ಸಗಟು ವಿತರಕರ ಕಡಿಮೆ ದರಗಳನ್ನು ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+      ]
+    };
+
+    const langVoiceCodes = {
+      'english': 'en-IN',
+      'telugu': 'te-IN',
+      'hindi': 'hi-IN',
+      'tamil': 'ta-IN',
+      'kannada': 'kn-IN'
+    };
+
+    // Master function that updates EVERYTHING on the screen to the selected language
+    function changeLanguage(lang) {
+      currentLanguage = lang;
+      
+      // Update Language Pills UI
+      document.querySelectorAll('.lang-pill').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('lang-' + lang);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const dict = UI_TRANSLATIONS[lang] || UI_TRANSLATIONS['english'];
+
+      // Translate all DOM elements marked with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      // Update input placeholder
+      const customInput = document.getElementById('custom-prompt-input');
+      if (customInput && dict['placeholder_ask']) {
+        customInput.placeholder = dict['placeholder_ask'];
+      }
+
+      // Update active language badge
+      const names = {
+        'english': 'English',
+        'telugu': 'తెలుగు (Telugu)',
+        'hindi': 'हिंदी (Hindi)',
+        'tamil': 'தமிழ் (Tamil)',
+        'kannada': 'ಕನ್ನಡ (Kannada)'
+      };
+      document.getElementById('active-lang-badge').innerText = 'Language: ' + names[lang];
+
+      // Update the chat message bubble and AI response text to the selected language
+      const userBubble = document.getElementById('initial-user-msg');
+      if (userBubble && dict['initial_user_msg']) {
+        userBubble.innerHTML = dict['initial_user_msg'];
+      }
+      const aiBubble = document.getElementById('last-ai-text');
+      if (aiBubble && dict['initial_ai_response']) {
+        aiBubble.innerHTML = dict['initial_ai_response'];
+      }
+      window.lastClipKey = 'sales_' + lang;
+
+      // Refresh sample prompt buttons
+      renderSamplePrompts();
+
+      // Announce language change aloud on Soundbox
+      speakLanguageWelcome(lang);
+    }
+
+        // Soundbox Audio Player: Uses studio MP3 audio bundle first, with Web Speech API fallback
+    let currentSoundboxAudio = null;
+
+    function playSoundboxAudio(clipName, fallbackText) {
+      const waves = document.getElementById('soundbox-speaker-waves');
+      const micIcon = document.getElementById('soundbox-mic-icon');
+      if (waves) waves.classList.remove('hidden');
+      if (micIcon) micIcon.classList.add('bg-cyan-300', 'text-paytm-navy');
+
+      function stopSpeakerVisuals() {
+        if (waves) waves.classList.add('hidden');
+        if (micIcon) micIcon.classList.remove('bg-cyan-300', 'text-paytm-navy');
+      }
+
+      // Check bundled audio
+      if (window.SOUNDBOX_AUDIO_BUNDLE && window.SOUNDBOX_AUDIO_BUNDLE[clipName]) {
+        try {
+          if (currentSoundboxAudio) {
+            currentSoundboxAudio.pause();
+            currentSoundboxAudio.currentTime = 0;
+          }
+          currentSoundboxAudio = new Audio(window.SOUNDBOX_AUDIO_BUNDLE[clipName]);
+          currentSoundboxAudio.onended = stopSpeakerVisuals;
+          currentSoundboxAudio.onerror = () => {
+            speakFallbackSpeech(fallbackText);
+            stopSpeakerVisuals();
+          };
+          currentSoundboxAudio.play();
+          return;
+        } catch (e) {
+          console.warn('Audio bundle play failed, falling back to speech synthesis', e);
+        }
+      }
+
+      // Fallback: server audio URL
+      const audioUrl = `/audio/${clipName}.mp3`;
+      const directAudio = new Audio(audioUrl);
+      directAudio.onended = stopSpeakerVisuals;
+      directAudio.onerror = () => {
+        speakFallbackSpeech(fallbackText);
+        stopSpeakerVisuals();
+      };
+      directAudio.play().catch(() => {
+        speakFallbackSpeech(fallbackText);
+        stopSpeakerVisuals();
+      });
+    }
+
+    function speakFallbackSpeech(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = langVoiceCodes[currentLanguage] || 'en-IN';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakText(text) {
+      speakFallbackSpeech(text);
+    }
+
+    function speakLanguageWelcome(lang) {
+      const greetings = {
+        'english': "Paytm Soundbox voice is now set to English.",
+        'telugu': "పేటీఎం సౌండ్‌బాక్స్ వాయిస్ ఇప్పుడు తెలుగులోకి మార్చబడింది.",
+        'hindi': "पेटीएम साउंडबॉक्स की आवाज़ अब हिंदी में सेट हो गई है।",
+        'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் குரல் இப்போது தமிழில் மாற்றப்பட்டது.",
+        'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಧ್ವನಿಯನ್ನು ಈಗ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ."
+      };
+      const text = greetings[lang] || greetings['english'];
+      document.getElementById('speaker-status').innerText = text;
+      playSoundboxAudio(`welcome_${lang}`, text);
+      setTimeout(() => {
+        const dict = UI_TRANSLATIONS[currentLanguage];
+        document.getElementById('speaker-status').innerText = dict.sb_ready_status;
+      }, 4500);
+    }
+
+    function renderSamplePrompts() {
+      const container = document.getElementById('sample-prompts-container');
+      const bottomContainer = document.getElementById('bottom-quick-suggestions');
+      const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
+
+      // 1. Render left-hand Soundbox prompt cards
+      if (container) {
+        container.innerHTML = '';
+        list.forEach((p) => {
+          const btn = document.createElement('button');
+          btn.className = "w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 text-slate-700 hover:text-paytm-navy font-medium transition duration-150 flex items-center justify-between group shadow-xs cursor-pointer";
+          btn.innerHTML = `
+            <div class="flex items-center gap-2 pr-2">
+              <span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center shrink-0 text-[11px] group-hover:bg-paytm-cyan transition">
+                <i class="fa-solid ${p.icon || 'fa-microphone'}"></i>
+              </span>
+              <span class="leading-tight font-semibold text-[11.5px]">${p.label}</span>
+            </div>
+            <i class="fa-solid fa-play text-slate-300 group-hover:text-cyan-600 text-[10px] shrink-0"></i>
+          `;
+          btn.onclick = () => simulateVoiceQuery(p.query);
+          container.appendChild(btn);
+        });
+      }
+
+      // 2. Render bottom query suggestion chips right under the chat input
+      if (bottomContainer) {
+        bottomContainer.innerHTML = '';
+        list.forEach((p) => {
+          const chip = document.createElement('button');
+          chip.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-100 hover:bg-cyan-100 hover:text-paytm-navy border border-slate-200 hover:border-cyan-300 text-slate-700 font-medium transition flex items-center gap-1.5 cursor-pointer shadow-xs";
+          chip.innerHTML = `<i class="fa-solid ${p.icon || 'fa-comment-dots'} text-[10px] text-cyan-600"></i> <span>${p.label}</span>`;
+          chip.onclick = () => {
+            const inputEl = document.getElementById('custom-prompt-input');
+            if (inputEl) inputEl.value = p.query;
+            simulateVoiceQuery(p.query);
+          };
+          bottomContainer.appendChild(chip);
+        });
+      }
+    }
+
+    function triggerSampleVoice(type) {
+      const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
+      simulateVoiceQuery(list[0].query);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-paytm-cyan', 'text-paytm-navy');
+        btn.classList.add('border-transparent', 'text-slate-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+      document.getElementById('tab-' + tabId).classList.add('border-paytm-cyan', 'text-paytm-navy');
+      document.getElementById('tab-' + tabId).classList.remove('border-transparent', 'text-slate-500');
+      document.getElementById('content-' + tabId).classList.remove('hidden');
+
+      if (tabId === 'credit' && !window.chartRendered) {
+        initChart();
+      }
+    }
+
+    // Microphone Trigger with Web Speech Recognition
+    function triggerMic() {
+      const mic = document.getElementById('soundbox-mic-icon');
+      const status = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          const recognition = new SpeechRecognition();
+          recognition.lang = langVoiceCodes[currentLanguage] || 'en-IN';
+          recognition.interimResults = false;
+          
+          mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+          status.innerText = dict.sb_listening_status;
+
+          recognition.onresult = function(event) {
+            const spokenText = event.results[0][0].transcript;
+            mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+            status.innerText = dict.sb_speaking_status;
+            simulateVoiceQuery(spokenText);
+          };
+
+          recognition.onerror = function() {
+            fallbackSimulatedListen();
+          };
+
+          recognition.start();
+          return;
+        } catch(e) {
+          fallbackSimulatedListen();
+        }
+      } else {
+        fallbackSimulatedListen();
+      }
+    }
+
+    function fallbackSimulatedListen() {
+      const mic = document.getElementById('soundbox-mic-icon');
+      const status = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+      status.innerText = dict.sb_listening_status;
+      
+      setTimeout(() => {
+        mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+        status.innerText = dict.sb_speaking_status;
+        const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
+        simulateVoiceQuery(list[0].query);
+      }, 1400);
+    }
+
+    function getAudioClipForQuery(query, lang) {
+      const q = query.toLowerCase();
+      // Loan intent check first to avoid overlap
+      if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('लोन') || q.includes('ऋण') || q.includes('రుణం') || q.includes('లోన్') || q.includes('పరిమితి') || q.includes('கடன் வரம்பு') || q.includes('லோன்') || q.includes('வரம்பு') || q.includes('ಸಾಲದ ಮಿತಿ') || q.includes('ಲೋನ್') || q.includes('ಮಿತಿ')) {
+        return `loan_${lang}`;
+      } else if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('बिक्री') || q.includes('కలెక్షన్') || q.includes('సేల్స్') || q.includes('ఈరోజు') || q.includes('మొత్తం') || q.includes('வசூல்') || q.includes('விற்பனை') || q.includes('இன்று') || q.includes('ಕಲೆಕ್ಷನ್') || q.includes('ಮಾರಾಟ') || q.includes('ಇಂದು') || q.includes('ಒಟ್ಟು')) {
+        return `sales_${lang}`;
+      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('ondc') || q.includes('आर्डर') || q.includes('स्टॉक') || q.includes('दूध') || q.includes('थोक') || q.includes('స్టాక్') || q.includes('సరుకు') || q.includes('పాలు') || q.includes('ఆర్డర్') || q.includes('ధర') || q.includes('இருப்பு') || q.includes('பொருட்கள்') || q.includes('பால்') || q.includes('ஆர்டர்') || q.includes('விலை') || q.includes('ದಾಸ್ತಾನು') || q.includes('ಹಾಲು') || q.includes('ಆರ್ಡರ್') || q.includes('ದರ') || q.includes('trend') || q.includes('ట్రెండింగ్')) {
+        return `stock_${lang}`;
+      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('anil') || q.includes('उधार') || q.includes('बाकी') || q.includes('रिमाइंडर') || q.includes('బాకీ') || q.includes('బకాయి') || q.includes('రిమైండర్') || q.includes('అనిల్') || q.includes('கடன்') || q.includes('பாக்கி') || q.includes('நினைவூட்டல்') || q.includes('அனில்') || q.includes('ಸಾಲ') || q.includes('ಬಾಕಿ') || q.includes('ರಿಮೈಂಡರ್') || q.includes('ಅನಿಲ್')) {
+        return `udhar_${lang}`;
+      }
+      return `welcome_${lang}`;
+    }
+
+    async function simulateVoiceQuery(query) {
+      const stream = document.getElementById('chat-stream');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+
+      const userHtml = `
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0">${dict.user_tag}</div>
+          <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 max-w-lg">
+            <p class="font-semibold text-xs text-slate-500 mb-0.5">${dict.chat_spoken_label} (${currentLanguage.toUpperCase()})</p>
+            <p>"${query}"</p>
+          </div>
+        </div>
+      `;
+      stream.innerHTML += userHtml;
+
+      const clipKey = getAudioClipForQuery(query, currentLanguage);
+
+      try {
+        const res = await fetch('/api/copilot/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: query, language: currentLanguage })
+        });
+        const data = await res.json();
+        renderAiResponse(data.voice_response, clipKey);
+      } catch (err) {
+        fallbackClientSimulation(query, clipKey);
+      }
+    }
+
+    function fallbackClientSimulation(query, clipKey) {
+      let resp = "";
+      const lang = currentLanguage;
+      if (clipKey.startsWith('sales')) {
+        if (lang === 'telugu') resp = "సేత్ గారూ, ఈరోజు సాయంత్రం వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది. అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, రీస్టాక్ చేయండి!";
+        else if (lang === 'tamil') resp = "சேத் அவர்களே, இன்று மாலை வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது. அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!";
+        else if (lang === 'kannada') resp = "ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ. ಅಮುಲ್ ಹಾಲಿನ ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ರೀಸ್ಟಾಕ್ ಮಾಡಿ!";
+        else if (lang === 'hindi') resp = "सेठ जी, आज शाम तक कुल ₹18,420 का कलेक्शन हुआ है। अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!";
+        else resp = "Boss, today's total collection reached ₹18,420 across 64 transactions. Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!";
+      } else if (clipKey.startsWith('stock')) {
+        if (lang === 'telugu') resp = "మీ దుకాణంలో 3 వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి. బాలాజీ ఏజెన్సీ ONDC లో అమూల్ పాలను ₹24.20 కి ఇస్తున్నారు. రీ-ఆర్డర్ సిద్ధం చేశాను.";
+        else if (lang === 'tamil') resp = "கடையில் 3 பொருட்கள் குறைவான இருப்பில் உள்ளன. பாலாஜி ஏஜென்சி ONDC-யில் அமுல் பால் வழங்குகிறது. ஆர்டர் தயாராக உள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಂಗಡಿಯಲ್ಲಿ 3 ವಸ್ತುಗಳ ದಾಸ್ತಾನು ಕಡಿಮೆಯಾಗಿದೆ. ಬಾಲಾಜಿ ಏಜೆನ್ಸಿ ONDC ಯಲ್ಲಿ ಅಮುಲ್ ಹಾಲು ನೀಡುತ್ತಿದೆ. ಆರ್ಡರ್ ಸಿದ್ಧವಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान में 3 आइटम कम स्टॉक पर हैं। बालाजी एजेंसी ONDC पर अमूल दूध दे रही है। ऑर्डर तैयार है।";
+        else resp = "You have 3 items running low on stock. Sri Balaji Agency on ONDC is offering Amul Milk at ₹24.20. Order prepared.";
+      } else if (clipKey.startsWith('udhar')) {
+        if (lang === 'telugu') resp = "మొత్తం ₹12,450 ఉధార్ బకాయి ఉంది. అనిల్ వర్మ గారికి వాట్సాప్ రిమైండర్ మరియు పేటీఎం క్యూఆర్ లింక్ పంపాను.";
+        else if (lang === 'tamil') resp = "மொத்தம் ₹12,450 கடன் பாக்கி உள்ளது. அனில் வர்மாவுக்கு வாட்ஸ்அப் நினைவூட்டல் மற்றும் பேடிஎம் லிங்க் அனுப்பப்பட்டது.";
+        else if (lang === 'kannada') resp = "ಒಟ್ಟು ₹12,450 ಸಾಲದ ಹಣ ಬಾಕಿ ಇದೆ. ಅನಿಲ್ ವರ್ಮಾ ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಮತ್ತು ಪೇಟಿಎಂ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान पर कुल ₹12,450 का उधार बाकी है। अनिल वर्मा जी को व्हाट्सएप पर विनम्र रिमाइंडर और पेमेंट लिंक भेज दिया गया है।";
+        else resp = "A total of ₹12,450 in customer credit is pending. WhatsApp reminder with dynamic UPI link sent to Anil Verma.";
+      } else if (clipKey.startsWith('loan')) {
+        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
+        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
+        else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for ₹2,50,000 in instant working capital credit.";
+      } else {
+        resp = UI_TRANSLATIONS[lang].sb_ready_status;
+      }
+      renderAiResponse(resp, clipKey);
+    }
+
+    function renderAiResponse(responseText, clipKey) {
+      const stream = document.getElementById('chat-stream');
+      const micStatus = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+
+      const safeClip = clipKey || getAudioClipForQuery(responseText, currentLanguage);
+
+      const aiHtml = `
+        <div class="flex items-start space-x-3 justify-end">
+          <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl rounded-tr-none text-slate-800 max-w-lg space-y-2 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-paytm-navy font-bold">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-volume-high text-cyan-600"></i>
+                Paytm Soundbox 4.0 (${currentLanguage.toUpperCase()})
+              </span>
+              <button onclick="playSoundboxAudio('${safeClip}', '${responseText.replace(/'/g, "\\'")}')" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
+                <i class="fa-solid fa-play text-[10px]"></i>
+                <span>${dict.btn_play_sb_audio}</span>
+              </button>
+            </div>
+            <p class="text-slate-800 leading-relaxed">${responseText}</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-paytm-navy text-paytm-cyan flex items-center justify-center font-bold text-xs shrink-0">AI</div>
+        </div>
+      `;
+      stream.innerHTML += aiHtml;
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('last-ai-text').innerText = responseText;
+      window.lastClipKey = safeClip;
+      micStatus.innerText = dict.sb_ready_status;
+
+      // Play Soundbox speaker audio
+      playSoundboxAudio(safeClip, responseText);
+    }
+
+    function speakLastResponse() {
+      const text = document.getElementById('last-ai-text').innerText;
+      const clip = window.lastClipKey || `sales_${currentLanguage}`;
+      playSoundboxAudio(clip, text);
+    }
+
+    function handleCustomInput() {
+      const val = document.getElementById('custom-prompt-input').value;
+      if (!val) return;
+      simulateVoiceQuery(val);
+      document.getElementById('custom-prompt-input').value = "";
+    }
+
+    // ONDC Reordering
+    function placeOrder(item, qty, amt) {
+      const toast = document.getElementById('order-toast');
+      const msg = document.getElementById('order-toast-msg');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      
+      let successMsg = "";
+      if (currentLanguage === 'telugu') {
+        successMsg = `<b>విజయం:</b> ONDC ద్వారా ${qty} <b>${item}</b> ఆర్డర్ చేయబడింది. మొత్తం <b>${amt}</b> పేటీఎం బ్యాలెన్స్ నుండి తీసివేయబడింది.`;
+      } else if (currentLanguage === 'hindi') {
+        successMsg = `<b>सफलता:</b> ONDC के माध्यम से ${qty} <b>${item}</b> ऑर्डर किया गया। कुल <b>${amt}</b> मर्चेंट बैलेंस से काटा गया।`;
+      } else if (currentLanguage === 'tamil') {
+        successMsg = `<b>வெற்றி:</b> ONDC மூலம் ${qty} <b>${item}</b> ஆர்டர் செய்யப்பட்டது. மொத்தம் <b>${amt}</b> பேடிஎம் கணக்கிலிருந்து கழிக்கப்பட்டது.`;
+      } else if (currentLanguage === 'kannada') {
+        successMsg = `<b>ಯಶಸ್ಸು:</b> ONDC ಮೂಲಕ ${qty} <b>${item}</b> ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ. ಒಟ್ಟು <b>${amt}</b> ಪೇಟಿಎಂ ಬ್ಯಾಲೆನ್ಸ್‌ನಿಂದ ಕಡಿತಗೊಳಿಸಲಾಗಿದೆ.`;
+      } else {
+        successMsg = `<b>Success:</b> ${qty} of <b>${item}</b> ordered from distributor over ONDC. Total <b>${amt}</b> deducted from Paytm Merchant Balance.`;
+      }
+
+      msg.innerHTML = successMsg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+
+    // Dynamic QR & Udhar Reminder
+    function sendUdharReminder(name, amountFormatted, amountNum) {
+      const preview = document.getElementById('udhar-preview-box');
+      const msg = document.getElementById('udhar-msg-text');
+      const qrContainer = document.getElementById('qrcode-canvas');
+      
+      const upiUrl = `upi://pay?pa=guptakirana@paytm&pn=Sri%20Lakshmi%20Store&am=${amountNum}&cu=INR&tn=Khata%20Clearance`;
+      const webUrl = `https://paytm.me/pay/gupta-store?amt=${amountNum}`;
+
+      let text = "";
+      if (currentLanguage === 'telugu') {
+        text = `నమస్కారం ${name} గారు! 🙏 శ్రీ లక్ష్మి ప్రొవిజన్ స్టోర్ నుండి శుభాకాంక్షలు. మీ పాత బకాయి *${amountFormatted}* పెండింగ్‌లో ఉంది. పేటీఎం యూపీఐతో 1-క్లిక్‌లో పే చేయడానికి: ${webUrl} . ధన్యవాదాలు!`;
+      } else if (currentLanguage === 'tamil') {
+        text = `வணக்கம் ${name} அவர்களே! 🙏 ஸ்ரீ லக்ஷ்மி மளிகைக் கடையின் வாழ்த்துகள். உங்கள் கடை பாக்கி *${amountFormatted}* நிலுவையில் உள்ளது. பேடிஎம் யுபிஐ மூலம் உடனே செலுத்த: ${webUrl} . நன்றி!`;
+      } else if (currentLanguage === 'kannada') {
+        text = `ನಮಸ್ಕಾರ ${name} ಅವರೇ! 🙏 ಶ್ರೀ ಲಕ್ಷ್ಮಿ ಪ್ರಾವಿಷನ್ ಸ್ಟೋರ್‌ನಿಂದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಹಳೆಯ ಬಾಕಿ ಮೊತ್ತ *${amountFormatted}* ಬಾಕಿ ಉಳಿದಿದೆ. ಪೇಟಿಎಂ ಯುಪಿಐ ಮೂಲಕ ಪಾವತಿಸಲು: ${webUrl} . ಧನ್ಯವಾದಗಳು!`;
+      } else if (currentLanguage === 'hindi') {
+        text = `नमस्ते ${name} जी! 🙏 श्री लक्ष्मी किराना स्टोर से शुभकामनाएं. आपका दुकान का पुराना बैलेंस *${amountFormatted}* पेंडिंग है. 1-क्लिक में पे करने के लिए: ${webUrl} . धन्यवाद!`;
+      } else {
+        text = `Hello ${name}! 🙏 Greetings from Sri Lakshmi Provision Store. Your pending store balance is *${amountFormatted}*. To settle conveniently in 1-click via Paytm UPI: ${webUrl} . Thank you!`;
+      }
+
+      msg.innerText = text;
+      preview.classList.remove('hidden');
+
+      // Generate Live Dynamic QR
+      qrContainer.innerHTML = "";
+      if (window.QRCode) {
+        new QRCode(qrContainer, {
+          text: upiUrl,
+          width: 96,
+          height: 96,
+          colorDark: "#002970",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+
+    function sendAllReminders() {
+      const msgs = {
+        'telugu': "అందరు 5 మంది కస్టమర్లకు వాట్సాప్ ద్వారా మర్యాదపూర్వక రిమైండర్లు పంపబడ్డాయి!",
+        'hindi': "सभी 5 ग्राहकों को व्हाट्सएप पर 1-क्लिक लिंक के साथ विनम्र रिमाइंडर भेज दिए गए हैं!",
+        'tamil': "அனைத்து 5 வாடிக்கையாளர்களுக்கும் வாட்ஸ்அப் மூலம் நினைவூட்டல்கள் அனுப்பப்பட்டன!",
+        'kannada': "ಎಲ್ಲಾ 5 ಗ್ರಾಹಕರಿಗೆ ವಾಟ್ಸಾಪ್ ಮೂಲಕ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಲಾಗಿದೆ!",
+        'english': "Sent automated polite WhatsApp reminders with dynamic 1-click payment links to all 5 pending customers!"
+      };
+      alert(msgs[currentLanguage] || msgs['english']);
+    }
+
+    function disburseCredit() {
+      document.getElementById('credit-success-toast').classList.remove('hidden');
+    }
+
+    function initChart() {
+      window.chartRendered = true;
+      const ctx = document.getElementById('velocityChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Oct 1', 'Oct 5', 'Oct 10', 'Oct 15', 'Oct 20', 'Oct 25', 'Today'],
+          datasets: [{
+            label: 'Daily Verified UPI Settlements (₹)',
+            data: [14200, 16800, 15400, 19200, 17500, 21300, 18420],
+            borderColor: '#00BAF2',
+            backgroundColor: 'rgba(0, 186, 242, 0.1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3,
+            pointBackgroundColor: '#002970',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      changeLanguage('english');
+    });
   </script>
 </body>
 </html>

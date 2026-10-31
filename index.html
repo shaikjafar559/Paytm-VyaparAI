@@ -162,30 +162,7 @@
         <!-- Dynamic Prompts by Language -->
         <!-- Dynamic Prompts by Language -->
         <div class="w-full space-y-2 mt-4 text-left" id="sample-prompts-container">
-          <button onclick="simulateVoiceQuery('ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-chart-line"></i></span><span class="font-semibold text-[11.5px]">ఈరోజు సేల్స్ & మొత్తం కలెక్షన్ ఎంత?</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
-          <button onclick="simulateVoiceQuery('ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? అమూల్ పాలు ఆర్డర్ చేయి')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-boxes-stacked"></i></span><span class="font-semibold text-[11.5px]">స్టాక్ చెక్ చేయి & పాలు రీ-ఆర్డర్ పెట్టు</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
-          <button onclick="simulateVoiceQuery('అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-receipt"></i></span><span class="font-semibold text-[11.5px]">అనిల్ వర్మ గారి బాకీ ఎంత? వాట్సాప్ రిమైండర్ పంపు</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
-          <button onclick="simulateVoiceQuery('నా పేటీఎం లోన్ లిమిట్ ఎంత?')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-building-columns"></i></span><span class="font-semibold text-[11.5px]">నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
-          <button onclick="simulateVoiceQuery('పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-fire-flame-curved"></i></span><span class="font-semibold text-[11.5px]">పరిసరాల్లో ఏ సరుకులు ఎక్కువ అమ్ముడవుతున్నాయి?</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
-          <button onclick="simulateVoiceQuery('ONDC లో హోల్‌సేల్ రేట్లు చూపించు')" class="w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 text-slate-700 font-medium flex items-center justify-between shadow-xs">
-            <div class="flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center text-[11px]"><i class="fa-solid fa-truck-fast"></i></span><span class="font-semibold text-[11.5px]">ONDC డిస్ట్రిబ్యూటర్ హోల్‌సేల్ ధరలు చూపించు</span></div>
-            <i class="fa-solid fa-play text-slate-300 text-[10px]"></i>
-          </button>
+          <!-- Dynamically populated in the selected language with audio simulation -->
         </div>
       </div>
 
@@ -238,11 +215,21 @@
 
         <!-- Custom Query Input -->
         <div class="mt-4 pt-3 border-t border-slate-100 flex items-center space-x-2">
-          <input type="text" id="custom-prompt-input" placeholder="Ask anything in your language..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-paytm-cyan">
+          <input type="text" id="custom-prompt-input" placeholder="Ask anything in your language..." onkeydown="if(event.key==='Enter') handleCustomInput()" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-paytm-cyan">
           <button onclick="handleCustomInput()" class="bg-paytm-navy hover:bg-blue-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center space-x-1 shadow">
             <span data-i18n="btn_send">Send</span>
             <i class="fa-solid fa-paper-plane text-xs"></i>
           </button>
+        </div>
+
+        <!-- Dynamic Multi-Language Query Suggestions Below -->
+        <div class="mt-2.5 pt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 font-semibold text-[11px] flex items-center gap-1 shrink-0" data-i18n="quick_suggestions_label">
+            <i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:
+          </span>
+          <div id="bottom-quick-suggestions" class="flex flex-wrap items-center gap-1.5">
+            <!-- Dynamically populated in selected language -->
+          </div>
         </div>
       </div>
     </div>
@@ -534,6 +521,7 @@
     // Full 5-Language UI Dictionary
     const UI_TRANSLATIONS = {
       'english': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:',
         tag_copilot: "Live Multi-Agent",
         initial_user_msg: "\"Boss, how much is today's total collection and what is the fastest selling item?\"",
         initial_ai_response: "\"Boss, today's total collection reached ₹18,420 across 64 transactions. The top-selling product was 'Amul Taaza Milk 500ml' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!\"",
@@ -634,6 +622,7 @@
         credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
       },
       'telugu': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> అడగడానికి సూచనలు:',
         tag_copilot: "లైవ్ మల్టీ-ఏజెంట్",
         initial_user_msg: "\"సేత్ గారూ, ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?\"",
         initial_ai_response: "\"సేత్ గారూ, ఈరోజు సాయంత్రం 7 గంటల వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది (64 లావాదేవీలు). అత్యధికంగా అమ్ముడైన వస్తువు 'అమూల్ తాజా పాలు 500ml' (38 ప్యాకెట్లు). హెచ్చరిక: అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, వెంటనే రీస్టాక్ చేయండి!\"",
@@ -734,6 +723,7 @@
         credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
       },
       'hindi': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> पूछने के लिए सुझाव:',
         tag_copilot: "लाइव मल्टी-एजेंट",
         initial_user_msg: "\"सेठ जी, आज का कुल मुनाफा और सबसे तेज बिकने वाला आइटम कौन सा है?\"",
         initial_ai_response: "\"सेठ जी, आज शाम 7 बजे तक कुल ₹18,420 का कलेक्शन हुआ है (64 लेनदेन)। सबसे तेज़ बिकने वाला आइटम 'अमूल ताज़ा दूध 500ml' (38 पैकेट) रहा। चेतावनी: अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!\"",
@@ -834,6 +824,7 @@
         credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
       },
       'tamil': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> கேட்க பரிந்துரைகள்:',
         tag_copilot: "நேரலை மல்டி-ஏஜென்ட்",
         initial_user_msg: "\"முதலாளி, இன்று மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?\"",
         initial_ai_response: "\"சேத் அவர்களே, இன்று மாலை 7 மணி வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது (64 பரிவர்த்தனைகள்). அதிகம் விற்பனையான பொருள் 'அமுல் தாசா பால் 500ml' (38 பாக்கெட்டுகள்). எச்சரிக்கை: அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!\"",
@@ -934,6 +925,7 @@
         credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
       },
       'kannada': {
+        quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> ಕೇಳಲು ಸಲಹೆಗಳು:',
         tag_copilot: "ಲೈವ್ ಮಲ್ಟಿ-ಏಜೆಂಟ್",
         initial_user_msg: "\"ಸೇಠ್ ಅವರೇ, ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?\"",
         initial_ai_response: "\"ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆ 7 ಗಂಟೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ (64 ವಹಿವಾಟುಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು 'ಅಮುಲ್ ತಾಜಾ ಹಾಲು 500ml' (38 ಪ್ಯಾಕೆಟ್‌ಗಳು). ಎಚ್ಚರಿಕೆ: ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ಮರುದಾಸ್ತಾನು ಮಾಡಿ!\"",
@@ -1130,7 +1122,7 @@
       if (aiBubble && dict['initial_ai_response']) {
         aiBubble.innerHTML = dict['initial_ai_response'];
       }
-      window.lastClipKey = sales_;
+      window.lastClipKey = 'sales_' + lang;
 
       // Refresh sample prompt buttons
       renderSamplePrompts();
@@ -1220,25 +1212,44 @@
 
     function renderSamplePrompts() {
       const container = document.getElementById('sample-prompts-container');
-      if (!container) return;
-      container.innerHTML = '';
+      const bottomContainer = document.getElementById('bottom-quick-suggestions');
       const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
 
-      list.forEach((p) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 text-slate-700 hover:text-paytm-navy font-medium transition duration-150 flex items-center justify-between group shadow-xs cursor-pointer";
-        btn.innerHTML = `
-          <div class="flex items-center gap-2 pr-2">
-            <span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center shrink-0 text-[11px] group-hover:bg-paytm-cyan transition">
-              <i class="fa-solid ${p.icon || 'fa-microphone'}"></i>
-            </span>
-            <span class="leading-tight font-semibold text-[11.5px]">${p.label}</span>
-          </div>
-          <i class="fa-solid fa-play text-slate-300 group-hover:text-cyan-600 text-[10px] shrink-0"></i>
-        `;
-        btn.onclick = () => simulateVoiceQuery(p.query);
-        container.appendChild(btn);
-      });
+      // 1. Render left-hand Soundbox prompt cards
+      if (container) {
+        container.innerHTML = '';
+        list.forEach((p) => {
+          const btn = document.createElement('button');
+          btn.className = "w-full text-left text-xs p-2.5 rounded-xl bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 text-slate-700 hover:text-paytm-navy font-medium transition duration-150 flex items-center justify-between group shadow-xs cursor-pointer";
+          btn.innerHTML = `
+            <div class="flex items-center gap-2 pr-2">
+              <span class="w-6 h-6 rounded-lg bg-blue-100 text-paytm-navy flex items-center justify-center shrink-0 text-[11px] group-hover:bg-paytm-cyan transition">
+                <i class="fa-solid ${p.icon || 'fa-microphone'}"></i>
+              </span>
+              <span class="leading-tight font-semibold text-[11.5px]">${p.label}</span>
+            </div>
+            <i class="fa-solid fa-play text-slate-300 group-hover:text-cyan-600 text-[10px] shrink-0"></i>
+          `;
+          btn.onclick = () => simulateVoiceQuery(p.query);
+          container.appendChild(btn);
+        });
+      }
+
+      // 2. Render bottom query suggestion chips right under the chat input
+      if (bottomContainer) {
+        bottomContainer.innerHTML = '';
+        list.forEach((p) => {
+          const chip = document.createElement('button');
+          chip.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-100 hover:bg-cyan-100 hover:text-paytm-navy border border-slate-200 hover:border-cyan-300 text-slate-700 font-medium transition flex items-center gap-1.5 cursor-pointer shadow-xs";
+          chip.innerHTML = `<i class="fa-solid ${p.icon || 'fa-comment-dots'} text-[10px] text-cyan-600"></i> <span>${p.label}</span>`;
+          chip.onclick = () => {
+            const inputEl = document.getElementById('custom-prompt-input');
+            if (inputEl) inputEl.value = p.query;
+            simulateVoiceQuery(p.query);
+          };
+          bottomContainer.appendChild(chip);
+        });
+      }
     }
 
     function triggerSampleVoice(type) {
@@ -1314,16 +1325,17 @@
       }, 1400);
     }
 
-        function getAudioClipForQuery(query, lang) {
+    function getAudioClipForQuery(query, lang) {
       const q = query.toLowerCase();
-      if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('కలెక్షన్') || q.includes('வசூல்') || q.includes('ಕಲೆಕ್ಷನ್')) {
-        return `sales_${lang}`;
-      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('आर्डर') || q.includes('స్టాక్') || q.includes('இருப்பு') || q.includes('ದಾಸ್ತಾನು')) {
-        return `stock_${lang}`;
-      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('उधार') || q.includes('బాకీ') || q.includes('கடன்') || q.includes('ಸಾಲ')) {
-        return `udhar_${lang}`;
-      } else if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('ऋण') || q.includes('రుణం') || q.includes('கடன்') || q.includes('ಸಾಲ')) {
+      // Loan intent check first to avoid overlap
+      if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('लोन') || q.includes('ऋण') || q.includes('రుణం') || q.includes('లోన్') || q.includes('పరిమితి') || q.includes('கடன் வரம்பு') || q.includes('லோன்') || q.includes('வரம்பு') || q.includes('ಸಾಲದ ಮಿತಿ') || q.includes('ಲೋನ್') || q.includes('ಮಿತಿ')) {
         return `loan_${lang}`;
+      } else if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('बिक्री') || q.includes('కలెక్షన్') || q.includes('సేల్స్') || q.includes('ఈరోజు') || q.includes('మొత్తం') || q.includes('வசூல்') || q.includes('விற்பனை') || q.includes('இன்று') || q.includes('ಕಲೆಕ್ಷನ್') || q.includes('ಮಾರಾಟ') || q.includes('ಇಂದು') || q.includes('ಒಟ್ಟು')) {
+        return `sales_${lang}`;
+      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('ondc') || q.includes('आर्डर') || q.includes('स्टॉक') || q.includes('दूध') || q.includes('थोक') || q.includes('స్టాక్') || q.includes('సరుకు') || q.includes('పాలు') || q.includes('ఆర్డర్') || q.includes('ధర') || q.includes('இருப்பு') || q.includes('பொருட்கள்') || q.includes('பால்') || q.includes('ஆர்டர்') || q.includes('விலை') || q.includes('ದಾಸ್ತಾನು') || q.includes('ಹಾಲು') || q.includes('ಆರ್ಡರ್') || q.includes('ದರ') || q.includes('trend') || q.includes('ట్రెండింగ్')) {
+        return `stock_${lang}`;
+      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('anil') || q.includes('उधार') || q.includes('बाकी') || q.includes('रिमाइंडर') || q.includes('బాకీ') || q.includes('బకాయి') || q.includes('రిమైండర్') || q.includes('అనిల్') || q.includes('கடன்') || q.includes('பாக்கி') || q.includes('நினைவூட்டல்') || q.includes('அனில்') || q.includes('ಸಾಲ') || q.includes('ಬಾಕಿ') || q.includes('ರಿಮೈಂಡರ್') || q.includes('ಅನಿಲ್')) {
+        return `udhar_${lang}`;
       }
       return `welcome_${lang}`;
     }

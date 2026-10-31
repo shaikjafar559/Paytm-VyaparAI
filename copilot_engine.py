@@ -141,7 +141,7 @@ class MerchantCopilotEngine:
         lang = language.lower().strip()
 
         # Sales intent
-        if any(w in q_lower for w in ["munafa", "collection", "today", "aaj", "sales", "earnings", "total", "లబ్ది", "కలెక్షన్", "வசூல்", "ಆದಾಯ"]):
+        if any(w in q_lower for w in ["munafa", "collection", "today", "aaj", "sales", "earnings", "total", "లబ్ది", "కలెక్షన్", "సేల్స్", "మొత్తం", "ఈరోజు", "मुनाफा", "बिक्री", "कलेक्शन", "आज", "வசூல்", "விற்பனை", "இன்று", "ಆದಾಯ", "ಕಲೆಕ್ಷನ್", "ಮಾರಾಟ", "ಇಂದು"]):
             total_today = self.merchant_profile["today_collection"]
             txn_count = self.merchant_profile["today_txns"]
             top_item = "Amul Taaza Milk 500ml"
@@ -164,7 +164,7 @@ class MerchantCopilotEngine:
             }
 
         # Inventory intent
-        elif any(w in q_lower for w in ["stock", "khatam", "order", "inventory", "reorder", "milk", "butter", "స్టాక్", "இருப்பு", "ದಾಸ್ತಾನು"]):
+        elif any(w in q_lower for w in ["stock", "khatam", "order", "inventory", "reorder", "milk", "butter", "ondc", "స్టాక్", "సరుకు", "ఆర్డర్", "పాలు", "స్టాక్‌లో", "स्टॉक", "सामान", "आर्डर", "दूध", "थोक", "இருப்பு", "பொருட்கள்", "ஆர்டர்", "பால்", "விலை", "ದಾಸ್ತಾನು", "ಸ್ಟಾಕ್", "ಹಾಲು", "ಆರ್ಡರ್", "ದರ"]):
             low_stock = [item for item in self.inventory if item["stock"] <= item["reorder_threshold"]]
             low_stock_names = ", ".join([f"{item['name']} ({item['stock']})" for item in low_stock])
             resp = self._get_response_text("INVENTORY_CHECK", lang, items=low_stock_names)
@@ -182,7 +182,7 @@ class MerchantCopilotEngine:
             }
 
         # Udhar intent
-        elif any(w in q_lower for w in ["udhar", "khata", "due", "pending", "reminder", "sharma", "anil", "అప్పు", "బాకీ", "கடன்", "ಬಾಕಿ"]):
+        elif any(w in q_lower for w in ["udhar", "khata", "due", "pending", "reminder", "sharma", "anil", "verma", "అప్పు", "బాకీ", "బకాయి", "రిమైండర్", "ఉధార్", "उधार", "बाकी", "खाता", "रिमाइंडर", "பாக்கி", "நினைவூட்டல்", "அனில்", "ಬಾಕಿ", "ಖಾತೆ", "ರಿಮೈಂಡರ್"]):
             total_due = sum(k["due_amount"] for k in self.khata)
             oldest = max(self.khata, key=lambda x: x["days_pending"])
             resp = self._get_response_text("KHATA_RECOVERY", lang, due=f"{total_due:,}", name=oldest["name"], cust_due=f"{oldest['due_amount']:,}", days=str(oldest["days_pending"]))
@@ -200,7 +200,7 @@ class MerchantCopilotEngine:
             }
 
         # Loan intent
-        elif any(w in q_lower for w in ["loan", "credit", "paisa", "working capital", "paise", "borrow", "రుణం", "கடன்", "ಸಾಲ"]):
+        elif any(w in q_lower for w in ["loan", "credit", "paisa", "working capital", "paise", "borrow", "రుణం", "లోన్", "పరిమితి", "తక్షణ", "लोन", "ऋण", "क्रेडिट", "लिमिट", "கடன்", "லோன்", "வரம்பு", "முன்அனுமதி", "ಸಾಲ", "ಸಾಲದ ಮಿತಿ", "ಲೋನ್", "ಮಿತಿ", "ತ್ವರಿತ"]):
             return self.evaluate_merchant_credit(lang)
 
         # General
