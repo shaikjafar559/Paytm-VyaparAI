@@ -81,6 +81,13 @@ async def get_icon_png():
         return FileResponse(png_path, media_type="image/png")
     return Response(status_code=404)
 
+@app.get("/merchant_qr.png")
+async def get_merchant_qr():
+    qr_path = os.path.join(os.path.dirname(__file__), "merchant_qr.png")
+    if os.path.exists(qr_path):
+        return FileResponse(qr_path, media_type="image/png")
+    return Response(status_code=404)
+
 @app.get("/manifest.json")
 async def get_manifest():
     manifest_path = os.path.join(os.path.dirname(__file__), "manifest.json")

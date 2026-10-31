@@ -14,9 +14,10 @@ class MerchantCopilotEngine:
             "name": "Kirana & Grocery",
             "merchant_profile": {
                 "store_name": "Sri Lakshmi Provision & Kirana Store",
-                "owner": "Ramesh Gupta",
+                "owner": "Shaik Japhar",
+                "qr_image": "/merchant_qr.png",
                 "location": "Koramangala 4th Block, Bengaluru (Pin: 560034)",
-                "upi_id": "guptakirana@paytm",
+                "upi_id": "8310508118@ptyes",
                 "soundbox_id": "SB-4.0-BLR-89211",
                 "soundbox_status": "ONLINE (Dual-Mic Active)",
                 "account_balance": 48250.00,
