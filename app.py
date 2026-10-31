@@ -66,6 +66,21 @@ async def serve_dashboard():
             return f.read()
     return "<h1>Paytm VyaparAI Server Running.</h1>"
 
+
+@app.get("/favicon.ico")
+async def get_favicon():
+    ico_path = os.path.join(os.path.dirname(__file__), "paytm_vyapar_icon.ico")
+    if os.path.exists(ico_path):
+        return FileResponse(ico_path, media_type="image/x-icon")
+    return Response(status_code=404)
+
+@app.get("/paytm_vyapar_icon.png")
+async def get_icon_png():
+    png_path = os.path.join(os.path.dirname(__file__), "paytm_vyapar_icon.png")
+    if os.path.exists(png_path):
+        return FileResponse(png_path, media_type="image/png")
+    return Response(status_code=404)
+
 @app.get("/manifest.json")
 async def get_manifest():
     manifest_path = os.path.join(os.path.dirname(__file__), "manifest.json")
