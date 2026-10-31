@@ -88,6 +88,13 @@ async def get_manifest():
         return FileResponse(manifest_path, media_type="application/manifest+json")
     return JSONResponse({})
 
+@app.get("/sw.js")
+async def get_service_worker():
+    sw_path = os.path.join(os.path.dirname(__file__), "sw.js")
+    if os.path.exists(sw_path):
+        return FileResponse(sw_path, media_type="application/javascript", headers={"Service-Worker-Allowed": "/"})
+    return Response(status_code=404)
+
 @app.get("/api/profile")
 async def get_profile():
     return engine.merchant_profile

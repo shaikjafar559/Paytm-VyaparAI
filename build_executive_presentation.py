@@ -319,7 +319,12 @@ def create_presentation_docx(output_path):
         ("Persistent Two-Tier Synchronization Architecture",
          "Synchronizes merchant and customer updates across client-side browser localStorage (ensuring zero data loss on page refreshes) "
          "and FastAPI backend REST endpoints (POST /api/khata/update and POST /api/khata/delete). Pre-configures regular customer records "
-         "like Jafar with 2-KM map coordinates.")
+         "like Jafar with 2-KM map coordinates."),
+        
+        ("Native Mobile Application & PWA Smartphone Ecosystem",
+         "Engineered as an installable Progressive Web App (PWA) with Service Worker offline caching and a native Android wrapper (mobile_android/). "
+         "Features a mobile-optimized sticky bottom navigation bar (Copilot, Demand, Khata, 3D Racks, Orders), 1-tap 'Add to Home Screen' installation, "
+         "instant local Wi-Fi QR code connectivity (http://10.150.24.76:8080/), and an interactive iPhone 15 Pro device simulator on desktop.")
     ]
 
     for it_title, it_desc in innovations:

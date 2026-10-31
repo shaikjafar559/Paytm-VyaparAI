@@ -1,22 +1,51 @@
 {
-  "name": "Paytm VyaparAI - Autonomous Merchant Copilot",
-  "short_name": "Paytm VyaparAI",
+  "name": "Paytm VyaparAI — Merchant Copilot",
+  "short_name": "VyaparAI",
   "description": "Autonomous Business Copilot for 40M+ Bharat Merchants with Voice Soundbox, ONDC Reordering, Smart Khata Udhar, Cashflow Credit, and DMart 3D Racks.",
   "start_url": "/",
+  "id": "com.paytm.vyaparai",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
   "background_color": "#002970",
   "theme_color": "#002970",
-  "orientation": "any",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "categories": ["business", "finance", "shopping", "productivity"],
   "icons": [
     {
       "src": "/paytm_vyapar_icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/paytm_vyapar_icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Voice Copilot",
+      "url": "/#voice",
+      "description": "Speak to Soundbox in 5 Indic languages"
+    },
+    {
+      "name": "Smart Khata (Udhar)",
+      "url": "/#udhar",
+      "description": "Automated Udhar & Real-Time WhatsApp Reminders"
+    },
+    {
+      "name": "DMart 3D Racks",
+      "url": "/#racks",
+      "description": "Cinematic visual retail shelves"
+    },
+    {
+      "name": "Takeaway Orders",
+      "url": "/#orders",
+      "description": "Pack customer voice orders"
     }
   ]
 }
