@@ -307,3 +307,39 @@ async def complete_order(req: CompleteOrderRequest):
         "today_collection": engine.merchant_profile["today_collection"],
         "today_txns": engine.merchant_profile["today_txns"]
     }
+
+
+# -------------------------------------------------------------
+# ADD CUSTOMER KHATA ENDPOINT
+# -------------------------------------------------------------
+class AddCustomerPayload(BaseModel):
+    name: str
+    phone: Optional[str] = "+91 98450 11223"
+    due_amount: float
+    notes: Optional[str] = "Monthly Groceries & Essentials"
+    days_pending: Optional[int] = 3
+    risk: Optional[str] = "Low"
+    addr: Optional[str] = "Neighborhood"
+    dist: Optional[str] = "0.6 km"
+    business_type: Optional[str] = "kirana"
+
+@app.post("/api/khata/add")
+async def api_add_customer(payload: AddCustomerPayload):
+    biz = payload.business_type or engine.current_biz
+    profile = engine.BUSINESS_PROFILES.get(biz, engine.BUSINESS_PROFILES["kirana"])
+    new_id = f"K{len(profile.get('khata', [])) + 1}"
+    
+    new_cust = {
+        "id": new_id,
+        "name": payload.name,
+        "phone": payload.phone,
+        "due_amount": payload.due_amount,
+        "days_pending": payload.days_pending,
+        "last_reminder": "Never",
+        "notes": payload.notes,
+        "risk": payload.risk,
+        "addr": payload.addr,
+        "dist": payload.dist
+    }
+    profile.setdefault("khata", []).insert(0, new_cust)
+    return {"status": "SUCCESS", "customer": new_cust, "total_khata": sum(c["due_amount"] for c in profile["khata"])}

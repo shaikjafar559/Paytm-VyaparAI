@@ -335,6 +335,16 @@ class MerchantCopilotEngine:
         # Inventory intent
         # DMart Smart Racks / Shelves intent
         # Customer Takeaway & Voice Orders intent
+        # Add Customer intent
+        elif any(w in q_lower for w in ["add customer", "new customer", "naya customer", "naya khata", "add khata", "కస్టమర్ జోడించు", "ఖాతా జోడించు", "नया कस्टमर", "नया खाता", "கஸ்டமர் சேர்", "ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ"]):
+            return {
+                "intent": "ADD_CUSTOMER",
+                "language": lang,
+                "business_type": self.current_biz,
+                "action": {"type": "OPEN_MODAL", "modal": "add_customer", "tab": "udhar"},
+                "voice_response": "Boss, opening Add Customer modal! Please enter customer name, phone, location and due amount to plot on the 2-KM map."
+            }
+
         elif any(w in q_lower for w in ["customer order", "pack", "takeaway", "voice note", "whatsapp order", "packing", "ఆర్డర్", "ప్యాక్", "टेकअवे", "पैक", "ऑर्डर", "ஆர்டர்", "பேக்", "ಆರ್ಡರ್", "ಪ್ಯಾಕ್"]):
             return self.get_customer_orders_summary(lang)
 

@@ -825,16 +825,22 @@
             <h3 class="font-bold text-slate-800" data-i18n="khata_ledger_title">Active Khata Ledger & Customer Geolocation</h3>
             <p class="text-xs text-slate-500">2-KM Neighborhood Debt Recovery & Delivery Radius Map</p>
           </div>
-          <!-- View Switcher: List vs Map -->
-          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-            <button onclick="toggleKhataView('list')" id="khata-view-list" class="px-3 py-1.5 rounded-lg font-bold bg-white text-paytm-navy shadow-xs transition cursor-pointer">
-              <i class="fa-solid fa-list mr-1"></i> List View
+          <!-- Add Customer Button & View Switcher -->
+          <div class="flex items-center space-x-2.5">
+            <button onclick="openAddCustomerModal()" class="px-3.5 py-1.5 rounded-xl font-bold bg-gradient-to-r from-paytm-navy to-slate-900 hover:from-slate-900 hover:to-paytm-navy text-white text-xs shadow-sm flex items-center space-x-1.5 transition active:scale-95 cursor-pointer">
+              <i class="fa-solid fa-user-plus text-paytm-cyan"></i>
+              <span data-i18n="btn_add_customer">➕ Add Customer</span>
             </button>
-            <button onclick="toggleKhataView('map')" id="khata-view-map" class="px-3 py-1.5 rounded-lg font-bold text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5">
-              <i class="fa-solid fa-map-location-dot text-cyan-600"></i>
-              <span>Customer Map View</span>
-              <span class="bg-cyan-100 text-cyan-800 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">2-KM</span>
-            </button>
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+              <button onclick="toggleKhataView('list')" id="khata-view-list" class="px-3 py-1.5 rounded-lg font-bold bg-white text-paytm-navy shadow-xs transition cursor-pointer">
+                <i class="fa-solid fa-list mr-1"></i> List View
+              </button>
+              <button onclick="toggleKhataView('map')" id="khata-view-map" class="px-3 py-1.5 rounded-lg font-bold text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-map-location-dot text-cyan-600"></i>
+                <span>Customer Map View</span>
+                <span class="bg-cyan-100 text-cyan-800 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">2-KM</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1315,6 +1321,112 @@
 
       </div>
 
+    </div>
+
+  
+    <!-- ADD CUSTOMER DATA MODAL -->
+    <div id="add-customer-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 animate-scale-up relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeAddCustomerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-paytm-navy flex items-center justify-center text-xl shrink-0 font-bold">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base" data-i18n="modal_add_cust_title">Add New Customer to Smart Khata & Map</h3>
+            <p class="text-xs text-slate-500" data-i18n="modal_add_cust_sub">Register customer with credit ledger record & 2-KM geolocation map pin.</p>
+          </div>
+        </div>
+
+        <form id="add-customer-form" onsubmit="event.preventDefault(); saveNewCustomer();" class="space-y-3.5 text-xs">
+          <!-- Customer Name & Phone -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Customer Full Name <span class="text-rose-500">*</span></label>
+              <input id="new-cust-name" type="text" required placeholder="e.g. Rajesh Gupta (Flat 401)" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Phone Number (WhatsApp) <span class="text-rose-500">*</span></label>
+              <input id="new-cust-phone" type="tel" required placeholder="+91 98450 11223" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+          </div>
+
+          <!-- Address & Distance from Shop -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Neighborhood / Address</label>
+              <input id="new-cust-addr" type="text" placeholder="e.g. 8th Cross, 4th Block" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Distance from Store</label>
+              <select id="new-cust-dist" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="0.3 km">0.3 km (3 mins walk)</option>
+                <option value="0.5 km">0.5 km (5 mins)</option>
+                <option value="0.8 km" selected>0.8 km (8 mins)</option>
+                <option value="1.2 km">1.2 km (12 mins)</option>
+                <option value="1.8 km">1.8 km (2-KM Boundary)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Due Amount & Days Pending -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Udhar / Due Amount (₹) <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <span class="absolute left-3 top-2 font-bold text-slate-400">₹</span>
+                <input id="new-cust-due" type="number" step="10" required placeholder="1850" class="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-xl font-bold text-rose-600 focus:outline-none focus:border-paytm-cyan">
+              </div>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Days Pending</label>
+              <input id="new-cust-days" type="number" min="0" value="3" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+          </div>
+
+          <!-- Risk Level & Language Preference -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Credit Risk Category</label>
+              <select id="new-cust-risk" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="low">🟢 Low Risk (Prompt payer)</option>
+                <option value="moderate" selected>🟡 Moderate Risk (Needs reminders)</option>
+                <option value="high">🔴 High Risk (15+ days pending)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">WhatsApp Language</label>
+              <select id="new-cust-lang" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="hindi" selected>🇮🇳 हिंदी (Hindi)</option>
+                <option value="telugu">🇮🇳 తెలుగు (Telugu)</option>
+                <option value="english">🌐 English</option>
+                <option value="tamil">🇮🇳 தமிழ் (Tamil)</option>
+                <option value="kannada">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notes / Purchased Items -->
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Items Purchased / Ledger Notes</label>
+            <input id="new-cust-notes" type="text" placeholder="e.g. Aashirvaad Atta 5kg, Sunflower Oil 1L, Tata Salt" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+          </div>
+
+          <!-- Modal Buttons -->
+          <div class="flex items-center space-x-3 pt-3">
+            <button type="button" onclick="closeAddCustomerModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer">
+              Cancel
+            </button>
+            <button type="submit" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-paytm-navy to-slate-900 hover:from-slate-900 hover:to-paytm-navy text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-2 transition cursor-pointer">
+              <i class="fa-solid fa-floppy-disk text-paytm-cyan"></i>
+              <span>Save Customer & Plot on Map</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
   </main>
@@ -2174,6 +2286,9 @@
 
     const UI_TRANSLATIONS = {
       'english': {
+        btn_add_customer: "➕ Add Customer",
+        modal_add_cust_title: "Add New Customer to Smart Khata & Map",
+        modal_add_cust_sub: "Register customer with credit ledger record & 2-KM geolocation map pin.",
         tab_6: "6. 🛍️ Customer Voice Orders & Takeaway",
         hero_btn_orders: "🛍️ Takeaway Orders (2)",
         orders_title: "Customer WhatsApp Voice Orders & Takeaway",
@@ -2292,6 +2407,9 @@
         credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
       },
       'telugu': {
+        btn_add_customer: "➕ కస్టమర్ జోడించు",
+        modal_add_cust_title: "స్మార్ట్ ఖాతా & మ్యాప్‌లో కొత్త కస్టమర్ చేర్చండి",
+        modal_add_cust_sub: "కస్టమర్ ఖాతా వివరాలు మరియు 2-కి.మీ మ్యాప్ పిన్ నమోదు చేయండి.",
         tab_6: "6. 🛍️ కస్టమర్ వాయిస్ ఆర్డర్లు & టేక్‌అవే",
         hero_btn_orders: "🛍️ టేక్‌అవే ఆర్డర్లు (2)",
         orders_title: "కస్టమర్ వాట్సాప్ వాయిస్ ఆర్డర్లు & టేక్‌అవే హబ్",
@@ -2410,6 +2528,9 @@
         credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
       },
       'hindi': {
+        btn_add_customer: "➕ नया कस्टमर जोड़ें",
+        modal_add_cust_title: "स्मार्ट खाता व मैप में नया कस्टमर जोड़ें",
+        modal_add_cust_sub: "उधार लेजर और 2-किमी मैप पिन के साथ नया ग्राहक दर्ज करें।",
         tab_6: "6. 🛍️ कस्टमर वॉइस आर्डर व टेकअवे",
         hero_btn_orders: "🛍️ टेकअवे आर्डर्स (2)",
         orders_title: "कस्टमर व्हाट्सएप वॉइस आर्डर व टेकअवे हब",
@@ -2528,6 +2649,9 @@
         credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
       },
       'tamil': {
+        btn_add_customer: "➕ வாடிக்கையாளர் சேர்",
+        modal_add_cust_title: "புதிய வாடிக்கையாளரை சேர்க்க",
+        modal_add_cust_sub: "கடன் லெட்ஜர் மற்றும் 2-கிமீ வரைபடத்தில் வாடிக்கையாளர் பதிவு.",
         tab_6: "6. 🛍️ வாடிக்கையாளர் வாய்ஸ் ஆர்டர்கள் & டேக்அவே",
         hero_btn_orders: "🛍️ டேக்அவே ஆர்டர்கள் (2)",
         orders_title: "வாடிக்கையாளர் வாட்ஸ்அப் வாய்ஸ் ஆர்டர்கள் & டேக்அவே",
@@ -2646,6 +2770,9 @@
         credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
       },
       'kannada': {
+        btn_add_customer: "➕ ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+        modal_add_cust_title: "ಸ್ಮಾರ್ಟ್ ಖಾತೆ & ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+        modal_add_cust_sub: "ಖಾತಾ ವಿವರ ಮತ್ತು 2-ಕಿಮೀ ಮ್ಯಾಪ್ ಪಿನ್ ನಮೂದಿಸಿ.",
         tab_6: "6. 🛍️ ಗ್ರಾಹಕರ ವಾಯ್ಸ್ ಆರ್ಡರ್‌ಗಳು & ಟೇಕ್‌ಅವೇ",
         hero_btn_orders: "🛍️ ಟೇಕ್‌ಅವೇ ಆರ್ಡರ್‌ಗಳು (2)",
         orders_title: "ಗ್ರಾಹಕರ ವಾಟ್ಸಾಪ್ ವಾಯ್ಸ್ ಆರ್ಡರ್‌ಗಳು & ಟೇಕ್‌ಅವೇ",
@@ -4070,6 +4197,165 @@
 
       renderCustomerOrders();
       switchTab('orders');
+    }
+
+
+    
+    // ==========================================
+    // ADD CUSTOMER DATA & DYNAMIC KHATA LEDGER
+    // ==========================================
+    function openAddCustomerModal() {
+      const modal = document.getElementById('add-customer-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('new-cust-name').focus();
+      }
+    }
+
+    function closeAddCustomerModal() {
+      const modal = document.getElementById('add-customer-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Dynamic Render of Khata Ledger List View
+    function renderKhataLedger() {
+      const container = document.getElementById('khata-list-container');
+      if (!container) return;
+
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+
+      let totalDue = 0;
+      let html = '';
+
+      customers.forEach(c => {
+        const dueNumeric = parseFloat(String(c.due).replace(/[^0-9.]/g, '')) || 0;
+        totalDue += dueNumeric;
+
+        const isHigh = c.risk === 'high';
+        const isMod = c.risk === 'moderate';
+        const badgeColor = isHigh ? 'bg-rose-100 text-rose-800' : (isMod ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800');
+        const dueTextColor = isHigh ? 'text-rose-600' : (isMod ? 'text-amber-600' : 'text-emerald-700');
+
+        html += `
+          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-sm transition">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800 text-sm">${c.name}</span>
+                <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${c.days} (${c.risk} risk)</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">
+                <i class="fa-solid fa-location-dot text-rose-500 mr-0.5"></i> ${c.addr} (${c.dist}) • ${c.notes}
+              </p>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="font-extrabold text-base ${dueTextColor}">${c.due}</span>
+              <button onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${dueNumeric}')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-xs"></i>
+                <span data-i18n="btn_send_qr">Send WhatsApp & QR</span>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Update Total Trapped Credit display
+      const trappedBox = document.querySelector('#content-udhar .text-3xl.font-black.text-amber-900');
+      if (trappedBox) trappedBox.innerText = `₹${totalDue.toLocaleString('en-IN')}`;
+
+      const countDescEl = document.querySelector('[data-i18n="udhar_trapped_desc"]');
+      if (countDescEl) countDescEl.innerText = `Across ${customers.length} regular customers (2-KM Geolocation)`;
+    }
+
+    // Save New Customer
+    async function saveNewCustomer() {
+      const name = document.getElementById('new-cust-name').value.trim();
+      const phone = document.getElementById('new-cust-phone').value.trim();
+      const addr = document.getElementById('new-cust-addr').value.trim() || 'Neighborhood';
+      const dist = document.getElementById('new-cust-dist').value;
+      const dueVal = parseFloat(document.getElementById('new-cust-due').value) || 0;
+      const days = document.getElementById('new-cust-days').value || '1';
+      const risk = document.getElementById('new-cust-risk').value;
+      const notes = document.getElementById('new-cust-notes').value.trim() || 'General Provisions';
+      const lang = document.getElementById('new-cust-lang').value;
+
+      if (!name || dueVal <= 0) return;
+
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const store = data.store;
+
+      // Calculate realistic coordinates around store within 2-KM
+      const distKm = parseFloat(dist) || 0.6;
+      const angle = Math.random() * 2 * Math.PI;
+      const deltaLat = (distKm / 111.0) * Math.cos(angle);
+      const deltaLng = (distKm / (111.0 * Math.cos(store.lat * Math.PI / 180))) * Math.sin(angle);
+      const newLat = store.lat + deltaLat;
+      const newLng = store.lng + deltaLng;
+
+      const newId = 'K' + (data.customers.length + 1);
+      const newCustObj = {
+        id: newId,
+        name: name,
+        lat: newLat,
+        lng: newLng,
+        dist: dist,
+        due: `₹${dueVal.toLocaleString('en-IN')}`,
+        days: `${days} Days`,
+        risk: risk,
+        addr: addr,
+        notes: notes,
+        phone: phone,
+        lang: lang
+      };
+
+      // Add to front of customers list
+      data.customers.unshift(newCustObj);
+
+      // Save to backend API
+      try {
+        await fetch('/api/khata/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            due_amount: dueVal,
+            notes: notes,
+            days_pending: parseInt(days),
+            risk: risk,
+            addr: addr,
+            dist: dist,
+            business_type: currentBusinessType
+          })
+        });
+      } catch (e) {
+        console.log('Client fallback save active');
+      }
+
+      // Close modal & reset form
+      closeAddCustomerModal();
+      document.getElementById('add-customer-form').reset();
+
+      // Re-render list & map
+      renderKhataLedger();
+      if (typeof initCustomerMap === 'function') {
+        initCustomerMap();
+      }
+
+      // Soundbox voice announcement
+      const msgs = {
+        'english': `Customer ${name} added to Khata Ledger with ₹${dueVal.toFixed(0)} balance! Plotted on 2-KM Map.`,
+        'telugu': `${name} గారు ఖాతా లెడ్జర్‌లో ₹${dueVal.toFixed(0)} బ్యాలెన్స్‌తో చేర్చబడ్డారు! 2-కి.మీ మ్యాప్‌లో పిన్ చేయబడింది.`,
+        'hindi': `ग्राहक ${name} को ₹${dueVal.toFixed(0)} उधारी के साथ खाते में जोड़ा गया! 2-किमी मैप पर पिन सेट।`,
+        'tamil': `வாடிக்கையாளர் ${name} ₹${dueVal.toFixed(0)} பாக்கியுடன் கணக்கில் சேர்க்கப்பட்டார்! வரைபடத்தில் குறிக்கப்பட்டது.`,
+        'kannada': `ಗ್ರಾಹಕ ${name} ಅವರನ್ನು ₹${dueVal.toFixed(0)} ಬಾಕಿಯೊಂದಿಗೆ ಖಾತೆಗೆ ಸೇರಿಸಲಾಗಿದೆ! 2-ಕಿಮೀ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಪಿನ್ ಮಾಡಲಾಗಿದೆ.`
+      };
+
+      if (typeof speakFallbackSpeech === 'function') {
+        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
+      }
     }
 
 
