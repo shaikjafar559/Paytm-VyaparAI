@@ -36,16 +36,7 @@
     }
   
     /* Grand Jury Tour & Polish Styles */
-    @keyframes pulse-gold {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); }
-      50% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); }
-    }
-    .btn-jury-gold {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-      color: #001f3f;
-      font-weight: 800;
-      animation: pulse-gold 2s infinite;
-    }
+
     .wave-bar {
       width: 3px;
       background-color: #00BAF2;
@@ -99,15 +90,7 @@
           <i class="fa-solid fa-coins mr-1"></i> <span data-i18n="nav_today_collection">Today: ₹18,420</span>
         </div>
 
-        <!-- 10/10 Jury Tour & Pitch Materials Buttons -->
-        <button onclick="startJuryTour()" class="btn-jury-gold px-3.5 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 hover:scale-105 transition shadow-lg cursor-pointer">
-          <i class="fa-solid fa-trophy text-amber-900"></i>
-          <span>✨ 60s Jury Tour</span>
-        </button>
-        <button onclick="openPitchModal()" class="bg-blue-900/80 hover:bg-blue-800 text-cyan-300 border border-cyan-400/40 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
-          <i class="fa-solid fa-file-powerpoint text-paytm-cyan"></i>
-          <span>Pitch Assets</span>
-        </button>
+        
       </div>
     </div>
 
@@ -122,108 +105,13 @@
         <div class="hidden md:flex items-center gap-4 text-slate-400">
           <span><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Sarvam Dual-Mic ANC: <b class="text-emerald-300">ACTIVE</b></span>
           <span><i class="fa-solid fa-bolt text-paytm-cyan mr-1"></i>ONDC Node: <b class="text-slate-200">ONLINE</b></span>
-          <span><i class="fa-solid fa-star text-amber-400 mr-1"></i>Hackathon Target: <b class="text-amber-300">10/10</b></span>
+          
         </div>
       </div>
     </div>
   </header>
 
   <!-- MAIN CONTAINER -->
-    <!-- GRAND JURY 60-SEC TOUR FLOATING BANNER -->
-  <div id="jury-tour-banner" class="hidden max-w-7xl mx-auto px-4 mt-3">
-    <div class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-900 px-4 py-3 rounded-2xl shadow-xl border-2 border-yellow-200 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-slate-900 text-yellow-300 flex items-center justify-center text-lg shrink-0 font-black shadow">
-          <i class="fa-solid fa-trophy"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] uppercase tracking-wider font-black bg-slate-900 text-yellow-300 px-2 py-0.5 rounded">GRAND JURY WALKTHROUGH</span>
-            <span id="jury-step-indicator" class="text-xs font-bold text-slate-900">Step 1 of 4: Multilingual Voice Soundbox</span>
-          </div>
-          <p id="jury-step-desc" class="text-xs text-slate-950 font-semibold mt-0.5">
-            Demonstrating acoustic query & instant voice reply in chosen Indic dialect with noise cancellation.
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <span id="jury-timer-pill" class="text-xs bg-slate-900 text-white font-mono px-2 py-1 rounded-lg">6s</span>
-        <button onclick="stopJuryTour()" class="bg-slate-900 hover:bg-slate-800 text-yellow-300 text-xs px-3 py-1 rounded-xl font-bold transition flex items-center gap-1 cursor-pointer">
-          <i class="fa-solid fa-stop text-[10px]"></i> End Tour
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PITCH ASSETS MODAL -->
-  <div id="pitch-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 space-y-5">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-paytm-navy text-paytm-cyan flex items-center justify-center font-black">
-            <i class="fa-solid fa-award"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-extrabold text-paytm-navy">Paytm VyaparAI Pitch Assets</h3>
-            <p class="text-xs text-slate-500">All materials under 2MB requirement</p>
-          </div>
-        </div>
-        <button onclick="closePitchModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
-        <a href="/static/Paytm_VyaparAI_Pitch_Deck.pptx" download class="p-3 bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 rounded-2xl flex items-center gap-3 transition group">
-          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-file-powerpoint"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-800 group-hover:text-paytm-navy">Pitch Deck (PPTX)</h4>
-            <p class="text-[11px] text-slate-500">12 Visual Slides</p>
-          </div>
-        </a>
-
-        <a href="/static/Paytm_VyaparAI_Pitch_Deck.pdf" download class="p-3 bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 rounded-2xl flex items-center gap-3 transition group">
-          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-file-pdf"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-800 group-hover:text-paytm-navy">Pitch Deck (PDF)</h4>
-            <p class="text-[11px] text-slate-500">Executive Briefing</p>
-          </div>
-        </a>
-
-        <a href="/static/Paytm_VyaparAI_Pitch_Document.docx" download class="p-3 bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 rounded-2xl flex items-center gap-3 transition group">
-          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-file-word"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-800 group-hover:text-paytm-navy">PRD Spec (DOCX)</h4>
-            <p class="text-[11px] text-slate-500">Multi-Agent Architecture</p>
-          </div>
-        </a>
-
-        <a href="https://github.com/shaikjafar559/Paytm-VyaparAI" target="_blank" class="p-3 bg-slate-50 hover:bg-cyan-50 border border-slate-200 hover:border-cyan-400 rounded-2xl flex items-center gap-3 transition group">
-          <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-800 flex items-center justify-center text-lg shrink-0">
-            <i class="fa-brands fa-github"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-800 group-hover:text-paytm-navy">GitHub Code Repo</h4>
-            <p class="text-[11px] text-slate-500">shaikjafar559/Paytm-VyaparAI</p>
-          </div>
-        </a>
-      </div>
-
-      <div class="bg-cyan-50 border border-cyan-200 p-3 rounded-2xl text-xs text-paytm-navy flex items-start gap-2">
-        <i class="fa-solid fa-circle-check text-cyan-600 mt-0.5"></i>
-        <div>
-          <span class="font-bold">10/10 Verification Status:</span> Dual-Mic ANC • 5 Indic Languages • ONDC B2B • Dynamic UPI QR • 180s Cashflow Underwriting.
-        </div>
-      </div>
-    </div>
-  </div>
-
   <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 flex-1 w-full">
 
     <!-- HERO PROTOTYPE BANNER -->
@@ -1743,16 +1631,6 @@
     }
 
     
-    // Pitch Assets Modal Controls
-    function openPitchModal() {
-      const m = document.getElementById('pitch-modal');
-      if (m) m.classList.remove('hidden');
-    }
-    function closePitchModal() {
-      const m = document.getElementById('pitch-modal');
-      if (m) m.classList.add('hidden');
-    }
-
     // Live Realistic UPI Transaction Ticker
     const tickerReceipts = [
       "₹80 received from Ramesh (12s ago) via UPI Soundbox",
@@ -1767,75 +1645,6 @@
       const el = document.getElementById('live-ticker-text');
       if (el) el.innerText = tickerReceipts[tickerIdx];
     }, 8000);
-
-    // Grand Jury 60-Sec Interactive Automated Tour
-    let juryTourTimer = null;
-    let juryTourStep = 0;
-
-    function startJuryTour() {
-      const banner = document.getElementById('jury-tour-banner');
-      if (banner) banner.classList.remove('hidden');
-      juryTourStep = 1;
-      executeJuryStep(1);
-    }
-
-    function stopJuryTour() {
-      if (juryTourTimer) clearTimeout(juryTourTimer);
-      const banner = document.getElementById('jury-tour-banner');
-      if (banner) banner.classList.add('hidden');
-    }
-
-    function executeJuryStep(step) {
-      const stepIndicator = document.getElementById('jury-step-indicator');
-      const stepDesc = document.getElementById('jury-step-desc');
-      const timerPill = document.getElementById('jury-timer-pill');
-
-      if (step === 1) {
-        if (stepIndicator) stepIndicator.innerText = "Step 1 of 4: Multilingual Voice Soundbox";
-        if (stepDesc) stepDesc.innerText = "Demonstrating dual-mic ANC voice query & audio response on Soundbox 4.0 in Telugu...";
-        if (timerPill) timerPill.innerText = "Step 1";
-        switchTab('voice');
-        changeLanguage('telugu');
-        setTimeout(() => {
-          simulateVoiceQuery("ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?");
-        }, 1200);
-
-        juryTourTimer = setTimeout(() => executeJuryStep(2), 7000);
-      } else if (step === 2) {
-        if (stepIndicator) stepIndicator.innerText = "Step 2 of 4: 2-KM Hyperlocal Radar & ONDC Reorder";
-        if (stepDesc) stepDesc.innerText = "Switching to Tab 2: Autonomous price discovery across ONDC distributors & 1-click B2B restocking...";
-        if (timerPill) timerPill.innerText = "Step 2";
-        switchTab('demand');
-        setTimeout(() => {
-          placeOrder('Amul Taaza Milk (50 pkts)', 50, '₹1,210');
-        }, 1500);
-
-        juryTourTimer = setTimeout(() => executeJuryStep(3), 6000);
-      } else if (step === 3) {
-        if (stepIndicator) stepIndicator.innerText = "Step 3 of 4: Automated Polite Udhar + Dynamic UPI QR";
-        if (stepDesc) stepDesc.innerText = "Switching to Tab 3: Khata recovery with personalized WhatsApp reminder & live NPCI-compliant UPI QR...";
-        if (timerPill) timerPill.innerText = "Step 3";
-        switchTab('udhar');
-        setTimeout(() => {
-          selectCustomer(1);
-          generateReminder('anil');
-        }, 1500);
-
-        juryTourTimer = setTimeout(() => executeJuryStep(4), 6000);
-      } else if (step === 4) {
-        if (stepIndicator) stepIndicator.innerText = "Step 4 of 4: 180-Sec Instant Cashflow Credit";
-        if (stepDesc) stepDesc.innerText = "Switching to Tab 4: Soundbox daily settlement velocity underwriting ₹2,50,000 working capital loan...";
-        if (timerPill) timerPill.innerText = "Step 4";
-        switchTab('credit');
-
-        juryTourTimer = setTimeout(() => {
-          if (stepIndicator) stepIndicator.innerText = "🏆 Tour Complete: 10/10 Score Ready!";
-          if (stepDesc) stepDesc.innerText = "All 4 pillars verified: Hardware Moat, ONDC B2B, Polite Udhar, and 180s Underwriting. Outstanding execution!";
-          if (timerPill) timerPill.innerText = "Score: 10/10";
-          setTimeout(stopJuryTour, 6000);
-        }, 6000);
-      }
-    }
 
     window.addEventListener('DOMContentLoaded', () => {
       changeLanguage('english');
