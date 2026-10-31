@@ -340,8 +340,10 @@
           <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>
           <span class="text-xs text-slate-200" data-i18n="nav_soundbox_status">Soundbox 4.0: <b>Live (Bengaluru)</b></span>
         </div>
-        <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold">
-          <i class="fa-solid fa-coins mr-1"></i> <span data-i18n="nav_today_collection">Today: ₹18,420</span>
+        <div onclick="switchTab('tracker')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5" title="Click to open Live Payment Tracker">
+          <i class="fa-solid fa-coins text-yellow-300"></i>
+          <span data-i18n="nav_today_collection">Today: ₹19,620</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
         </div>
 
         <!-- Merchant Standee QR Button -->
@@ -547,6 +549,11 @@
         <i class="fa-solid fa-bag-shopping text-cyan-600"></i>
         <span data-i18n="tab_6">6. 🛍️ Customer Voice Orders & Takeaway</span>
         <span id="orders-badge-count" class="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-500 text-white animate-pulse">2 NEW</span>
+      </button>
+      <button onclick="switchTab('tracker')" id="tab-tracker" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-receipt text-teal-600"></i>
+        <span data-i18n="tab_7">7. 📊 Live Payment Tracker</span>
+        <span id="tracker-txns-badge" class="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">65 TXNS</span>
       </button>
     </div>
 
@@ -1381,6 +1388,154 @@
 
         </div>
 
+      </div>
+
+    </div>
+
+    <!-- TAB 7: REAL-TIME PAYMENT TRACKER & PASSBOOK -->
+    <div id="content-tracker" class="tab-content hidden space-y-6">
+
+      <!-- Top Real-Time Tracker Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 rounded-3xl text-white shadow-xl border border-teal-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="space-y-2 max-w-xl z-10">
+          <div class="flex items-center space-x-2.5">
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-teal-400 text-slate-950 uppercase tracking-wider flex items-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-receipt"></i>
+              <span>Live Payment Tracker & Passbook</span>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-teal-300 border border-white/15 flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>Soundbox 4.0 Live Inflow</span>
+            </span>
+          </div>
+          <h2 class="text-2xl font-black tracking-tight">Real-Time UPI Collections & Settlements</h2>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Monitor incoming counter QR scans, Khata debt recoveries, and takeaway payments in real-time. View authentic receipts, replay Soundbox chimes, and track automatic bank settlements.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 z-10">
+          <button onclick="exportPaymentTrackerCSV()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition flex items-center space-x-2 shadow cursor-pointer">
+            <i class="fa-solid fa-file-excel text-emerald-400"></i>
+            <span>Export to Excel/CSV</span>
+          </button>
+          <button onclick="printPaymentTrackerPassbook()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-400 to-cyan-500 hover:from-teal-300 hover:to-cyan-400 text-slate-950 font-black text-xs transition flex items-center space-x-2 shadow cursor-pointer">
+            <i class="fa-solid fa-print"></i>
+            <span>Print Today's Passbook</span>
+          </button>
+        </div>
+
+        <!-- Decorative Background Elements -->
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      </div>
+
+      <!-- 4 High-Impact KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- KPI 1: Today's Collection -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+            <span>Today's Total Inflow</span>
+            <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></span>
+          </div>
+          <div id="tracker-kpi-total" class="text-2xl font-black text-slate-900">₹19,620.00</div>
+          <div class="flex items-center text-[11px] text-emerald-600 font-bold gap-1">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <span>+18.4% vs yesterday (65 txns)</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Khata Recovered -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+            <span>Khata Recovered Today</span>
+            <span class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+          </div>
+          <div id="tracker-kpi-khata" class="text-2xl font-black text-amber-900">₹4,620.00</div>
+          <div class="flex items-center text-[11px] text-slate-500 font-medium gap-1">
+            <span>Ramesh Sharma, Jafar cleared</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Counter Standee Scans -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+            <span>Counter Standee Scans</span>
+            <span class="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-800 flex items-center justify-center text-sm"><i class="fa-solid fa-qrcode"></i></span>
+          </div>
+          <div id="tracker-kpi-scans" class="text-2xl font-black text-cyan-950">₹14,852.00</div>
+          <div class="flex items-center text-[11px] text-slate-500 font-medium gap-1">
+            <span>Avg ticket: ₹228 (52 scans)</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Bank Auto-Settlement -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-500 font-bold">
+            <span>Bank Settlement Status</span>
+            <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-sm"><i class="fa-solid fa-building-columns"></i></span>
+          </div>
+          <div class="text-2xl font-black text-blue-950">₹19,620.00</div>
+          <div class="flex items-center text-[11px] text-emerald-600 font-bold gap-1">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Auto-Settle @ 11:59 PM (HDFC Bank)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Simulator & Search Header Bar -->
+      <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Quick Instant Payment Simulator for Testing -->
+        <div class="flex flex-wrap items-center gap-2 text-xs w-full md:w-auto">
+          <span class="font-bold text-slate-700 flex items-center gap-1.5"><i class="fa-solid fa-bolt text-teal-600"></i> Test Payment:</span>
+          <input type="text" id="sim-pay-name" value="Suresh Kumar" placeholder="Customer Name" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold w-28">
+          <input type="number" id="sim-pay-amt" value="250" placeholder="Amt" class="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold w-20">
+          <button onclick="triggerQuickSimPayment()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold text-xs shadow transition active:scale-95 cursor-pointer flex items-center gap-1">
+            <i class="fa-solid fa-plus text-[10px]"></i> Receive Payment
+          </button>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="flex items-center gap-2 text-xs w-full md:w-auto justify-end">
+          <div class="relative flex-1 md:w-48">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs pointer-events-none"></i>
+            <input type="text" id="tracker-search-input" onkeyup="filterPaymentTracker()" placeholder="Search customer, phone, RRN..." class="w-full pl-8 pr-3 py-1.5 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:border-teal-500">
+          </div>
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button onclick="filterTrackerChannel('ALL')" id="filter-chan-ALL" class="tracker-flt active px-2.5 py-1 rounded-lg font-bold text-xs bg-white text-teal-800 shadow-xs cursor-pointer">All</button>
+            <button onclick="filterTrackerChannel('QR')" id="filter-chan-QR" class="tracker-flt px-2.5 py-1 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 cursor-pointer">QR</button>
+            <button onclick="filterTrackerChannel('KHATA')" id="filter-chan-KHATA" class="tracker-flt px-2.5 py-1 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 cursor-pointer">Khata</button>
+            <button onclick="filterTrackerChannel('ORDER')" id="filter-chan-ORDER" class="tracker-flt px-2.5 py-1 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 cursor-pointer">Orders</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Payments Passbook Table -->
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+            <h3 class="font-bold text-slate-800 text-sm">Live Transaction Feed (Paytm Merchant Passbook)</h3>
+          </div>
+          <span id="tracker-showing-count" class="text-xs font-bold text-slate-500">Showing 7 recent transactions</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-extrabold uppercase tracking-wider text-[10px]">
+                <th class="py-3 px-4">Time & Status</th>
+                <th class="py-3 px-4">Payer / Customer</th>
+                <th class="py-3 px-4">Payment Channel & Notes</th>
+                <th class="py-3 px-4">UPI Reference (RRN)</th>
+                <th class="py-3 px-4 text-right">Amount Credited</th>
+                <th class="py-3 px-4 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="payment-tracker-tbody" class="divide-y divide-slate-100">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -5250,6 +5405,10 @@ function switchTab(tabId) {
         }
       }
 
+      if (tabId === 'tracker') {
+        renderPaymentTracker();
+      }
+
       if (tabId === 'credit' && !window.chartRendered) {
         initChart();
       }
@@ -6111,6 +6270,29 @@ function switchTab(tabId) {
       currentPaymentReceipt = details;
       const cleanAmt = String(details.amount || '0').replace(/[^0-9.]/g, '');
       const numAmt = parseFloat(cleanAmt) || 0;
+
+      // Auto-append payment into real-time payment tracker feed
+      const newTxn = {
+        id: 'TXN-' + Math.floor(100000 + Math.random() * 900000),
+        rrn: details.rrn || ('UPI/' + Date.now().toString().slice(-8) + Math.floor(1000 + Math.random() * 9000)),
+        customerName: details.customerName || 'Customer',
+        phone: details.phone || '+91 98450 11223',
+        amount: numAmt,
+        channel: (details.purpose && details.purpose.includes('Khata')) ? 'KHATA' : 
+                 ((details.purpose && details.purpose.includes('Order')) ? 'ORDER' : 'QR'),
+        channelLabel: (details.purpose && details.purpose.includes('Khata')) ? 'Khata Udhar Recovery' : 
+                      ((details.purpose && details.purpose.includes('Order')) ? 'Takeaway Order' : 'Paytm Counter QR Standee'),
+        notes: details.purpose || 'Instant UPI Settlement',
+        timeAgo: 'Just now',
+        timestamp: new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+        status: 'SUCCESS'
+      };
+      if (typeof paymentTrackerData !== 'undefined') {
+        paymentTrackerData.unshift(newTxn);
+        if (typeof renderPaymentTracker === 'function') {
+          renderPaymentTracker();
+        }
+      }
       
       const rrn = details.rrn || ('UPI/' + Date.now().toString().slice(-8) + Math.floor(1000 + Math.random() * 9000));
       const timeStr = details.timestamp || new Date().toLocaleString('en-IN', { 
@@ -6315,6 +6497,329 @@ function switchTab(tabId) {
       } catch (e) {}
 
       showToastNotification(`✅ Payment confirmation SMS & WhatsApp dispatched to ${d.customerName} (${d.phone})!`);
+    }
+
+    // ==========================================
+    // REAL-TIME PAYMENT TRACKER & PASSBOOK ENGINE
+    // ==========================================
+    let activeTrackerFilter = 'ALL';
+    let paymentTrackerData = [
+      {
+        id: 'TXN-984210',
+        rrn: 'UPI/395235564993',
+        customerName: 'Jafar',
+        phone: '+91 98450 11223',
+        amount: 1200.00,
+        channel: 'KHATA',
+        channelLabel: 'Khata Udhar Recovery',
+        notes: 'Cleared: sunflower oil 1 L',
+        timeAgo: 'Just now',
+        timestamp: '31 Oct 2026, 03:08 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984209',
+        rrn: 'UPI/395235564882',
+        customerName: 'Ramesh Sharma',
+        phone: '+91 98765 43210',
+        amount: 3420.00,
+        channel: 'KHATA',
+        channelLabel: 'Khata Udhar Recovery',
+        notes: 'Atta 10kg & Cooking Oil',
+        timeAgo: '12m ago',
+        timestamp: '31 Oct 2026, 02:56 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984208',
+        rrn: 'UPI/395235564771',
+        customerName: 'Priya Sharma',
+        phone: '+91 98450 12345',
+        amount: 148.00,
+        channel: 'ORDER',
+        channelLabel: 'Takeaway Order #ORD-1042',
+        notes: '2 Milk, 1 Butter, 1 Maggi',
+        timeAgo: '28m ago',
+        timestamp: '31 Oct 2026, 02:40 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984207',
+        rrn: 'UPI/395235564660',
+        customerName: 'Ramesh Kumar',
+        phone: '+91 98450 99887',
+        amount: 150.00,
+        channel: 'QR',
+        channelLabel: 'Paytm Counter QR Standee',
+        notes: 'Amul Milk & Bread',
+        timeAgo: '42m ago',
+        timestamp: '31 Oct 2026, 02:26 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984206',
+        rrn: 'UPI/395235564559',
+        customerName: 'Ankit Verma',
+        phone: '+91 98111 22334',
+        amount: 120.00,
+        channel: 'QR',
+        channelLabel: 'Paytm Counter QR Standee',
+        notes: 'Snacks & Biscuits',
+        timeAgo: '1h ago',
+        timestamp: '31 Oct 2026, 02:08 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984205',
+        rrn: 'UPI/395235564448',
+        customerName: 'Sita Ram',
+        phone: '+91 98222 33445',
+        amount: 35.00,
+        channel: 'QR',
+        channelLabel: 'Paytm Counter QR Standee',
+        notes: 'Thums Up 250ml',
+        timeAgo: '1h 20m ago',
+        timestamp: '31 Oct 2026, 01:48 PM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'TXN-984204',
+        rrn: 'UPI/395235564337',
+        customerName: 'Sharma Ji',
+        phone: '+91 98333 44556',
+        amount: 450.00,
+        channel: 'QR',
+        channelLabel: 'Paytm Counter QR Standee',
+        notes: 'Grocery Basket',
+        timeAgo: '2h ago',
+        timestamp: '31 Oct 2026, 01:08 PM',
+        status: 'SUCCESS'
+      }
+    ];
+
+    function renderPaymentTracker() {
+      const tbody = document.getElementById('payment-tracker-tbody');
+      if (!tbody) return;
+
+      const q = (document.getElementById('tracker-search-input')?.value || '').toLowerCase().trim();
+      let list = paymentTrackerData.filter(t => {
+        const matchesType = (activeTrackerFilter === 'ALL') || (t.channel === activeTrackerFilter);
+        const matchesQuery = !q || 
+          t.customerName.toLowerCase().includes(q) || 
+          (t.phone && t.phone.includes(q)) || 
+          (t.rrn && t.rrn.toLowerCase().includes(q)) ||
+          (t.notes && t.notes.toLowerCase().includes(q));
+        return matchesType && matchesQuery;
+      });
+
+      let html = '';
+      if (list.length === 0) {
+        html = `
+          <tr>
+            <td colspan="6" class="text-center py-8 text-slate-400 font-bold">
+              <i class="fa-solid fa-receipt text-2xl mb-2 block"></i>
+              No payments found matching filter.
+            </td>
+          </tr>
+        `;
+      } else {
+        list.forEach(t => {
+          const channelIcon = t.channel === 'KHATA' ? 'fa-hand-holding-dollar text-amber-500' :
+                             (t.channel === 'ORDER' ? 'fa-bag-shopping text-cyan-500' : 'fa-qrcode text-teal-600');
+          const channelBg = t.channel === 'KHATA' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                           (t.channel === 'ORDER' ? 'bg-cyan-50 text-cyan-800 border-cyan-200' : 'bg-teal-50 text-teal-800 border-teal-200');
+
+          html += `
+            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+              <td class="py-3.5 px-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <div>
+                    <span class="font-bold text-slate-800 text-xs block">${t.timeAgo}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">${t.timestamp}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4 whitespace-nowrap">
+                <div class="font-bold text-slate-900 text-xs">${t.customerName}</div>
+                <div class="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                  <i class="fa-solid fa-phone text-blue-500 text-[9px]"></i> ${t.phone}
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${channelBg} mb-0.5">
+                  <i class="fa-solid ${channelIcon} text-[10px]"></i> ${t.channelLabel}
+                </span>
+                <p class="text-[11px] text-slate-500 leading-tight">${t.notes}</p>
+              </td>
+              <td class="py-3.5 px-4 whitespace-nowrap">
+                <span class="font-mono text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 font-semibold">${t.rrn}</span>
+              </td>
+              <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                <span class="text-sm font-black text-emerald-600">+₹${t.amount.toFixed(2)}</span>
+                <span class="text-[9px] text-emerald-700 font-bold block">✔ Zero MDR</span>
+              </td>
+              <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                <div class="flex items-center justify-center gap-1.5">
+                  <button onclick="replayPaymentSoundbox('${t.id}')" class="w-7 h-7 rounded-lg bg-cyan-50 hover:bg-cyan-100 text-paytm-navy border border-cyan-200 flex items-center justify-center text-xs transition cursor-pointer" title="Replay Soundbox Voice Chime">
+                    <i class="fa-solid fa-volume-high text-paytm-cyan text-[11px]"></i>
+                  </button>
+                  <button onclick="viewTrackerReceipt('${t.id}')" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition cursor-pointer flex items-center gap-1" title="View Detailed Payment Receipt">
+                    <i class="fa-solid fa-receipt text-slate-500 text-[10px]"></i> Receipt
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      tbody.innerHTML = html;
+
+      const showingEl = document.getElementById('tracker-showing-count');
+      if (showingEl) showingEl.innerText = `Showing ${list.length} of ${paymentTrackerData.length} total payments`;
+
+      // Recalculate KPIs
+      let totalSum = paymentTrackerData.reduce((acc, x) => acc + x.amount, 0);
+      let khataSum = paymentTrackerData.filter(x => x.channel === 'KHATA').reduce((acc, x) => acc + x.amount, 0);
+      let qrSum = paymentTrackerData.filter(x => x.channel === 'QR').reduce((acc, x) => acc + x.amount, 0);
+
+      const kpiTotal = document.getElementById('tracker-kpi-total');
+      const kpiKhata = document.getElementById('tracker-kpi-khata');
+      const kpiScans = document.getElementById('tracker-kpi-scans');
+      const txnsBadge = document.getElementById('tracker-txns-badge');
+
+      if (kpiTotal) kpiTotal.innerText = `₹${totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (kpiKhata) kpiKhata.innerText = `₹${khataSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (kpiScans) kpiScans.innerText = `₹${qrSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (txnsBadge) txnsBadge.innerText = `${paymentTrackerData.length} TXNS`;
+    }
+
+    function filterTrackerChannel(type) {
+      activeTrackerFilter = type;
+      document.querySelectorAll('.tracker-flt').forEach(b => {
+        b.className = "tracker-flt px-2.5 py-1 rounded-lg font-bold text-xs text-slate-500 hover:text-slate-800 cursor-pointer";
+      });
+      const act = document.getElementById('filter-chan-' + type);
+      if (act) act.className = "tracker-flt active px-2.5 py-1 rounded-lg font-bold text-xs bg-white text-teal-800 shadow-xs cursor-pointer";
+      renderPaymentTracker();
+    }
+
+    function filterPaymentTracker() {
+      renderPaymentTracker();
+    }
+
+    // Replay Soundbox chime for any past payment row
+    function replayPaymentSoundbox(txnId) {
+      const t = paymentTrackerData.find(x => x.id === txnId);
+      if (!t) return;
+      const msgs = {
+        'english': `₹${t.amount.toFixed(0)} received on Paytm from ${t.customerName}!`,
+        'telugu': `${t.customerName} గారి నుంచి పేటీఎంపై ₹${t.amount.toFixed(0)} వచ్చాయి!`,
+        'hindi': `पेटीएम पर ${t.customerName} से ₹${t.amount.toFixed(0)} प्राप्त हुए!`,
+        'tamil': `பேடிஎம் மூலம் ₹${t.amount.toFixed(0)} பெறப்பட்டது!`,
+        'kannada': `ಪೇಟಿಎಂನಲ್ಲಿ ₹${t.amount.toFixed(0)} ಸ್ವೀಕರಿಸಲಾಗಿದೆ!`
+      };
+      if (typeof triggerSoundboxSpeech === 'function') {
+        triggerSoundboxSpeech(msgs[currentLanguage] || msgs['english']);
+      }
+      showToastNotification(`🔊 Soundbox: ₹${t.amount.toFixed(0)} from ${t.customerName}`);
+    }
+
+    // View Detailed Receipt from Payment Tracker row
+    function viewTrackerReceipt(txnId) {
+      const t = paymentTrackerData.find(x => x.id === txnId);
+      if (!t) return;
+      showPaymentReceivedReceipt({
+        amount: `₹${t.amount.toFixed(2)}`,
+        customerName: t.customerName,
+        phone: t.phone,
+        rrn: t.rrn,
+        purpose: `${t.channelLabel}: ${t.notes}`,
+        timestamp: t.timestamp
+      });
+    }
+
+    // Quick Simulation from top simulator bar
+    function triggerQuickSimPayment() {
+      const name = document.getElementById('sim-pay-name')?.value.trim() || 'Suresh Kumar';
+      const amt = parseFloat(document.getElementById('sim-pay-amt')?.value) || 250;
+      
+      showPaymentReceivedReceipt({
+        amount: `₹${amt.toFixed(2)}`,
+        customerName: name,
+        phone: '+91 98450 77889',
+        purpose: 'Paytm Counter QR Standee Scan & Pay'
+      });
+    }
+
+    // Export Payment Tracker to CSV
+    function exportPaymentTrackerCSV() {
+      let csv = "Transaction ID,Date & Time,Payer Name,Phone,Channel,Notes,UPI RRN,Amount Credited (INR),Status\n";
+      paymentTrackerData.forEach(t => {
+        csv += `"${t.id}","${t.timestamp}","${t.customerName}","${t.phone}","${t.channelLabel}","${t.notes}","${t.rrn}","${t.amount}","${t.status}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Paytm_Payment_Tracker_${Date.now()}.csv`;
+      a.click();
+      showToastNotification("Exported Payment Tracker to CSV file!");
+    }
+
+    // Print Payment Tracker Passbook
+    function printPaymentTrackerPassbook() {
+      const w = window.open('', '_blank', 'width=800,height=900');
+      if (!w) {
+        alert("Please allow popups to print the passbook.");
+        return;
+      }
+      let rows = '';
+      paymentTrackerData.forEach(t => {
+        rows += `
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 12px;">${t.timestamp}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: bold;">${t.customerName} (${t.phone})</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 12px;">${t.channelLabel}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-family: monospace;">${t.rrn}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: bold; color: #059669; text-align: right;">+₹${t.amount.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      w.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Paytm Merchant Passbook - Shaik Japhar</title>
+            <style>
+              body { font-family: sans-serif; padding: 24px; color: #002970; }
+              table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+              th { background: #002970; color: white; padding: 10px; font-size: 12px; text-align: left; }
+            </style>
+          </head>
+          <body>
+            <h2>Paytm VyaparAI - Merchant Payment Tracker Passbook</h2>
+            <p>Merchant: <b>Shaik Japhar</b> • UPI ID: <b>8310508118@ptyes</b> • Date: <b>31 Oct 2026</b></p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Customer / Phone</th>
+                  <th>Channel</th>
+                  <th>UPI RRN</th>
+                  <th style="text-align: right;">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+            <script>window.onload = function() { setTimeout(function() { window.print(); }, 400); };<\/script>
+          </body>
+        </html>
+      `);
+      w.document.close();
     }
 </script>
 </body>
