@@ -180,9 +180,10 @@ def create_presentation_docx(output_path):
          "Analyzes micro-market demand signals within 2 km (e.g. +44% beverage surge during heatwaves, weekend temple footfall). "
          "Connects directly with ONDC open-network FMCG distributors to restock inventory at 12-18% lower wholesale rates with 1-click execution."),
         
-        ("Pillar 3: Automated Udhar Recovery + 2-KM Geolocation Customer Map",
-         "Replaces traditional paper bahi-khata. Visualizes all debtor customers on an interactive 2-KM radius map with color-coded "
-         "risk pins (High, Moderate, Low). Generates polite, localized WhatsApp payment reminders containing a dynamic Paytm UPI QR code."),
+        ("Pillar 3: Automated Udhar Recovery + 2-KM Geolocation Customer Map & Real-Time WhatsApp",
+         "Replaces traditional paper bahi-khata. Visualizes all regular customers on an interactive 2-KM radius map with color-coded "
+         "debt risk pins. Features real-time WhatsApp payment reminder dispatch directly to the customer's phone with 1-click Paytm UPI links, "
+         "full in-place customer editing (name, phone, address, distance, balance, risk), and instant Soundbox voice alerts in 5 Indic languages."),
         
         ("Pillar 4: 180-Second Cashflow Underwriting Engine",
          "Eliminates collateral-based loan friction. Evaluates daily QR and Soundbox settlement velocity, txn consistency, and zero bounce rate "
@@ -302,7 +303,23 @@ def create_presentation_docx(output_path):
         
         ("Interactive Customer Order Simulator",
          "Allows evaluators and merchants to simulate incoming customer orders using preset voice notes in 5 languages or "
-         "typing custom shopping lists. Tests the full end-to-end lifecycle: Voice -> Extraction -> Checklist -> Packing -> WhatsApp Pickup Alert -> UPI QR Payment.")
+         "typing custom shopping lists. Tests the full end-to-end lifecycle: Voice -> Extraction -> Checklist -> Packing -> WhatsApp Pickup Alert -> UPI QR Payment."),
+        
+        ("Real-Time WhatsApp Message Dispatch & Dynamic QR System",
+         "Merchants can trigger real-time WhatsApp payment reminders with automatic international +91 phone formatting. "
+         "Directly launches WhatsApp Web or the WhatsApp desktop/mobile app with personalized polite messages, store branding, "
+         "and dynamic 1-click Paytm UPI links. Displays a dedicated confirmation modal with live status, dynamic QR code for in-person scans, "
+         "and Soundbox audio alerts across 5 Indic languages."),
+        
+        ("Full Customer Data Management & Khata Ledger Editing",
+         "Introduces an 'Edit' action on every customer ledger card and 2-KM map pin. Merchants can modify customer names, "
+         "WhatsApp phone numbers, village/neighborhood addresses, 2-KM distance tiers (0.3km - 1.8km), due amounts, overdue days, "
+         "credit risk ratings, and purchased item notes. Includes safe customer removal/settlement with instant ledger recalculation."),
+        
+        ("Persistent Two-Tier Synchronization Architecture",
+         "Synchronizes merchant and customer updates across client-side browser localStorage (ensuring zero data loss on page refreshes) "
+         "and FastAPI backend REST endpoints (POST /api/khata/update and POST /api/khata/delete). Pre-configures regular customer records "
+         "like Jafar with 2-KM map coordinates.")
     ]
 
     for it_title, it_desc in innovations:
@@ -397,5 +414,10 @@ if __name__ == "__main__":
     desktop_docx = os.path.join(desktop_dir, "Paytm_VyaparAI_Executive_Presentation.docx")
 
     create_presentation_docx(proj_docx)
-    create_presentation_docx(desktop_docx)
+    try:
+        create_presentation_docx(desktop_docx)
+    except PermissionError:
+        alt_docx = os.path.join(desktop_dir, "Paytm_VyaparAI_Executive_Presentation_Updated.docx")
+        print(f"Desktop file is locked by Word. Saving updated presentation to: {alt_docx}")
+        create_presentation_docx(alt_docx)
     print("All presentation documents generated successfully!")
