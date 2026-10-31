@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paytm Vyapar AI (पेटीएम व्यापार एआई) - Merchant Growth Copilot</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Fonts: Inter & Hind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paytm: {
+              blue: '#002970',
+              cyan: '#00b9f1',
+              light: '#f5f7fc',
+              dark: '#011942',
+              gold: '#ffb703',
+              green: '#10b981'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Hind', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', 'Hind', sans-serif;
+      background-color: #f3f6fb;
+    }
+    .wave-bar {
+      animation: wave 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes wave {
+      0% { height: 6px; }
+      100% { height: 28px; }
+    }
+    .pulse-glow {
+      box-shadow: 0 0 25px rgba(0, 185, 241, 0.6);
+      animation: pulseGlow 1.8s infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 185, 241, 0.4); }
+      50% { transform: scale(1.04); box-shadow: 0 0 30px rgba(0, 185, 241, 0.85); }
+    }
+    .chat-bubble-ai {
+      background: linear-gradient(135deg, #ffffff 0%, #f7faff 100%);
+      border-left: 4px solid #00b9f1;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP PAYTM BRANDED HEADER -->
+  <header class="bg-paytm-blue text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-md">
+          <svg viewBox="0 0 100 32" class="w-full h-auto fill-current text-paytm-blue">
+            <path d="M12 2h8c6 0 10 4 10 9.5s-4 9.5-10 9.5H16v9H12V2zm4 15h4c3.5 0 6-2 6-5.5S23.5 6 20 6h-4v11zM32 10h4v20h-4zM34 2a3 3 0 100 6 3 3 0 000-6zM46 10h4v2.5c1.2-1.8 3.2-2.9 5.5-2.9 4.2 0 7.5 3.5 7.5 8.2v12.2h-4V18c0-2.8-1.8-4.5-4.2-4.5-2.4 0-4.8 1.8-4.8 5v11.5h-4V10z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold tracking-tight text-white flex items-center">
+              Paytm Vyapar <span class="text-paytm-cyan ml-1 font-extrabold">AI</span>
+            </h1>
+            <span class="bg-paytm-cyan/20 border border-paytm-cyan/50 text-paytm-cyan text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
+              Track 1 • Merchant Copilot
+            </span>
+          </div>
+          <p class="text-xs text-blue-200">व्यापारी विकास साथी • Sharma Super Store (Noida)</p>
+        </div>
+      </div>
+
+      <!-- SOUNDBOX STATUS & ACTIONS -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden md:flex items-center bg-white/10 border border-white/15 px-3 py-1.5 rounded-full text-xs">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping mr-2"></span>
+          <span class="text-blue-100">Soundbox 2.0: <strong class="text-white">Connected</strong> (SBOX-4091)</span>
+        </div>
+
+        <button onclick="triggerSoundboxSimulate()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-lg flex items-center space-x-1.5 shadow transition active:scale-95">
+          <i data-lucide="volume-2" class="w-4 h-4"></i>
+          <span>Simulate Payment (₹500)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: LIVE MERCHANT DASHBOARD (7 Cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- STORE HEADER BANNER -->
+      <div class="bg-gradient-to-r from-paytm-blue to-paytm-dark rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-paytm-cyan/10 rounded-full blur-2xl"></div>
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs uppercase tracking-wider text-paytm-cyan font-semibold">पेटीएम मर्चेंट स्टोर</span>
+              <span class="bg-emerald-500/30 text-emerald-300 text-[11px] px-2 py-0.5 rounded-full">QR & Soundbox Verified</span>
+            </div>
+            <h2 class="text-2xl font-bold mt-1">शर्मा सुपर स्टोर (Sharma Super Store)</h2>
+            <p class="text-xs text-blue-200 mt-0.5">सेक्टर 18, नोएडा • UPI: <code class="bg-black/20 px-1.5 py-0.5 rounded text-blue-100 font-mono">sharmastore@paytm</code></p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-blue-200">आज की कुल बिक्री</span>
+            <div id="metric-total-rev" class="text-3xl font-extrabold text-paytm-cyan">₹28,450</div>
+            <span class="text-[11px] text-emerald-400 font-medium">↑ +18.4% पिछले सप्ताह से</span>
+          </div>
+        </div>
+
+        <!-- 3 KPI PILLS -->
+        <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-white/10 text-center">
+          <div class="bg-white/5 rounded-xl p-2.5">
+            <span class="text-[11px] text-blue-200 block">Paytm UPI / QR</span>
+            <span id="metric-upi-rev" class="text-base font-bold text-white">₹24,250</span>
+          </div>
+          <div class="bg-white/5 rounded-xl p-2.5">
+            <span class="text-[11px] text-blue-200 block">Soundbox Txns</span>
+            <span id="metric-txns" class="text-base font-bold text-emerald-300">128 पेमेंट्स</span>
+          </div>
+          <div class="bg-white/5 rounded-xl p-2.5">
+            <span class="text-[11px] text-blue-200 block">Avg Bill</span>
+            <span class="text-base font-bold text-white">₹191</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY ALERT RADAR CARD -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 text-base">स्टॉक अलर्ट रडार (Stock Depletion Radar)</h3>
+              <p class="text-xs text-slate-500">AI predicts fast-depleting goods before they run out</p>
+            </div>
+          </div>
+          <button onclick="triggerReorderModal()" class="text-xs font-semibold bg-paytm-blue hover:bg-paytm-blue/90 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1 shadow-sm">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>1-Click Reorder PO</span>
+          </button>
+        </div>
+
+        <div id="inventory-list" class="space-y-2.5">
+          <!-- Dynamic inventory populated via JS -->
+        </div>
+      </div>
+
+      <!-- HOURLY SALES CHART & PRE-APPROVED LOAN CARD -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Chart -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider flex items-center">
+              <i data-lucide="trending-up" class="w-4 h-4 mr-1.5 text-paytm-cyan"></i> Peak Hour Sales
+            </h4>
+            <span class="text-[11px] font-semibold text-paytm-blue bg-blue-50 px-2 py-0.5 rounded">7-9 PM Rush</span>
+          </div>
+          <div class="h-36">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Loan Pre-Approval Card -->
+        <div class="bg-gradient-to-br from-blue-900 to-paytm-blue text-white rounded-2xl p-4 shadow-sm border border-blue-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-paytm-cyan">Paytm Merchant Loan</span>
+              <span class="bg-emerald-400 text-slate-900 text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase">Pre-Approved</span>
+            </div>
+            <div class="mt-2">
+              <span class="text-xs text-blue-200">Instant Working Capital Limit:</span>
+              <div class="text-2xl font-black text-amber-400">₹2,50,000</div>
+              <p class="text-[11px] text-blue-200 mt-1">Daily auto-settlement: ₹320 via Soundbox. Zero collateral.</p>
+            </div>
+          </div>
+          <button onclick="askCopilot('मर्चेंट लोन की पात्रता और ब्याज दर बताओ')" class="mt-3 w-full bg-paytm-cyan hover:bg-paytm-cyan/90 text-paytm-dark font-bold text-xs py-2 rounded-xl text-center shadow transition">
+            Check Loan Terms via Voice AI →
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: VERNACULAR VOICE COPILOT INTERACTION (5 Cols) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+
+      <!-- COPILOT CARD -->
+      <div class="bg-white rounded-2xl shadow-md border border-blue-100 flex-1 flex flex-col overflow-hidden min-h-[580px]">
+        
+        <!-- COPILOT HEADER -->
+        <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-paytm-cyan to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+              </div>
+              <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+            </div>
+            <div>
+              <h3 class="font-bold text-sm text-white flex items-center">
+                पेटीएम आवाज़ (Paytm Voice Copilot)
+              </h3>
+              <p class="text-[11px] text-slate-400">Hindi & English Speech-to-Speech</p>
+            </div>
+          </div>
+
+          <!-- Language Selector -->
+          <div class="flex items-center space-x-1 bg-slate-800 p-1 rounded-lg text-xs">
+            <button id="lang-btn-hi" onclick="setLanguage('hi')" class="px-2 py-0.5 rounded font-medium bg-paytm-cyan text-slate-950 font-bold transition">हिंदी</button>
+            <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-medium text-slate-300 hover:text-white transition">EN</button>
+          </div>
+        </div>
+
+        <!-- VOICE STATUS & AUDIO WAVEFORM (Shows when listening or speaking) -->
+        <div id="voice-indicator-bar" class="hidden bg-paytm-cyan/10 border-b border-paytm-cyan/30 px-4 py-2.5 flex items-center justify-between transition-all">
+          <div class="flex items-center space-x-2">
+            <span id="voice-pulse-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+            <span id="voice-status-text" class="text-xs font-semibold text-paytm-blue">Listening (सुन रहा हूँ)...</span>
+          </div>
+          <!-- Waveform bars -->
+          <div class="flex items-center space-x-1 h-5">
+            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.1s"></div>
+            <div class="w-1 bg-paytm-blue rounded-full wave-bar" style="animation-delay: 0.3s"></div>
+            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.2s"></div>
+            <div class="w-1 bg-paytm-blue rounded-full wave-bar" style="animation-delay: 0.4s"></div>
+            <div class="w-1 bg-paytm-cyan rounded-full wave-bar" style="animation-delay: 0.15s"></div>
+          </div>
+        </div>
+
+        <!-- CHAT CONVERSATION LOG -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3.5 max-h-[380px] text-sm">
+          <!-- Initial Welcome Message -->
+          <div class="chat-bubble-ai p-3.5 rounded-2xl rounded-tl-none shadow-sm space-y-2">
+            <div class="flex items-center space-x-1.5 text-paytm-blue font-semibold text-xs">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-paytm-cyan"></i>
+              <span>Paytm Vyapar AI Business Partner</span>
+            </div>
+            <div class="text-slate-700 leading-relaxed text-xs sm:text-sm">
+              नमस्ते राजेश जी! मैं आपका व्यक्तिगत व्यापार साथी हूँ। नीचे दिए गए <strong>माइक बटन</strong> को दबाकर बोलें या किसी भी प्रश्न पर टैप करें।
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK VOICE PROMPTS CHIPS -->
+        <div class="p-3 bg-slate-50 border-t border-slate-100">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+            🎙️ अक्सर पूछे जाने वाले सवाल (Quick Voice Prompts):
+          </span>
+          <div class="flex flex-wrap gap-1.5">
+            <button onclick="askCopilot('आज की कुल बिक्री और यूपीआई कलेक्शन कितना है?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
+              💰 आज की कुल बिक्री?
+            </button>
+            <button onclick="askCopilot('कौन सा सामान खत्म होने वाला है और री-ऑर्डर चाहिए?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
+              ⚠️ कौन सा स्टॉक कम है?
+            </button>
+            <button onclick="askCopilot('दीवाली ऑफर का 10% डिस्काउंट वाला व्हाट्सएप मैसेज बनाओ')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
+              📢 10% छूट WhatsApp मैसेज
+            </button>
+            <button onclick="askCopilot('दुकान पर सबसे ज्यादा भीड़ किस समय होती है?')" class="text-xs bg-white hover:bg-blue-50 text-slate-700 border border-slate-200 hover:border-paytm-cyan px-2.5 py-1 rounded-full transition shadow-xs">
+              ⏰ पीक आवर कब है?
+            </button>
+          </div>
+        </div>
+
+        <!-- VOICE MIC & INPUT BAR -->
+        <div class="p-3.5 bg-white border-t border-slate-200 flex items-center space-x-2.5">
+          <!-- Big Mic Button -->
+          <button id="mic-btn" onclick="toggleVoiceRecording()" class="w-12 h-12 rounded-full bg-paytm-blue hover:bg-paytm-cyan hover:text-slate-900 text-white flex items-center justify-center shadow-lg transition transform active:scale-90 flex-shrink-0">
+            <i id="mic-icon" data-lucide="mic" class="w-6 h-6"></i>
+          </button>
+
+          <!-- Text Input fallback -->
+          <div class="flex-1 relative">
+            <input 
+              id="user-input-text" 
+              type="text" 
+              placeholder="माइक दबाकर बोलें या यहाँ लिखें..." 
+              class="w-full pl-3.5 pr-10 py-2.5 text-xs sm:text-sm bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-paytm-cyan rounded-xl outline-none transition"
+              onkeypress="handleKeyPress(event)"
+            />
+            <button onclick="sendUserText()" class="absolute right-2 top-1/2 -translate-y-1/2 text-paytm-blue hover:text-paytm-cyan p-1">
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- HIDDEN AUDIO PLAYER FOR EDGE-TTS REPLIES -->
+  <audio id="tts-audio-player" class="hidden"></audio>
+
+  <!-- MODAL: WHATSAPP CAMPAIGN BROADCAST -->
+  <div id="whatsapp-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in duration-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2 text-emerald-600 font-bold">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>1-Click WhatsApp Vyapar Broadcast</span>
+        </div>
+        <button onclick="closeModal('whatsapp-modal')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-500 mt-3">Ready to dispatch to 320 loyal Paytm QR shoppers:</p>
+
+      <div class="mt-2.5 p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-xs font-mono text-slate-800 whitespace-pre-wrap" id="whatsapp-preview-text">
+      </div>
+
+      <div class="mt-4 flex space-x-2">
+        <button onclick="dispatchWhatsAppWeb()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center space-x-1.5 shadow">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+          <span>Open in WhatsApp</span>
+        </button>
+        <button onclick="copyCampaignText()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs px-3.5 py-2.5 rounded-xl">
+          Copy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REORDER PO DISPATCH -->
+  <div id="reorder-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2 text-paytm-blue font-bold">
+          <i data-lucide="truck" class="w-5 h-5"></i>
+          <span>Automated Restock Purchase Order</span>
+        </div>
+        <button onclick="closeModal('reorder-modal')" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-3">
+        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 text-xs space-y-1">
+          <div class="font-bold text-paytm-blue">Supplier: M/s Gupta FMCG Wholesalers (Noida)</div>
+          <div class="text-slate-600">Items: Amul Milk (30 pkts), Fortune Oil (2 cartons), Maggi (50 pkts)</div>
+          <div class="font-semibold text-slate-800 mt-1">Est. Amount: ₹4,850 • Payment via Paytm Commercial UPI</div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex space-x-2">
+        <button onclick="confirmReorderPO()" class="flex-1 bg-paytm-blue hover:bg-paytm-blue/90 text-white font-bold text-xs py-2.5 rounded-xl shadow">
+          Confirm & Dispatch PO to Wholesaler
+        </button>
+        <button onclick="closeModal('reorder-modal')" class="bg-slate-100 text-slate-600 text-xs px-3 py-2.5 rounded-xl">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script src="/static/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

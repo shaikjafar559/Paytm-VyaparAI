@@ -1,14 +1,14 @@
 """
-Paytm VyaparAI — FastAPI Application Server v3.0 (10/10 Hackathon Edition)
-Multi-Language: English, Telugu, Hindi, Tamil, Kannada
-Includes TTS Audio Endpoint + QR Code Generator
+Paytm VyaparAI — FastAPI Application Server v4.0
+Includes Native Static Audio Server for Paytm Soundbox Multilingual Voice Playback
 """
 
 import os
 import io
 import uvicorn
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -17,8 +17,8 @@ from gtts import gTTS
 
 app = FastAPI(
     title="Paytm VyaparAI Multi-Agent API",
-    description="The Autonomous AI Business Partner for Bharat Merchants (10/10 Hackathon Edition)",
-    version="3.0.0"
+    description="The Autonomous AI Business Partner for Bharat Merchants with Multilingual Soundbox Audio",
+    version="4.0.0"
 )
 
 app.add_middleware(
@@ -30,6 +30,11 @@ app.add_middleware(
 )
 
 engine = MerchantCopilotEngine()
+
+# Mount static audio files
+static_audio_dir = os.path.join(os.path.dirname(__file__), "static", "audio")
+os.makedirs(static_audio_dir, exist_ok=True)
+app.mount("/audio", StaticFiles(directory=static_audio_dir), name="audio")
 
 class QueryRequest(BaseModel):
     query: str

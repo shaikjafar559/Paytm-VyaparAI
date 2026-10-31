@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="static/audio_bundle.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -142,12 +143,14 @@
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
           </div>
           <!-- Speaker grille -->
-          <div class="w-24 h-24 rounded-full border-2 border-dashed border-cyan-400/60 flex items-center justify-center">
+          <div class="relative w-24 h-24 rounded-full border-2 border-dashed border-cyan-400/60 flex items-center justify-center">
             <div id="soundbox-mic-icon" class="w-14 h-14 rounded-full bg-cyan-400/20 text-cyan-300 flex items-center justify-center text-2xl cursor-pointer hover:scale-110 transition shadow-inner" onclick="triggerMic()">
               <i class="fa-solid fa-microphone"></i>
             </div>
+            <div id="soundbox-speaker-waves" class="hidden absolute -inset-2 rounded-full border-2 border-cyan-300 animate-ping pointer-events-none"></div>
           </div>
-          <div class="text-[11px] text-white font-semibold bg-black/50 px-3.5 py-1 rounded-full border border-white/10">
+          <div class="text-[11px] text-white font-semibold bg-black/50 px-3.5 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
+            <span id="sb-pulse-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
             <span id="speaker-status" data-i18n="sb_ready_status">Tap Mic or Query Below</span>
           </div>
         </div>
@@ -1079,6 +1082,68 @@
       speakLanguageWelcome(lang);
     }
 
+        // Soundbox Audio Player: Uses studio MP3 audio bundle first, with Web Speech API fallback
+    let currentSoundboxAudio = null;
+
+    function playSoundboxAudio(clipName, fallbackText) {
+      const waves = document.getElementById('soundbox-speaker-waves');
+      const micIcon = document.getElementById('soundbox-mic-icon');
+      if (waves) waves.classList.remove('hidden');
+      if (micIcon) micIcon.classList.add('bg-cyan-300', 'text-paytm-navy');
+
+      function stopSpeakerVisuals() {
+        if (waves) waves.classList.add('hidden');
+        if (micIcon) micIcon.classList.remove('bg-cyan-300', 'text-paytm-navy');
+      }
+
+      // Check bundled audio
+      if (window.SOUNDBOX_AUDIO_BUNDLE && window.SOUNDBOX_AUDIO_BUNDLE[clipName]) {
+        try {
+          if (currentSoundboxAudio) {
+            currentSoundboxAudio.pause();
+            currentSoundboxAudio.currentTime = 0;
+          }
+          currentSoundboxAudio = new Audio(window.SOUNDBOX_AUDIO_BUNDLE[clipName]);
+          currentSoundboxAudio.onended = stopSpeakerVisuals;
+          currentSoundboxAudio.onerror = () => {
+            speakFallbackSpeech(fallbackText);
+            stopSpeakerVisuals();
+          };
+          currentSoundboxAudio.play();
+          return;
+        } catch (e) {
+          console.warn('Audio bundle play failed, falling back to speech synthesis', e);
+        }
+      }
+
+      // Fallback: server audio URL
+      const audioUrl = `/audio/${clipName}.mp3`;
+      const directAudio = new Audio(audioUrl);
+      directAudio.onended = stopSpeakerVisuals;
+      directAudio.onerror = () => {
+        speakFallbackSpeech(fallbackText);
+        stopSpeakerVisuals();
+      };
+      directAudio.play().catch(() => {
+        speakFallbackSpeech(fallbackText);
+        stopSpeakerVisuals();
+      });
+    }
+
+    function speakFallbackSpeech(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = langVoiceCodes[currentLanguage] || 'en-IN';
+        utterance.rate = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakText(text) {
+      speakFallbackSpeech(text);
+    }
+
     function speakLanguageWelcome(lang) {
       const greetings = {
         'english': "Paytm Soundbox voice is now set to English.",
@@ -1089,11 +1154,11 @@
       };
       const text = greetings[lang] || greetings['english'];
       document.getElementById('speaker-status').innerText = text;
-      speakText(text);
+      playSoundboxAudio(`welcome_${lang}`, text);
       setTimeout(() => {
         const dict = UI_TRANSLATIONS[currentLanguage];
         document.getElementById('speaker-status').innerText = dict.sb_ready_status;
-      }, 4000);
+      }, 4500);
     }
 
     function renderSamplePrompts() {
@@ -1183,6 +1248,20 @@
       }, 1400);
     }
 
+        function getAudioClipForQuery(query, lang) {
+      const q = query.toLowerCase();
+      if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('కలెక్షన్') || q.includes('வசூல்') || q.includes('ಕಲೆಕ್ಷನ್')) {
+        return `sales_${lang}`;
+      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('आर्डर') || q.includes('స్టాక్') || q.includes('இருப்பு') || q.includes('ದಾಸ್ತಾನು')) {
+        return `stock_${lang}`;
+      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('उधार') || q.includes('బాకీ') || q.includes('கடன்') || q.includes('ಸಾಲ')) {
+        return `udhar_${lang}`;
+      } else if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('ऋण') || q.includes('రుణం') || q.includes('கடன்') || q.includes('ಸಾಲ')) {
+        return `loan_${lang}`;
+      }
+      return `welcome_${lang}`;
+    }
+
     async function simulateVoiceQuery(query) {
       const stream = document.getElementById('chat-stream');
       const dict = UI_TRANSLATIONS[currentLanguage];
@@ -1198,6 +1277,8 @@
       `;
       stream.innerHTML += userHtml;
 
+      const clipKey = getAudioClipForQuery(query, currentLanguage);
+
       try {
         const res = await fetch('/api/copilot/query', {
           method: 'POST',
@@ -1205,49 +1286,62 @@
           body: JSON.stringify({ query: query, language: currentLanguage })
         });
         const data = await res.json();
-        renderAiResponse(data.voice_response);
+        renderAiResponse(data.voice_response, clipKey);
       } catch (err) {
-        fallbackClientSimulation(query);
+        fallbackClientSimulation(query, clipKey);
       }
     }
 
-    function fallbackClientSimulation(query) {
+    function fallbackClientSimulation(query, clipKey) {
       let resp = "";
       const lang = currentLanguage;
-      if (query.includes("collection") || query.includes("sales") || query.includes("मुनाफा") || query.includes("కలెక్షన్") || query.includes("வசூல்") || query.includes("ಕಲೆಕ್ಷನ್")) {
-        if (lang === 'telugu') resp = "సేత్ గారూ, ఈరోజు సాయంత్రం 7 గంటల వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది (64 లాವಾదేవీలు). అత్యధికంగా అమ్ముడైన వస్తువు 'అమూల్ తాజా పాలు 500ml'. జాగ్రత్త: అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి!";
-        else if (lang === 'tamil') resp = "சேத் அவர்களே, இன்று மாலை 7 மணி வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது (64 பரிவர்த்தனைகள்). அதிகம் விற்பனையான பொருள் 'அமுல் தாசா பால் 500ml'. கவனம்: அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன!";
-        else if (lang === 'kannada') resp = "ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆ 7 ಗಂಟೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ (64 ವಹಿವಾಟುಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು 'ಅಮುಲ್ ತಾಜಾ ಹಾಲು 500ml'. ಗಮನಿಸಿ: ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ!";
-        else if (lang === 'hindi') resp = "सेठ जी, आज शाम 7 बजे तक कुल ₹18,420 का कलेक्शन हुआ है (64 transactions). सबसे तेज़ बिकने वाला आइटम 'अमूल ताज़ा दूध' रहा. ध्यान दें: अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!";
-        else resp = "Boss, today's total collection reached ₹18,420 across 64 transactions. The top-selling product was 'Amul Taaza Milk 500ml' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!";
-      } else if (query.includes("loan") || query.includes("limit") || query.includes("రుణం") || query.includes("கடன்") || query.includes("ಸಾಲ")) {
-        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ మరియు స్థిరమైన రోజువారీ యూపీఐ లావాదేవీల ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ ముందస్తుగా ఆమోదించబడింది.";
-        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் மற்றும் தினசரி யுபிஐ பரிவர்த்தனை வேகத்தின் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
-        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಮತ್ತು ದೈನಂದಿನ ಯುಪಿಐ ವಹಿವಾಟುಗಳ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ವರ್ಕಿಂಗ್ ಕ್ಯಾಪಿಟಲ್ ಲೋನ್ ಅನುಮೋದಿಸಲಾಗಿದೆ.";
-        else if (lang === 'hindi') resp = "बधाई हो सेठ जी! आपके वेरीफाइड पेटीएम साउंडबॉक्स और नियमित यूपीआई लेनदेन के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन प्री-अप्रूव्ड मिला है.";
+      if (clipKey.startsWith('sales')) {
+        if (lang === 'telugu') resp = "సేత్ గారూ, ఈరోజు సాయంత్రం వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది. అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, రీస్టాక్ చేయండి!";
+        else if (lang === 'tamil') resp = "சேத் அவர்களே, இன்று மாலை வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது. அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!";
+        else if (lang === 'kannada') resp = "ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ. ಅಮುಲ್ ಹಾಲಿನ ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ರೀಸ್ಟಾಕ್ ಮಾಡಿ!";
+        else if (lang === 'hindi') resp = "सेठ जी, आज शाम तक कुल ₹18,420 का कलेक्शन हुआ है। अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!";
+        else resp = "Boss, today's total collection reached ₹18,420 across 64 transactions. Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!";
+      } else if (clipKey.startsWith('stock')) {
+        if (lang === 'telugu') resp = "మీ దుకాణంలో 3 వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి. బాలాజీ ఏజెన్సీ ONDC లో అమూల్ పాలను ₹24.20 కి ఇస్తున్నారు. రీ-ఆర్డర్ సిద్ధం చేశాను.";
+        else if (lang === 'tamil') resp = "கடையில் 3 பொருட்கள் குறைவான இருப்பில் உள்ளன. பாலாஜி ஏஜென்சி ONDC-யில் அமுல் பால் வழங்குகிறது. ஆர்டர் தயாராக உள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಂಗಡಿಯಲ್ಲಿ 3 ವಸ್ತುಗಳ ದಾಸ್ತಾನು ಕಡಿಮೆಯಾಗಿದೆ. ಬಾಲಾಜಿ ಏಜೆನ್ಸಿ ONDC ಯಲ್ಲಿ ಅಮುಲ್ ಹಾಲು ನೀಡುತ್ತಿದೆ. ಆರ್ಡರ್ ಸಿದ್ಧವಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान में 3 आइटम कम स्टॉक पर हैं। बालाजी एजेंसी ONDC पर अमूल दूध दे रही है। ऑर्डर तैयार है।";
+        else resp = "You have 3 items running low on stock. Sri Balaji Agency on ONDC is offering Amul Milk at ₹24.20. Order prepared.";
+      } else if (clipKey.startsWith('udhar')) {
+        if (lang === 'telugu') resp = "మొత్తం ₹12,450 ఉధార్ బకాయి ఉంది. అనిల్ వర్మ గారికి వాట్సాప్ రిమైండర్ మరియు పేటీఎం క్యూఆర్ లింక్ పంపాను.";
+        else if (lang === 'tamil') resp = "மொத்தம் ₹12,450 கடன் பாக்கி உள்ளது. அனில் வர்மாவுக்கு வாட்ஸ்அப் நினைவூட்டல் மற்றும் பேடிஎம் லிங்க் அனுப்பப்பட்டது.";
+        else if (lang === 'kannada') resp = "ಒಟ್ಟು ₹12,450 ಸಾಲದ ಹಣ ಬಾಕಿ ಇದೆ. ಅನಿಲ್ ವರ್ಮಾ ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಮತ್ತು ಪೇಟಿಎಂ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान पर कुल ₹12,450 का उधार बाकी है। अनिल वर्मा जी को व्हाट्सएप पर विनम्र रिमाइंडर और पेमेंट लिंक भेज दिया गया है।";
+        else resp = "A total of ₹12,450 in customer credit is pending. WhatsApp reminder with dynamic UPI link sent to Anil Verma.";
+      } else if (clipKey.startsWith('loan')) {
+        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
+        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
         else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for ₹2,50,000 in instant working capital credit.";
       } else {
-        if (lang === 'telugu') resp = "మీ అభ్యర్థన విజయవంతంగా ప్రాసెస్ చేయబడింది. సౌండ్‌బాక్స్ 4.0 ఆన్‌లైన్‌లో ఉంది.";
-        else if (lang === 'tamil') resp = "உங்கள் கோரிக்கை வெற்றிகரமாக செயல்படுத்தப்பட்டது. சவுண்ட்பாக்ஸ் 4.0 ஆன்லைனில் உள்ளது.";
-        else if (lang === 'kannada') resp = "ನಿಮ್ಮ ವಿನಂತಿ ಯಶಸ್ವಿಯಾಗಿ ಪ್ರಕ್ರಿಯೆಗೊಂಡಿದೆ. ಸೌಂಡ್‌ಬಾಕ್ಸ್ 4.0 ಆನ್‌ಲೈನ್‌ನಲ್ಲಿದೆ.";
-        else if (lang === 'hindi') resp = "आपकी दुकान का ऑपरेशन बिल्कुल सुचारू रूप से चल रहा है. साउंडबॉक्स 4.0 ऑनलाइन है.";
-        else resp = "Store operations are running smoothly. Soundbox 4.0 is online and active on your counter.";
+        resp = UI_TRANSLATIONS[lang].sb_ready_status;
       }
-      renderAiResponse(resp);
+      renderAiResponse(resp, clipKey);
     }
 
-    function renderAiResponse(responseText) {
+    function renderAiResponse(responseText, clipKey) {
       const stream = document.getElementById('chat-stream');
       const micStatus = document.getElementById('speaker-status');
       const dict = UI_TRANSLATIONS[currentLanguage];
+
+      const safeClip = clipKey || getAudioClipForQuery(responseText, currentLanguage);
 
       const aiHtml = `
         <div class="flex items-start space-x-3 justify-end">
           <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl rounded-tr-none text-slate-800 max-w-lg space-y-2 shadow-sm">
             <div class="flex items-center justify-between text-xs text-paytm-navy font-bold">
-              <span>Paytm VyaparAI (${currentLanguage.toUpperCase()})</span>
-              <button onclick="speakText('${responseText.replace(/'/g, "\\'")}')" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
-                <i class="fa-solid fa-volume-high"></i>
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-volume-high text-cyan-600"></i>
+                Paytm Soundbox 4.0 (${currentLanguage.toUpperCase()})
+              </span>
+              <button onclick="playSoundboxAudio('${safeClip}', '${responseText.replace(/'/g, "\\'")}')" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
+                <i class="fa-solid fa-play text-[10px]"></i>
                 <span>${dict.btn_play_sb_audio}</span>
               </button>
             </div>
@@ -1259,24 +1353,17 @@
       stream.innerHTML += aiHtml;
       stream.scrollTop = stream.scrollHeight;
       document.getElementById('last-ai-text').innerText = responseText;
+      window.lastClipKey = safeClip;
       micStatus.innerText = dict.sb_ready_status;
 
-      speakText(responseText);
-    }
-
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = langVoiceCodes[currentLanguage] || 'en-IN';
-        utterance.rate = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
+      // Play Soundbox speaker audio
+      playSoundboxAudio(safeClip, responseText);
     }
 
     function speakLastResponse() {
       const text = document.getElementById('last-ai-text').innerText;
-      speakText(text);
+      const clip = window.lastClipKey || `sales_${currentLanguage}`;
+      playSoundboxAudio(clip, text);
     }
 
     function handleCustomInput() {
