@@ -343,3 +343,31 @@ async def api_add_customer(payload: AddCustomerPayload):
     }
     profile.setdefault("khata", []).insert(0, new_cust)
     return {"status": "SUCCESS", "customer": new_cust, "total_khata": sum(c["due_amount"] for c in profile["khata"])}
+
+class UpdateCustomerPayload(BaseModel):
+    id: str
+    name: str
+    phone: Optional[str] = None
+    due_amount: float
+    notes: Optional[str] = None
+    days_pending: Optional[int] = None
+    risk: Optional[str] = None
+    addr: Optional[str] = None
+    dist: Optional[str] = None
+    business_type: Optional[str] = None
+
+class DeleteCustomerPayload(BaseModel):
+    id: str
+    business_type: Optional[str] = None
+
+@app.post("/api/khata/update")
+async def api_update_customer(payload: UpdateCustomerPayload):
+    biz = payload.business_type or engine.current_biz
+    res = engine.update_khata_customer(payload.id, payload.dict(), biz)
+    return JSONResponse(content=res)
+
+@app.post("/api/khata/delete")
+async def api_delete_customer(payload: DeleteCustomerPayload):
+    biz = payload.business_type or engine.current_biz
+    res = engine.delete_khata_customer(payload.id, biz)
+    return JSONResponse(content=res)

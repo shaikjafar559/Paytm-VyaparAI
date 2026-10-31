@@ -32,6 +32,7 @@ class MerchantCopilotEngine:
                 {"sku": "TATA-TEA-250", "name": "Tata Tea Gold 250g", "category": "Beverages", "stock": 25, "reorder_threshold": 10, "cost_price": 135.0, "mrp": 160.0, "daily_velocity": 6, "status": "HEALTHY"}
             ],
             "khata": [
+                {"id": "KJAFAR", "name": "Jafar", "phone": "+91 98450 11223", "due_amount": 1200, "days_pending": 3, "last_reminder": "Just now", "notes": "sunflower oil 1 L", "risk": "Moderate", "addr": "2-118, chennupalli(v)", "dist": "0.8 km"},
                 {"id": "K1", "name": "Anil Verma Gym", "phone": "+91 98450 99887", "due_amount": 4850, "days_pending": 18, "last_reminder": "5 days ago", "notes": "Eggs crate & Oats", "risk": "High"},
                 {"id": "K2", "name": "Ramesh Sharma", "phone": "+91 98765 43210", "due_amount": 3420, "days_pending": 12, "last_reminder": "2 days ago", "notes": "Atta 10kg & Oil", "risk": "Moderate"},
                 {"id": "K3", "name": "Sita Ram Tailor", "phone": "+91 98111 22334", "due_amount": 1180, "days_pending": 5, "last_reminder": "Never", "notes": "Tea & Sugar", "risk": "Low"}
@@ -428,6 +429,47 @@ class MerchantCopilotEngine:
             "upi_deep_link": upi_link,
             "web_pay_link": web_pay_link,
             "qr_payload": upi_link
+        }
+
+# Update customer record in Khata Ledger
+    def update_khata_customer(self, customer_id: str, data: dict, business_type: str = None) -> dict:
+        biz = business_type or self.current_biz
+        profile = self.BUSINESS_PROFILES.get(biz, self.BUSINESS_PROFILES["kirana"])
+        khata_list = profile.get("khata", [])
+        for cust in khata_list:
+            if cust.get("id") == customer_id or cust.get("name", "").lower() == data.get("name", "").lower():
+                cust["name"] = data.get("name", cust.get("name"))
+                if "phone" in data and data["phone"]:
+                    cust["phone"] = data["phone"]
+                if "due_amount" in data and data["due_amount"] is not None:
+                    cust["due_amount"] = float(data["due_amount"])
+                if "days_pending" in data and data["days_pending"] is not None:
+                    cust["days_pending"] = int(data["days_pending"])
+                if "risk" in data and data["risk"]:
+                    cust["risk"] = data["risk"]
+                if "notes" in data and data["notes"]:
+                    cust["notes"] = data["notes"]
+                if "addr" in data and data["addr"]:
+                    cust["addr"] = data["addr"]
+                if "dist" in data and data["dist"]:
+                    cust["dist"] = data["dist"]
+                return {
+                    "status": "SUCCESS",
+                    "customer": cust,
+                    "total_khata": sum(c.get("due_amount", 0) for c in khata_list)
+                }
+        return {"status": "NOT_FOUND", "message": f"Customer {customer_id} not found"}
+
+    # Delete customer from Khata Ledger
+    def delete_khata_customer(self, customer_id: str, business_type: str = None) -> dict:
+        biz = business_type or self.current_biz
+        profile = self.BUSINESS_PROFILES.get(biz, self.BUSINESS_PROFILES["kirana"])
+        khata_list = profile.get("khata", [])
+        profile["khata"] = [c for c in khata_list if c.get("id") != customer_id and c.get("name", "").lower() != customer_id.lower()]
+        return {
+            "status": "SUCCESS",
+            "customer_id": customer_id,
+            "total_khata": sum(c.get("due_amount", 0) for c in profile.get("khata", []))
         }
 
     # Execute Autonomous 1-Click ONDC Restock

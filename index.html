@@ -930,6 +930,16 @@
               <span data-i18n="whatsapp_preview_title">Generated WhatsApp Message:</span>
             </p>
             <p id="udhar-msg-text" class="text-slate-700 leading-relaxed font-sans bg-white p-3 rounded-xl border border-slate-200">--</p>
+            <div class="mt-2.5 flex items-center space-x-2">
+              <a id="udhar-inline-send-wa" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1.5 transition shadow-sm cursor-pointer">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+                <span>Open in WhatsApp Web / App</span>
+              </a>
+              <button onclick="copyWaModalMessage()" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center space-x-1 transition cursor-pointer">
+                <i class="fa-solid fa-copy text-xs text-slate-400"></i>
+                <span>Copy</span>
+              </button>
+            </div>
           </div>
           <!-- Dynamic QR Container -->
           <div class="bg-white p-3 rounded-2xl border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-sm">
@@ -1426,6 +1436,206 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+  <!-- EDIT CUSTOMER DATA MODAL -->
+    <div id="edit-customer-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 animate-scale-up relative max-h-[90vh] overflow-y-auto">
+        <button onclick="closeEditCustomerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shrink-0 font-bold">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Edit Customer Data & WhatsApp</h3>
+            <p class="text-xs text-slate-500">Update customer details, credit balance, WhatsApp phone, or clear record.</p>
+          </div>
+        </div>
+
+        <form id="edit-customer-form" onsubmit="event.preventDefault(); saveEditedCustomer();" class="space-y-3.5 text-xs">
+          <input type="hidden" id="edit-cust-id">
+
+          <!-- Customer Name & Phone -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Customer Full Name <span class="text-rose-500">*</span></label>
+              <input id="edit-cust-name" type="text" required placeholder="e.g. Jafar" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">WhatsApp Phone Number <span class="text-rose-500">*</span></label>
+              <input id="edit-cust-phone" type="tel" required placeholder="+91 98450 11223" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+          </div>
+
+          <!-- Address & Distance from Shop -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Neighborhood / Address</label>
+              <input id="edit-cust-addr" type="text" placeholder="e.g. 2-118, chennupalli(v)" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Distance from Store</label>
+              <select id="edit-cust-dist" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="0.3 km">0.3 km (3 mins walk)</option>
+                <option value="0.5 km">0.5 km (5 mins)</option>
+                <option value="0.8 km">0.8 km (8 mins)</option>
+                <option value="1.2 km">1.2 km (12 mins)</option>
+                <option value="1.8 km">1.8 km (2-KM Boundary)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Due Amount & Days Pending -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Udhar / Due Amount (₹) <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <span class="absolute left-3 top-2 font-bold text-slate-400">₹</span>
+                <input id="edit-cust-due" type="number" step="10" required placeholder="1200" class="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-xl font-bold text-rose-600 focus:outline-none focus:border-paytm-cyan">
+              </div>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Days Pending</label>
+              <input id="edit-cust-days" type="number" min="0" value="3" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+            </div>
+          </div>
+
+          <!-- Risk Level & Language Preference -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">Credit Risk Category</label>
+              <select id="edit-cust-risk" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="low">🟢 Low Risk (Prompt payer)</option>
+                <option value="moderate">🟡 Moderate Risk (Needs reminders)</option>
+                <option value="high">🔴 High Risk (15+ days pending)</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-slate-700 block mb-1">WhatsApp Language</label>
+              <select id="edit-cust-lang" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan bg-white">
+                <option value="telugu">🇮🇳 తెలుగు (Telugu)</option>
+                <option value="hindi">🇮🇳 हिंदी (Hindi)</option>
+                <option value="english">🌐 English</option>
+                <option value="tamil">🇮🇳 தமிழ் (Tamil)</option>
+                <option value="kannada">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notes / Purchased Items -->
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Items Purchased / Ledger Notes</label>
+            <input id="edit-cust-notes" type="text" placeholder="e.g. sunflower oil 1 L" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-paytm-cyan">
+          </div>
+
+          <!-- Modal Buttons -->
+          <div class="flex items-center space-x-2 pt-3">
+            <button type="button" onclick="deleteCurrentCustomer()" class="px-3.5 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs flex items-center space-x-1 cursor-pointer" title="Delete or Settle Customer">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+              <span>Delete</span>
+            </button>
+            <button type="button" onclick="closeEditCustomerModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 cursor-pointer">
+              Cancel
+            </button>
+            <button type="submit" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-paytm-navy to-slate-900 hover:from-slate-900 hover:to-paytm-navy text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-2 transition cursor-pointer">
+              <i class="fa-solid fa-floppy-disk text-paytm-cyan"></i>
+              <span>Save Changes</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- REAL-TIME WHATSAPP DISPATCH CONFIRMATION MODAL -->
+    <div id="whatsapp-dispatch-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 animate-scale-up relative max-h-[92vh] overflow-y-auto">
+        <button onclick="closeWhatsAppDispatchModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shrink-0 font-bold relative">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+            </span>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="font-bold text-slate-900 text-base">Real-Time WhatsApp Dispatched</h3>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">LIVE SENT</span>
+            </div>
+            <p class="text-xs text-slate-500">Dispatched directly to customer's WhatsApp chat with 1-click Paytm UPI payment link.</p>
+          </div>
+        </div>
+
+        <!-- Recipient Card -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <p class="font-bold text-slate-800 text-sm" id="wa-modal-cust-name">--</p>
+            <p class="text-xs text-slate-500 flex items-center gap-1">
+              <i class="fa-solid fa-phone text-emerald-600"></i>
+              <span id="wa-modal-cust-phone" class="font-mono font-semibold text-slate-700">--</span>
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 font-bold block">Pending Due</span>
+            <span id="wa-modal-cust-due" class="text-base font-extrabold text-rose-600">--</span>
+          </div>
+        </div>
+
+        <!-- Message Preview (WhatsApp Chat Bubble style) -->
+        <div>
+          <label class="text-[11px] font-bold text-slate-500 mb-1 flex items-center justify-between">
+            <span>Dispatched WhatsApp Message:</span>
+            <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-check-double text-emerald-500"></i> Pre-filled with Dynamic UPI Link
+            </span>
+          </label>
+          <div class="bg-[#dcf8c6] border border-emerald-200 rounded-2xl p-3.5 text-xs text-slate-800 shadow-inner relative leading-relaxed font-sans">
+            <p id="wa-modal-msg-text" class="whitespace-pre-wrap select-text">--</p>
+            <div class="text-right mt-2 text-[10px] text-slate-400 flex items-center justify-end gap-1">
+              <span>Just now</span>
+              <i class="fa-solid fa-check-double text-sky-500 text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic QR Code & Instant UPI Scan -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center gap-4">
+          <div id="wa-modal-qrcode" class="w-20 h-20 bg-white p-1 rounded-xl border border-slate-200 flex items-center justify-center shrink-0 shadow-sm"></div>
+          <div class="text-xs space-y-1">
+            <p class="font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-qrcode text-paytm-navy"></i> Dynamic Paytm UPI QR Code
+            </p>
+            <p class="text-[11px] text-slate-500">Customer can also scan right in person from your screen to settle immediately.</p>
+            <span class="inline-block bg-sky-100 text-paytm-navy font-bold text-[10px] px-2 py-0.5 rounded-full">Zero MDR • Instant Soundbox Chime</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-2 pt-1">
+          <a id="wa-modal-open-btn" href="#" target="_blank" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-brands fa-whatsapp text-base"></i>
+            <span>Open in WhatsApp Web / App (Direct Chat)</span>
+          </a>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="copyWaModalMessage()" class="py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer">
+              <i class="fa-solid fa-copy text-xs text-slate-500"></i>
+              <span id="wa-modal-copy-btn-text">Copy Message</span>
+            </button>
+            <button onclick="announceWaModalSoundbox()" class="py-2.5 rounded-xl border border-cyan-200 bg-cyan-50 hover:bg-cyan-100 text-paytm-navy font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer">
+              <i class="fa-solid fa-volume-high text-xs text-paytm-cyan"></i>
+              <span>Soundbox Alert</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1928,43 +2138,44 @@
       'kirana': {
         store: { name: "Sri Lakshmi Kirana & General Store", lat: 12.9345, lng: 77.6320, loc: "Koramangala 4th Block" },
         customers: [
-          { id: "K1", name: "Anil Verma (Gym Trainer)", lat: 12.9372, lng: 77.6345, dist: "0.4 km", due: "₹4,850", days: "18 Days", risk: "high", addr: "4th Cross, FitZone Gym", notes: "Eggs tray & oats" },
-          { id: "K2", name: "Ramesh Sharma (Flat 302)", lat: 12.9310, lng: 77.6360, dist: "0.8 km", due: "₹3,420", days: "12 Days", risk: "moderate", addr: "Green Glen Apts, Flat 302", notes: "Atta 10kg & Oil" },
-          { id: "K3", name: "Sita Ram (Tailor Shop)", lat: 12.9352, lng: 77.6300, dist: "0.3 km", due: "₹1,180", days: "5 Days", risk: "low", addr: "Near Ganapathi Temple", notes: "Daily tea milk & sugar" },
-          { id: "K4", name: "Pooja Reddy", lat: 12.9285, lng: 77.6310, dist: "1.1 km", due: "₹950", days: "3 Days", risk: "low", addr: "17th Main, 5th Block", notes: "Snacks & soft drinks" },
-          { id: "K5", name: "Kiran Kumar", lat: 12.9410, lng: 77.6280, dist: "1.4 km", due: "₹2,050", days: "9 Days", risk: "moderate", addr: "Teachers Colony, 1st Cross", notes: "Monthly groceries" }
+          { id: "KJAFAR", name: "Jafar", lat: 12.9330, lng: 77.6380, dist: "0.8 km", due: "₹1,200", days: "3 Days", risk: "moderate", addr: "2-118, chennupalli(v)", notes: "sunflower oil 1 L", phone: "+91 98450 11223", lang: "telugu" },
+          { id: "K1", name: "Anil Verma (Gym Trainer)", lat: 12.9372, lng: 77.6345, dist: "0.4 km", due: "₹4,850", days: "18 Days", risk: "high", addr: "4th Cross, FitZone Gym", notes: "Eggs tray & oats", phone: "+91 98450 99887", lang: "hindi" },
+          { id: "K2", name: "Ramesh Sharma (Flat 302)", lat: 12.9310, lng: 77.6360, dist: "0.8 km", due: "₹3,420", days: "12 Days", risk: "moderate", addr: "Green Glen Apts, Flat 302", notes: "Atta 10kg & Oil", phone: "+91 98765 43210", lang: "hindi" },
+          { id: "K3", name: "Sita Ram (Tailor Shop)", lat: 12.9352, lng: 77.6300, dist: "0.3 km", due: "₹1,180", days: "5 Days", risk: "low", addr: "Near Ganapathi Temple", notes: "Daily tea milk & sugar", phone: "+91 98111 22334", lang: "telugu" },
+          { id: "K4", name: "Pooja Reddy", lat: 12.9285, lng: 77.6310, dist: "1.1 km", due: "₹950", days: "3 Days", risk: "low", addr: "17th Main, 5th Block", notes: "Snacks & soft drinks", phone: "+91 98222 33445", lang: "kannada" },
+          { id: "K5", name: "Kiran Kumar", lat: 12.9410, lng: 77.6280, dist: "1.4 km", due: "₹2,050", days: "9 Days", risk: "moderate", addr: "Teachers Colony, 1st Cross", notes: "Monthly groceries", phone: "+91 98333 44556", lang: "telugu" }
         ]
       },
       'pharmacy': {
         store: { name: "Sanjivani MedPlus Pharmacy", lat: 12.9298, lng: 77.5840, loc: "Jayanagar 4th Block" },
         customers: [
-          { id: "KP1", name: "Dr. Mehra Clinic", lat: 12.9320, lng: 77.5875, dist: "0.5 km", due: "₹6,800", days: "15 Days", risk: "high", addr: "Apollo Diagnostic Lane", notes: "Syringes, Dettol bulk" },
-          { id: "KP2", name: "Anil Verma (Gym Trainer)", lat: 12.9275, lng: 77.5820, dist: "0.4 km", due: "₹3,200", days: "10 Days", risk: "moderate", addr: "Fitness First Studio", notes: "Multivitamins & Protein" },
-          { id: "KP3", name: "Mrs. Revathi (Senior Citizen)", lat: 12.9360, lng: 77.5810, dist: "1.2 km", due: "₹1,450", days: "6 Days", risk: "low", addr: "Elder Care Enclave, Flat 12", notes: "Monthly BP & Diabetes" }
+          { id: "KP1", name: "Dr. Mehra Clinic", lat: 12.9320, lng: 77.5875, dist: "0.5 km", due: "₹6,800", days: "15 Days", risk: "high", addr: "Apollo Diagnostic Lane", notes: "Syringes, Dettol bulk", phone: "+91 99001 12233", lang: "english" },
+          { id: "KP2", name: "Anil Verma (Gym Trainer)", lat: 12.9275, lng: 77.5820, dist: "0.4 km", due: "₹3,200", days: "10 Days", risk: "moderate", addr: "Fitness First Studio", notes: "Multivitamins & Protein", phone: "+91 98450 99887", lang: "hindi" },
+          { id: "KP3", name: "Mrs. Revathi (Senior Citizen)", lat: 12.9360, lng: 77.5810, dist: "1.2 km", due: "₹1,450", days: "6 Days", risk: "low", addr: "Elder Care Enclave, Flat 12", notes: "Monthly BP & Diabetes", phone: "+91 98888 77665", lang: "kannada" }
         ]
       },
       'restaurant': {
         store: { name: "Udupi Grand Cafe & Tiffin", lat: 12.9719, lng: 77.6412, loc: "Indiranagar 100ft Road" },
         customers: [
-          { id: "KR1", name: "Tech Corp Office Tiffin", lat: 12.9745, lng: 77.6435, dist: "0.5 km", due: "₹7,800", days: "14 Days", risk: "high", addr: "Prestige Tech Park, Gate 2", notes: "Monthly breakfast catering" },
-          { id: "KR2", name: "Anil Verma (Gym Trainer)", lat: 12.9695, lng: 77.6390, dist: "0.4 km", due: "₹2,850", days: "8 Days", risk: "low", addr: "CrossFit Box, 12th Main", notes: "Daily egg omelettes & juice" },
-          { id: "KR3", name: "City Cab Drivers Stand", lat: 12.9780, lng: 77.6460, dist: "1.5 km", due: "₹1,650", days: "6 Days", risk: "low", addr: "Indiranagar Metro Taxi Stand", notes: "Night shift tea & buns" }
+          { id: "KR1", name: "Tech Corp Office Tiffin", lat: 12.9745, lng: 77.6435, dist: "0.5 km", due: "₹7,800", days: "14 Days", risk: "high", addr: "Prestige Tech Park, Gate 2", notes: "Monthly breakfast catering", phone: "+91 97777 66554", lang: "english" },
+          { id: "KR2", name: "Anil Verma (Gym Trainer)", lat: 12.9695, lng: 77.6390, dist: "0.4 km", due: "₹2,850", days: "8 Days", risk: "low", addr: "CrossFit Box, 12th Main", notes: "Daily egg omelettes & juice", phone: "+91 98450 99887", lang: "hindi" },
+          { id: "KR3", name: "City Cab Drivers Stand", lat: 12.9780, lng: 77.6460, dist: "1.5 km", due: "₹1,650", days: "6 Days", risk: "low", addr: "Indiranagar Metro Taxi Stand", notes: "Night shift tea & buns", phone: "+91 96666 55443", lang: "kannada" }
         ]
       },
       'apparel': {
         store: { name: "Trends Fashion & Garments", lat: 12.9822, lng: 77.6083, loc: "Commercial Street" },
         customers: [
-          { id: "KA1", name: "Geeta Boutique", lat: 12.9850, lng: 77.6110, dist: "0.6 km", due: "₹9,200", days: "20 Days", risk: "high", addr: "Jewellers Street, 2nd Flr", notes: "Festive designer kurtis bulk" },
-          { id: "KA2", name: "Anil Verma (Gym Trainer)", lat: 12.9795, lng: 77.6060, dist: "0.4 km", due: "₹3,500", days: "9 Days", risk: "moderate", addr: "Gold Gym Commercial Branch", notes: "Track pants & gym tees" },
-          { id: "KA3", name: "Rajesh Tailors", lat: 12.9830, lng: 77.6055, dist: "0.3 km", due: "₹2,100", days: "7 Days", risk: "low", addr: "Main Bazar Cross", notes: "Suiting fabrics & lining" }
+          { id: "KA1", name: "Geeta Boutique", lat: 12.9850, lng: 77.6110, dist: "0.6 km", due: "₹9,200", days: "20 Days", risk: "high", addr: "Jewellers Street, 2nd Flr", notes: "Festive designer kurtis bulk", phone: "+91 95555 44332", lang: "hindi" },
+          { id: "KA2", name: "Anil Verma (Gym Trainer)", lat: 12.9795, lng: 77.6060, dist: "0.4 km", due: "₹3,500", days: "9 Days", risk: "moderate", addr: "Gold Gym Commercial Branch", notes: "Track pants & gym tees", phone: "+91 98450 99887", lang: "hindi" },
+          { id: "KA3", name: "Rajesh Tailors", lat: 12.9830, lng: 77.6055, dist: "0.3 km", due: "₹2,100", days: "7 Days", risk: "low", addr: "Main Bazar Cross", notes: "Suiting fabrics & lining", phone: "+91 94444 33221", lang: "telugu" }
         ]
       },
       'electronics': {
         store: { name: "Digital Hub Mobile & Repair", lat: 12.9654, lng: 77.5810, loc: "SP Road Tech Market" },
         customers: [
-          { id: "KE1", name: "Express Phone Repairs", lat: 12.9675, lng: 77.5830, dist: "0.4 km", due: "₹5,400", days: "16 Days", risk: "high", addr: "Sadar Patrappa Rd, Shop 4", notes: "Display combos & ICs" },
-          { id: "KE2", name: "Anil Verma (Gym Trainer)", lat: 12.9635, lng: 77.5790, dist: "0.4 km", due: "₹1,800", days: "8 Days", risk: "low", addr: "PowerGym SP Road", notes: "TWS Earbuds & fast charger" },
-          { id: "KE3", name: "Smart Solutions IT Office", lat: 12.9710, lng: 77.5865, dist: "1.3 km", due: "₹2,600", days: "5 Days", risk: "low", addr: "Town Hall Plaza, 3rd Floor", notes: "HDMI cables & multi-plugs" }
+          { id: "KE1", name: "Express Phone Repairs", lat: 12.9675, lng: 77.5830, dist: "0.4 km", due: "₹5,400", days: "16 Days", risk: "high", addr: "Sadar Patrappa Rd, Shop 4", notes: "Display combos & ICs", phone: "+91 93333 22110", lang: "hindi" },
+          { id: "KE2", name: "Anil Verma (Gym Trainer)", lat: 12.9635, lng: 77.5790, dist: "0.4 km", due: "₹1,800", days: "8 Days", risk: "low", addr: "PowerGym SP Road", notes: "TWS Earbuds & fast charger", phone: "+91 98450 99887", lang: "hindi" },
+          { id: "KE3", name: "Smart Solutions IT Office", lat: 12.9710, lng: 77.5865, dist: "1.3 km", due: "₹2,600", days: "5 Days", risk: "low", addr: "Town Hall Plaza, 3rd Floor", notes: "HDMI cables & multi-plugs", phone: "+91 92222 11009", lang: "english" }
         ]
       }
     };
@@ -2101,8 +2312,11 @@
                 <p class="text-sm font-extrabold ${c.risk === 'high' ? 'text-rose-600' : 'text-slate-800'} mt-1">Pending Due: ${c.due}</p>
               </div>
               <div class="flex items-center gap-1.5 pt-1">
-                <button onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="flex-1 bg-paytm-navy hover:bg-blue-900 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition shadow flex items-center justify-center gap-1 cursor-pointer">
-                  <i class="fa-brands fa-whatsapp text-emerald-400"></i> Send WhatsApp UPI
+                <button onclick="sendRealtimeWhatsAppReminder('${c.id}')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition shadow flex items-center justify-center gap-1 cursor-pointer">
+                  <i class="fa-brands fa-whatsapp text-white"></i> Send WhatsApp
+                </button>
+                <button onclick="openEditCustomerModal('${c.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-1.5 px-2 rounded-xl text-[11px] transition shadow-xs flex items-center justify-center gap-1 cursor-pointer" title="Edit Customer">
+                  <i class="fa-solid fa-pen-to-square"></i>
                 </button>
                 <a href="https://maps.google.com/?q=${c.lat},${c.lng}" target="_blank" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 px-2.5 rounded-xl text-[11px] font-bold transition flex items-center justify-center" title="Navigate">
                   <i class="fa-solid fa-diamond-turn-right text-cyan-600"></i>
@@ -2131,7 +2345,7 @@
         const leftPct = 20 + (idx * 15);
         const bg = c.risk === 'high' ? 'bg-rose-500' : c.risk === 'moderate' ? 'bg-amber-500' : 'bg-emerald-500';
         pinsHtml += `
-          <div onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="absolute p-2 rounded-xl bg-white shadow-lg border border-slate-200 cursor-pointer hover:scale-105 transition" style="top: ${topPct}%; left: ${leftPct}%;">
+          <div onclick="sendRealtimeWhatsAppReminder('${c.id}')" class="absolute p-2 rounded-xl bg-white shadow-lg border border-slate-200 cursor-pointer hover:scale-105 transition" style="top: ${topPct}%; left: ${leftPct}%;">
             <div class="flex items-center gap-1.5">
               <span class="w-3 h-3 rounded-full ${bg}"></span>
               <span class="font-bold text-[11px] text-slate-800">${c.name}</span>
@@ -2173,7 +2387,7 @@
           </div>
           <div class="text-right shrink-0">
             <span class="font-extrabold text-xs ${c.risk === 'high' ? 'text-rose-600' : 'text-slate-800'}">${c.due}</span>
-            <button onclick="event.stopPropagation(); sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="block mt-0.5 text-[10px] bg-paytm-navy text-white px-2 py-0.5 rounded-lg font-bold hover:bg-blue-900 transition">
+            <button onclick="event.stopPropagation(); sendRealtimeWhatsAppReminder('${c.id}')" class="block mt-0.5 text-[10px] bg-paytm-navy text-white px-2 py-0.5 rounded-lg font-bold hover:bg-blue-900 transition">
               Remind
             </button>
           </div>
@@ -4217,11 +4431,36 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // Dynamic Render of Khata Ledger List View
+// LocalStorage Synchronization for Customers
+    function loadGeoCustomers() {
+      try {
+        const saved = localStorage.getItem('PAYTM_GEO_CUSTOMERS_' + currentBusinessType);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            BUSINESS_GEO_DATA[currentBusinessType].customers = parsed;
+          }
+        }
+      } catch (e) {
+        console.error('Error loading geo customers from localStorage', e);
+      }
+    }
+
+    function saveGeoCustomers() {
+      try {
+        const custs = BUSINESS_GEO_DATA[currentBusinessType]?.customers || [];
+        localStorage.setItem('PAYTM_GEO_CUSTOMERS_' + currentBusinessType, JSON.stringify(custs));
+      } catch (e) {
+        console.error('Error saving geo customers to localStorage', e);
+      }
+    }
+
+// Dynamic Render of Khata Ledger List View
     function renderKhataLedger() {
       const container = document.getElementById('khata-list-container');
       if (!container) return;
 
+      loadGeoCustomers();
       const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
       const customers = data.customers || [];
 
@@ -4240,18 +4479,23 @@
         html += `
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-sm transition">
             <div>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                 <span class="font-bold text-slate-800 text-sm">${c.name}</span>
                 <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">${c.days} (${c.risk} risk)</span>
+                ${c.phone ? `<span class="text-[10px] text-slate-500 font-mono font-medium flex items-center gap-1"><i class="fa-brands fa-whatsapp text-emerald-600"></i> ${c.phone}</span>` : ''}
               </div>
               <p class="text-xs text-slate-500 mt-0.5">
                 <i class="fa-solid fa-location-dot text-rose-500 mr-0.5"></i> ${c.addr} (${c.dist}) • ${c.notes}
               </p>
             </div>
-            <div class="flex items-center space-x-3">
-              <span class="font-extrabold text-base ${dueTextColor}">${c.due}</span>
-              <button onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${dueNumeric}')" class="bg-paytm-cyan hover:bg-cyan-400 text-paytm-navy font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer">
-                <i class="fa-brands fa-whatsapp text-xs"></i>
+            <div class="flex items-center space-x-2 shrink-0">
+              <span class="font-extrabold text-base ${dueTextColor} mr-1">${c.due}</span>
+              <button onclick="openEditCustomerModal('${c.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs transition shadow-sm flex items-center space-x-1 cursor-pointer" title="Edit Customer Details">
+                <i class="fa-solid fa-pen-to-square text-xs text-paytm-navy"></i>
+                <span>Edit</span>
+              </button>
+              <button onclick="sendRealtimeWhatsAppReminder('${c.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer" title="Send WhatsApp Message in Real-Time">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
                 <span data-i18n="btn_send_qr">Send WhatsApp & QR</span>
               </button>
             </div>
@@ -4294,7 +4538,7 @@
       const newLat = store.lat + deltaLat;
       const newLng = store.lng + deltaLng;
 
-      const newId = 'K' + (data.customers.length + 1);
+      const newId = 'CUST_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
       const newCustObj = {
         id: newId,
         name: name,
@@ -4312,6 +4556,7 @@
 
       // Add to front of customers list
       data.customers.unshift(newCustObj);
+      saveGeoCustomers();
 
       // Save to backend API
       try {
@@ -4348,287 +4593,286 @@
       const msgs = {
         'english': `Customer ${name} added to Khata Ledger with ₹${dueVal.toFixed(0)} balance! Plotted on 2-KM Map.`,
         'telugu': `${name} గారు ఖాతా లెడ్జర్‌లో ₹${dueVal.toFixed(0)} బ్యాలెన్స్‌తో చేర్చబడ్డారు! 2-కి.మీ మ్యాప్‌లో పిన్ చేయబడింది.`,
-        'hindi': `ग्राहक ${name} को ₹${dueVal.toFixed(0)} उधारी के साथ खाते में जोड़ा गया! 2-किमी मैप पर पिन सेट।`,
-        'tamil': `வாடிக்கையாளர் ${name} ₹${dueVal.toFixed(0)} பாக்கியுடன் கணக்கில் சேர்க்கப்பட்டார்! வரைபடத்தில் குறிக்கப்பட்டது.`,
-        'kannada': `ಗ್ರಾಹಕ ${name} ಅವರನ್ನು ₹${dueVal.toFixed(0)} ಬಾಕಿಯೊಂದಿಗೆ ಖಾತೆಗೆ ಸೇರಿಸಲಾಗಿದೆ! 2-ಕಿಮೀ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಪಿನ್ ಮಾಡಲಾಗಿದೆ.`
+        'hindi': `ग्राहक ${name} को ₹${dueVal.toFixed(0)} बकाया के साथ खाता बही में जोड़ दिया गया है! 2-KM मैप पर पिन किया गया।`,
+        'tamil': `வாடிக்கையாளர் ${name} ₹${dueVal.toFixed(0)} பாக்கியுடன் கணக்குப் பதிவேட்டில் சேர்க்கப்பட்டார்! 2-கிமீ வரைபடத்தில் குறிக்கப்பட்டது.`,
+        'kannada': `ಗ್ರಾಹಕ ${name} ಅವರನ್ನು ₹${dueVal.toFixed(0)} ಬಾಕಿಯೊಂದಿಗೆ ಖಾತಾ ಲೆಡ್ಜರ್‌ನಲ್ಲಿ ಸೇರಿಸಲಾಗಿದೆ! 2-ಕಿಮೀ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಪಿನ್ ಮಾಡಲಾಗಿದೆ.`
       };
-
-      if (typeof speakFallbackSpeech === 'function') {
-        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
-      }
+      triggerSoundboxSpeech(msgs[currentLanguage] || msgs['english']);
+      showToastNotification(`Customer ${name} added successfully!`);
     }
 
+    // ==========================================
+    // EDIT & DELETE CUSTOMER FUNCTIONS
+    // ==========================================
+    function openEditCustomerModal(customerId) {
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      const c = customers.find(x => x.id === customerId);
+      if (!c) return;
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-paytm-cyan', 'text-paytm-navy');
-        btn.classList.add('border-transparent', 'text-slate-500');
-      });
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-
-      document.getElementById('tab-' + tabId).classList.add('border-paytm-cyan', 'text-paytm-navy');
-      document.getElementById('tab-' + tabId).classList.remove('border-transparent', 'text-slate-500');
-      document.getElementById('content-' + tabId).classList.remove('hidden');
-
-      if (tabId === 'credit' && !window.chartRendered) {
-        initChart();
-      }
-
-      if (tabId === 'racks') {
-        renderDmartRacks(currentBusinessType);
-      }
-
-      if (tabId === 'orders') {
-        renderCustomerOrders();
-      }
-    }
-
-    // Microphone Trigger with Web Speech Recognition
-    function triggerMic() {
-      const mic = document.getElementById('soundbox-mic-icon');
-      const status = document.getElementById('speaker-status');
-      const dict = UI_TRANSLATIONS[currentLanguage];
+      document.getElementById('edit-cust-id').value = c.id;
+      document.getElementById('edit-cust-name').value = c.name;
+      document.getElementById('edit-cust-phone').value = c.phone || '+91 98450 11223';
+      document.getElementById('edit-cust-addr').value = c.addr || '';
+      document.getElementById('edit-cust-dist').value = c.dist || '0.8 km';
       
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        try {
-          const recognition = new SpeechRecognition();
-          recognition.lang = langVoiceCodes[currentLanguage] || 'en-IN';
-          recognition.interimResults = false;
-          
-          mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
-          status.innerText = dict.sb_listening_status;
+      const dueNum = parseFloat(String(c.due).replace(/[^0-9.]/g, '')) || 0;
+      document.getElementById('edit-cust-due').value = dueNum;
 
-          recognition.onresult = function(event) {
-            const spokenText = event.results[0][0].transcript;
-            mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
-            status.innerText = dict.sb_speaking_status;
-            simulateVoiceQuery(spokenText);
-          };
+      const daysNum = parseInt(String(c.days).replace(/[^0-9]/g, '')) || 3;
+      document.getElementById('edit-cust-days').value = daysNum;
 
-          recognition.onerror = function() {
-            fallbackSimulatedListen();
-          };
+      document.getElementById('edit-cust-risk').value = c.risk || 'moderate';
+      document.getElementById('edit-cust-lang').value = c.lang || currentLanguage || 'english';
+      document.getElementById('edit-cust-notes').value = c.notes || '';
 
-          recognition.start();
-          return;
-        } catch(e) {
-          fallbackSimulatedListen();
-        }
-      } else {
-        fallbackSimulatedListen();
+      const modal = document.getElementById('edit-customer-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('edit-cust-name').focus();
       }
     }
 
-    function fallbackSimulatedListen() {
-      const mic = document.getElementById('soundbox-mic-icon');
-      const status = document.getElementById('speaker-status');
-      const dict = UI_TRANSLATIONS[currentLanguage];
-      mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
-      status.innerText = dict.sb_listening_status;
-      
-      setTimeout(() => {
-        mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
-        status.innerText = dict.sb_speaking_status;
-        const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
-        simulateVoiceQuery(list[0].query);
-      }, 1400);
+    function closeEditCustomerModal() {
+      const modal = document.getElementById('edit-customer-modal');
+      if (modal) modal.classList.add('hidden');
     }
 
-    function getAudioClipForQuery(query, lang) {
-      const q = query.toLowerCase();
-      // Loan intent check first to avoid overlap
-      if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('लोन') || q.includes('ऋण') || q.includes('రుణం') || q.includes('లోన్') || q.includes('పరిమితి') || q.includes('கடன் வரம்பு') || q.includes('லோன்') || q.includes('வரம்பு') || q.includes('ಸಾಲದ ಮಿತಿ') || q.includes('ಲೋನ್') || q.includes('ಮಿತಿ')) {
-        return `loan_${lang}`;
-      } else if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('बिक्री') || q.includes('కలెక్షన్') || q.includes('సేల్స్') || q.includes('ఈరోజు') || q.includes('మొత్తం') || q.includes('வசூல்') || q.includes('விற்பனை') || q.includes('இன்று') || q.includes('ಕಲೆಕ್ಷನ್') || q.includes('ಮಾರಾಟ') || q.includes('ಇಂದು') || q.includes('ಒಟ್ಟು')) {
-        return `sales_${lang}`;
-      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('ondc') || q.includes('आर्डर') || q.includes('स्टॉक') || q.includes('दूध') || q.includes('थोक') || q.includes('స్టాక్') || q.includes('సరుకు') || q.includes('పాలు') || q.includes('ఆర్డర్') || q.includes('ధర') || q.includes('இருப்பு') || q.includes('பொருட்கள்') || q.includes('பால்') || q.includes('ஆர்டர்') || q.includes('விலை') || q.includes('ದಾಸ್ತಾನು') || q.includes('ಹಾಲು') || q.includes('ಆರ್ಡರ್') || q.includes('ದರ') || q.includes('trend') || q.includes('ట్రెండింగ్')) {
-        return `stock_${lang}`;
-      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('anil') || q.includes('उधार') || q.includes('बाकी') || q.includes('रिमाइंडर') || q.includes('బాకీ') || q.includes('బకాయి') || q.includes('రిమైండర్') || q.includes('అనిల్') || q.includes('கடன்') || q.includes('பாக்கி') || q.includes('நினைவூட்டல்') || q.includes('அனில்') || q.includes('ಸಾಲ') || q.includes('ಬಾಕಿ') || q.includes('ರಿಮೈಂಡರ್') || q.includes('ಅನಿಲ್')) {
-        return `udhar_${lang}`;
-      }
-      return `welcome_${lang}`;
-    }
+    async function saveEditedCustomer() {
+      const id = document.getElementById('edit-cust-id').value;
+      const name = document.getElementById('edit-cust-name').value.trim();
+      const phone = document.getElementById('edit-cust-phone').value.trim();
+      const addr = document.getElementById('edit-cust-addr').value.trim() || 'Neighborhood';
+      const dist = document.getElementById('edit-cust-dist').value;
+      const dueVal = parseFloat(document.getElementById('edit-cust-due').value) || 0;
+      const days = document.getElementById('edit-cust-days').value || '1';
+      const risk = document.getElementById('edit-cust-risk').value;
+      const notes = document.getElementById('edit-cust-notes').value.trim() || 'General Items';
+      const lang = document.getElementById('edit-cust-lang').value;
 
-    async function simulateVoiceQuery(query) {
-      const stream = document.getElementById('chat-stream');
-      const dict = UI_TRANSLATIONS[currentLanguage];
-
-      const userHtml = `
-        <div class="flex items-start space-x-3">
-          <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0">${dict.user_tag}</div>
-          <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 max-w-lg">
-            <p class="font-semibold text-xs text-slate-500 mb-0.5">${dict.chat_spoken_label} (${currentLanguage.toUpperCase()})</p>
-            <p>"${query}"</p>
-          </div>
-        </div>
-      `;
-      stream.innerHTML += userHtml;
-
-      const clipKey = getAudioClipForQuery(query, currentLanguage);
-
-      try {
-        const res = await fetch('/api/copilot/query', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: query, language: currentLanguage, business_type: currentBusinessType })
-        });
-        const data = await res.json();
-        renderAiResponse(data.voice_response, clipKey);
-        if (data.intent === 'DMART_RACKS' || (data.action && data.action.tab === 'racks')) {
-          switchTab('racks');
-        }
-      } catch (err) {
-        fallbackClientSimulation(query, clipKey);
-      }
-    }
-
-    function fallbackClientSimulation(query, clipKey) {
-      let resp = "";
-      const lang = currentLanguage;
-      const q = (query || "").toLowerCase();
-
-      if (q.includes('rack') || q.includes('shelf') || q.includes('shelves') || q.includes('dmart') || q.includes('రెక్') || q.includes('షెల్ఫ్') || q.includes('रैक') || q.includes('ரேக்') || q.includes('ರ‍್ಯಾಕ್')) {
-        const msgs = {
-          'english': `Boss, opening DMart 3D Smart Racks view! Monitored 16 retail SKUs across 4 supermarket aisles. 2 shelves have critical stockouts (<15%). 1-Click ONDC restock is active.`,
-          'telugu': `సేత్ గారూ, డీమార్ట్ తరహా 3D స్మార్ట్ ర్యాక్స్ వీక్షణ ప్రారంభించాను! 4 ఐల్స్‌లో 16 వస్తువులు పర్యవేక్షించబడుతున్నాయి. 2 షెల్ఫ్‌లలో స్టాక్ చాలా తక్కువగా ఉంది. 1-క్లిక్ ONDC రీస్టాక్ సిద్ధంగా ఉంది.`,
-          'hindi': `सेठ जी, डीमार्ट 3D स्मार्ट रैक व्यू खुल गया है! 4 आइल्स में 16 आइटम्स मॉनिटर हो रहे हैं। 2 शेल्व्स पर गंभीर स्टॉक संकट है। 1-क्लिक ONDC रीస్టॉक तैयार है।`,
-          'tamil': `சேத் அவர்களே, டிமார்ட் 3D ஸ்மார்ட் ரேக் பார்வை திறக்கப்பட்டது! 4 பிரிவுகளில் 16 பொருட்கள் கண்காணிக்கப்படுகின்றன. 2 அலமாரிகளில் இருப்பு தீர்ந்துவிட்டது. ONDC உடனடி ரீஸ்டாக் தயார்.`,
-          'kannada': `ಸೇಠ್ ಅವರೇ, ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ ವೀಕ್ಷಣೆ ತೆರೆಯಲಾಗಿದೆ! 4 ಐಲ್‌ಗಳಲ್ಲಿ 16 ವಸ್ತುಗಳು ಲೈವ್ ಇವೆ. 2 ಕಪಾಟುಗಳಲ್ಲಿ ಸ್ಟಾಕ್ ತೀವ್ರ ಕಡಿಮೆಯಿದೆ. 1-ಕ್ಲಿಕ್ ONDC ಮರುಪೂರಣ ಸಿದ್ಧವಿದೆ.`
-        };
-        resp = msgs[lang] || msgs['english'];
-        renderAiResponse(resp, null);
-        switchTab('racks');
+      if (!name || dueVal <= 0) {
+        alert("Please enter customer name and valid due amount.");
         return;
       }
-      if (clipKey.startsWith('sales')) {
-        const bizCfg = BUSINESS_CONFIGS[currentBusinessType] || BUSINESS_CONFIGS['kirana'];
-        resp = (bizCfg.initial_ai && bizCfg.initial_ai[lang]) ? bizCfg.initial_ai[lang].replace(/^"|"$/g, '') : `Boss, today's total collection reached ${bizCfg.today_collection}. Restock recommended immediately!`;
-      } else if (clipKey.startsWith('stock')) {
-        if (lang === 'telugu') resp = "మీ దుకాణంలో 3 వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి. బాలాజీ ఏజెన్సీ ONDC లో అమూల్ పాలను ₹24.20 కి ఇస్తున్నారు. రీ-ఆర్డర్ సిద్ధం చేశాను.";
-        else if (lang === 'tamil') resp = "கடையில் 3 பொருட்கள் குறைவான இருப்பில் உள்ளன. பாலாஜி ஏஜென்சி ONDC-யில் அமுல் பால் வழங்குகிறது. ஆர்டர் தயாராக உள்ளது.";
-        else if (lang === 'kannada') resp = "ಅಂಗಡಿಯಲ್ಲಿ 3 ವಸ್ತುಗಳ ದಾಸ್ತಾನು ಕಡಿಮೆಯಾಗಿದೆ. ಬಾಲಾಜಿ ಏಜೆನ್ಸಿ ONDC ಯಲ್ಲಿ ಅಮುಲ್ ಹಾಲು ನೀಡುತ್ತಿದೆ. ಆರ್ಡರ್ ಸಿದ್ಧವಾಗಿದೆ.";
-        else if (lang === 'hindi') resp = "दुकान में 3 आइटम कम स्टॉक पर हैं। बालाजी एजेंसी ONDC पर अमूल दूध दे रही है। ऑर्डर तैयार है।";
-        else resp = "You have 3 items running low on stock. Sri Balaji Agency on ONDC is offering Amul Milk at ₹24.20. Order prepared.";
-      } else if (clipKey.startsWith('udhar')) {
-        if (lang === 'telugu') resp = "మొత్తం ₹12,450 ఉధార్ బకాయి ఉంది. అనిల్ వర్మ గారికి వాట్సాప్ రిమైండర్ మరియు పేటీఎం క్యూఆర్ లింక్ పంపాను.";
-        else if (lang === 'tamil') resp = "மொத்தம் ₹12,450 கடன் பாக்கி உள்ளது. அனில் வர்மாவுக்கு வாட்ஸ்அப் நினைவூட்டல் மற்றும் பேடிஎம் லிங்க் அனுப்பப்பட்டது.";
-        else if (lang === 'kannada') resp = "ಒಟ್ಟು ₹12,450 ಸಾಲದ ಹಣ ಬಾಕಿ ಇದೆ. ಅನಿಲ್ ವರ್ಮಾ ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಮತ್ತು ಪೇಟಿಎಂ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ.";
-        else if (lang === 'hindi') resp = "दुकान पर कुल ₹12,450 का उधार बाकी है। अनिल वर्मा जी को व्हाट्सएप पर विनम्र रिमाइंडर और पेमेंट लिंक भेज दिया गया है।";
-        else resp = "A total of ₹12,450 in customer credit is pending. WhatsApp reminder with dynamic UPI link sent to Anil Verma.";
-      } else if (clipKey.startsWith('loan')) {
-        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
-        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
-        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
-        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
-        else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for ₹2,50,000 in instant working capital credit.";
-      } else {
-        resp = UI_TRANSLATIONS[lang].sb_ready_status;
-      }
-      renderAiResponse(resp, clipKey);
-    }
 
-    function renderAiResponse(responseText, clipKey) {
-      const stream = document.getElementById('chat-stream');
-      const micStatus = document.getElementById('speaker-status');
-      const dict = UI_TRANSLATIONS[currentLanguage];
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      const idx = customers.findIndex(c => c.id === id);
+      if (idx === -1) return;
 
-      const safeClip = clipKey || getAudioClipForQuery(responseText, currentLanguage);
-
-      const aiHtml = `
-        <div class="flex items-start space-x-3 justify-end">
-          <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl rounded-tr-none text-slate-800 max-w-lg space-y-2 shadow-sm">
-            <div class="flex items-center justify-between text-xs text-paytm-navy font-bold">
-              <span class="flex items-center gap-1.5">
-                <i class="fa-solid fa-volume-high text-cyan-600"></i>
-                Paytm Soundbox 4.0 (${currentLanguage.toUpperCase()})
-              </span>
-              <button onclick="playSoundboxAudio('${safeClip}', '${responseText.replace(/'/g, "\\'")}')" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
-                <i class="fa-solid fa-play text-[10px]"></i>
-                <span>${dict.btn_play_sb_audio}</span>
-              </button>
-            </div>
-            <p class="text-slate-800 leading-relaxed">${responseText}</p>
-          </div>
-          <div class="w-8 h-8 rounded-full bg-paytm-navy text-paytm-cyan flex items-center justify-center font-bold text-xs shrink-0">AI</div>
-        </div>
-      `;
-      stream.innerHTML += aiHtml;
-      stream.scrollTop = stream.scrollHeight;
-      document.getElementById('last-ai-text').innerText = responseText;
-      window.lastClipKey = safeClip;
-      micStatus.innerText = dict.sb_ready_status;
-
-      // Play Soundbox speaker audio
-      playSoundboxAudio(safeClip, responseText);
-    }
-
-    function speakLastResponse() {
-      const text = document.getElementById('last-ai-text').innerText;
-      const clip = window.lastClipKey || `sales_${currentLanguage}`;
-      playSoundboxAudio(clip, text);
-    }
-
-    function handleCustomInput() {
-      const val = document.getElementById('custom-prompt-input').value;
-      if (!val) return;
-      simulateVoiceQuery(val);
-      document.getElementById('custom-prompt-input').value = "";
-    }
-
-    // ONDC Reordering
-    function placeOrder(item, qty, amt) {
-      const toast = document.getElementById('order-toast');
-      const msg = document.getElementById('order-toast-msg');
-      const dict = UI_TRANSLATIONS[currentLanguage];
-      
-      let successMsg = "";
-      if (currentLanguage === 'telugu') {
-        successMsg = `<b>విజయం:</b> ONDC ద్వారా ${qty} <b>${item}</b> ఆర్డర్ చేయబడింది. మొత్తం <b>${amt}</b> పేటీఎం బ్యాలెన్స్ నుండి తీసివేయబడింది.`;
-      } else if (currentLanguage === 'hindi') {
-        successMsg = `<b>सफलता:</b> ONDC के माध्यम से ${qty} <b>${item}</b> ऑर्डर किया गया। कुल <b>${amt}</b> मर्चेंट बैलेंस से काटा गया।`;
-      } else if (currentLanguage === 'tamil') {
-        successMsg = `<b>வெற்றி:</b> ONDC மூலம் ${qty} <b>${item}</b> ஆர்டர் செய்யப்பட்டது. மொத்தம் <b>${amt}</b> பேடிஎம் கணக்கிலிருந்து கழிக்கப்பட்டது.`;
-      } else if (currentLanguage === 'kannada') {
-        successMsg = `<b>ಯಶಸ್ಸು:</b> ONDC ಮೂಲಕ ${qty} <b>${item}</b> ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ. ಒಟ್ಟು <b>${amt}</b> ಪೇಟಿಎಂ ಬ್ಯಾಲೆನ್ಸ್‌ನಿಂದ ಕಡಿತಗೊಳಿಸಲಾಗಿದೆ.`;
-      } else {
-        successMsg = `<b>Success:</b> ${qty} of <b>${item}</b> ordered from distributor over ONDC. Total <b>${amt}</b> deducted from Paytm Merchant Balance.`;
+      const oldCust = customers[idx];
+      let newLat = oldCust.lat;
+      let newLng = oldCust.lng;
+      if (oldCust.dist !== dist) {
+        const store = data.store;
+        const distKm = parseFloat(dist) || 0.6;
+        const angle = Math.random() * 2 * Math.PI;
+        const deltaLat = (distKm / 111.0) * Math.cos(angle);
+        const deltaLng = (distKm / (111.0 * Math.cos(store.lat * Math.PI / 180))) * Math.sin(angle);
+        newLat = store.lat + deltaLat;
+        newLng = store.lng + deltaLng;
       }
 
-      msg.innerHTML = successMsg;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 5000);
+      customers[idx] = {
+        ...oldCust,
+        name: name,
+        phone: phone,
+        addr: addr,
+        dist: dist,
+        due: `₹${dueVal.toLocaleString('en-IN')}`,
+        days: `${days} Days`,
+        risk: risk,
+        notes: notes,
+        lang: lang,
+        lat: newLat,
+        lng: newLng
+      };
+
+      saveGeoCustomers();
+
+      try {
+        await fetch('/api/khata/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: id,
+            name: name,
+            phone: phone,
+            due_amount: dueVal,
+            days_pending: parseInt(days),
+            risk: risk,
+            notes: notes,
+            addr: addr,
+            dist: dist,
+            business_type: currentBusinessType
+          })
+        });
+      } catch (err) {
+        console.log('Backend sync offline/fallback active');
+      }
+
+      closeEditCustomerModal();
+      renderKhataLedger();
+      if (typeof initCustomerMap === 'function') {
+        initCustomerMap();
+      }
+
+      const msgs = {
+        'telugu': `${name} గారి వివరాలు విజయవంతంగా అప్‌డేట్ చేయబడ్డాయి!`,
+        'hindi': `${name} जी का कस्टमर डेटा सफलतापूर्वक अपडेट हो गया है!`,
+        'tamil': `${name} அவர்களின் விவரங்கள் புதுப்பிக்கப்பட்டன!`,
+        'kannada': `${name} ಅವರ ವಿವರಗಳನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ!`,
+        'english': `Customer ${name}'s details updated successfully!`
+      };
+      triggerSoundboxSpeech(msgs[currentLanguage] || msgs['english']);
+      showToastNotification(`Customer ${name} updated successfully!`);
     }
 
-    // Dynamic QR & Udhar Reminder
-    function sendUdharReminder(name, amountFormatted, amountNum) {
-      const preview = document.getElementById('udhar-preview-box');
-      const msg = document.getElementById('udhar-msg-text');
-      const qrContainer = document.getElementById('qrcode-canvas');
-      
-      const upiUrl = `upi://pay?pa=guptakirana@paytm&pn=Sri%20Lakshmi%20Store&am=${amountNum}&cu=INR&tn=Khata%20Clearance`;
-      const webUrl = `https://paytm.me/pay/gupta-store?amt=${amountNum}`;
+    async function deleteCurrentCustomer() {
+      const id = document.getElementById('edit-cust-id').value;
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      const c = customers.find(x => x.id === id);
+      if (!c) return;
 
+      if (!confirm(`Are you sure you want to delete / settle customer "${c.name}" from Smart Khata?`)) {
+        return;
+      }
+
+      data.customers = customers.filter(x => x.id !== id);
+      saveGeoCustomers();
+
+      try {
+        await fetch('/api/khata/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: id,
+            business_type: currentBusinessType
+          })
+        });
+      } catch (err) {}
+
+      closeEditCustomerModal();
+      renderKhataLedger();
+      if (typeof initCustomerMap === 'function') {
+        initCustomerMap();
+      }
+
+      triggerSoundboxSpeech(`Customer ${c.name} cleared from Smart Khata ledger.`);
+      showToastNotification(`Customer ${c.name} deleted.`);
+    }
+
+    // ==========================================
+    // REAL-TIME WHATSAPP DISPATCH & QR
+    // ==========================================
+    let currentWaModalData = null;
+
+    function cleanWhatsAppNumber(phone) {
+      if (!phone) return "";
+      let digits = String(phone).replace(/[^0-9]/g, '');
+      if (digits.length === 10) {
+        digits = '91' + digits; // Default India prefix
+      } else if (digits.length === 11 && digits.startsWith('0')) {
+        digits = '91' + digits.substring(1);
+      }
+      return digits;
+    }
+
+    function sendRealtimeWhatsAppReminder(customerId) {
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      let customer = customers.find(c => c.id === customerId);
+      if (!customer) {
+        customer = customers.find(c => c.name.toLowerCase().includes(customerId.toLowerCase()));
+      }
+      if (!customer) return;
+
+      // If customer has no phone number, prompt for one
+      if (!customer.phone || customer.phone.trim() === '') {
+        const inputPhone = prompt(`Please enter WhatsApp phone number for ${customer.name}:`, "+91 ");
+        if (inputPhone && inputPhone.trim() !== '') {
+          customer.phone = inputPhone.trim();
+          saveGeoCustomers();
+        } else {
+          alert("WhatsApp number is required to send real-time message.");
+          return;
+        }
+      }
+
+      const cleanPhone = cleanWhatsAppNumber(customer.phone);
+      const dueNumeric = parseFloat(String(customer.due).replace(/[^0-9.]/g, '')) || 0;
+      const storeName = (BUSINESS_GEO_DATA[currentBusinessType]?.store?.name) || "Sri Lakshmi Kirana & General Store";
+      const webUrl = `https://paytm.me/pay/gupta-store?amt=${dueNumeric}`;
+      const upiUrl = `upi://pay?pa=guptakirana@paytm&pn=${encodeURIComponent(storeName)}&am=${dueNumeric}&cu=INR&tn=Khata%20Clearance`;
+
+      // Language preference for customer
+      const lang = (customer.lang || currentLanguage || 'english').toLowerCase();
       let text = "";
-      if (currentLanguage === 'telugu') {
-        text = `నమస్కారం ${name} గారు! 🙏 శ్రీ లక్ష్మి ప్రొవిజన్ స్టోర్ నుండి శుభాకాంక్షలు. మీ పాత బకాయి *${amountFormatted}* పెండింగ్‌లో ఉంది. పేటీఎం యూపీఐతో 1-క్లిక్‌లో పే చేయడానికి: ${webUrl} . ధన్యవాదాలు!`;
-      } else if (currentLanguage === 'tamil') {
-        text = `வணக்கம் ${name} அவர்களே! 🙏 ஸ்ரீ லக்ஷ்மி மளிகைக் கடையின் வாழ்த்துகள். உங்கள் கடை பாக்கி *${amountFormatted}* நிலுவையில் உள்ளது. பேடிஎம் யுபிஐ மூலம் உடனே செலுத்த: ${webUrl} . நன்றி!`;
-      } else if (currentLanguage === 'kannada') {
-        text = `ನಮಸ್ಕಾರ ${name} ಅವರೇ! 🙏 ಶ್ರೀ ಲಕ್ಷ್ಮಿ ಪ್ರಾವಿಷನ್ ಸ್ಟೋರ್‌ನಿಂದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಹಳೆಯ ಬಾಕಿ ಮೊತ್ತ *${amountFormatted}* ಬಾಕಿ ಉಳಿದಿದೆ. ಪೇಟಿಎಂ ಯುಪಿಐ ಮೂಲಕ ಪಾವತಿಸಲು: ${webUrl} . ಧನ್ಯವಾದಗಳು!`;
-      } else if (currentLanguage === 'hindi') {
-        text = `नमस्ते ${name} जी! 🙏 श्री लक्ष्मी किराना स्टोर से शुभकामनाएं. आपका दुकान का पुराना बैलेंस *${amountFormatted}* पेंडिंग है. 1-क्लिक में पे करने के लिए: ${webUrl} . धन्यवाद!`;
+      if (lang === 'telugu') {
+        text = `నమస్కారం ${customer.name} గారు! 🙏 ${storeName} నుండి శుభాకాంక్షలు. మీ పాత బకాయి *${customer.due}* పెండింగ్‌లో ఉంది (${customer.notes || 'సామాన్లు'}). పేటీఎం యూపీఐతో 1-క్లిక్‌లో సులభంగా పే చేయడానికి: ${webUrl} . ధన్యవాదాలు!`;
+      } else if (lang === 'tamil') {
+        text = `வணக்கம் ${customer.name} அவர்களே! 🙏 ${storeName} இன் வாழ்த்துகள். உங்கள் கடை பாக்கி *${customer.due}* நிலுவையில் உள்ளது (${customer.notes || 'மளிகை பொருட்கள்'}). பேடிஎம் யுபிஐ மூலம் உடனே செலுத்த: ${webUrl} . நன்றி!`;
+      } else if (lang === 'kannada') {
+        text = `ನಮಸ್ಕಾರ ${customer.name} ಅವರೇ! 🙏 ${storeName} ನಿಂದ ಶುಭಾಶಯಗಳು. ನಿಮ್ಮ ಹಳೆಯ ಬಾಕಿ ಮೊತ್ತ *${customer.due}* ಬಾಕಿ ಉಳಿದಿದೆ (${customer.notes || 'ಸಾಮಾನುಗಳು'}). ಪೇಟಿಎಂ ಯುಪಿಐ ಮೂಲಕ ಪಾವತಿಸಲು: ${webUrl} . ಧನ್ಯವಾದಗಳು!`;
+      } else if (lang === 'hindi') {
+        text = `नमस्ते ${customer.name} जी! 🙏 ${storeName} से शुभकामनाएं. आपका दुकान का पुराना बैलेंस *${customer.due}* पेंडिंग है (${customer.notes || 'किराना सामान'}). 1-क्लिक में पे करने के लिए: ${webUrl} . धन्यवाद!`;
       } else {
-        text = `Hello ${name}! 🙏 Greetings from Sri Lakshmi Provision Store. Your pending store balance is *${amountFormatted}*. To settle conveniently in 1-click via Paytm UPI: ${webUrl} . Thank you!`;
+        text = `Hello ${customer.name}! 🙏 Greetings from ${storeName}. Your pending store balance is *${customer.due}* (${customer.notes || 'Groceries & items'}). To settle conveniently in 1-click via Paytm UPI: ${webUrl} . Thank you!`;
       }
 
-      msg.innerText = text;
-      preview.classList.remove('hidden');
+      // Direct WhatsApp URL
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`;
 
-      // Generate Live Dynamic QR
-      qrContainer.innerHTML = "";
-      if (window.QRCode) {
-        new QRCode(qrContainer, {
+      currentWaModalData = {
+        customer: customer,
+        phone: cleanPhone,
+        message: text,
+        waUrl: waUrl,
+        due: customer.due,
+        upiUrl: upiUrl
+      };
+
+      // Populate Real-Time WhatsApp Dispatch Confirmation Modal
+      const nameEl = document.getElementById('wa-modal-cust-name');
+      const phoneEl = document.getElementById('wa-modal-cust-phone');
+      const dueEl = document.getElementById('wa-modal-cust-due');
+      const msgEl = document.getElementById('wa-modal-msg-text');
+      const openBtn = document.getElementById('wa-modal-open-btn');
+
+      if (nameEl) nameEl.innerText = customer.name;
+      if (phoneEl) phoneEl.innerText = `+${cleanPhone}`;
+      if (dueEl) dueEl.innerText = customer.due;
+      if (msgEl) msgEl.innerText = text;
+      if (openBtn) openBtn.href = waUrl;
+
+      // Dynamic QR in modal
+      const qrBox = document.getElementById('wa-modal-qrcode');
+      if (qrBox) {
+        qrBox.innerHTML = '';
+        if (window.QRCode) {
+          new QRCode(qrBox, {
+            text: upiUrl,
+            width: 80,
+            height: 80,
+            colorDark: "#002970",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      }
+
+      // Update on-page preview box if present
+      const inlinePreview = document.getElementById('udhar-preview-box');
+      const inlineMsg = document.getElementById('udhar-msg-text');
+      const inlineQr = document.getElementById('qrcode-canvas');
+      const inlineWaBtn = document.getElementById('udhar-inline-send-wa');
+      if (inlineWaBtn) inlineWaBtn.href = waUrl;
+      if (inlineMsg) inlineMsg.innerText = text;
+      if (inlinePreview) inlinePreview.classList.remove('hidden');
+      if (inlineQr && window.QRCode) {
+        inlineQr.innerHTML = '';
+        new QRCode(inlineQr, {
           text: upiUrl,
           width: 96,
           height: 96,
@@ -4637,9 +4881,109 @@
           correctLevel: QRCode.CorrectLevel.M
         });
       }
+
+      // Show modal
+      const modal = document.getElementById('whatsapp-dispatch-modal');
+      if (modal) modal.classList.remove('hidden');
+
+      // OPEN REAL-TIME WHATSAPP DISPATCH TO RECIPIENT'S PHONE
+      try {
+        window.open(waUrl, '_blank');
+      } catch (err) {
+        console.warn("Popup blocked or direct open prevented", err);
+      }
+
+      // Backend API call
+      fetch('/api/khata/remind', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_id: customer.id,
+          language: lang,
+          phone: cleanPhone
+        })
+      }).catch(() => {});
+
+      // Soundbox audio announcement
+      announceWaModalSoundbox();
+      showToastNotification(`WhatsApp reminder dispatched in real-time to ${customer.name}!`);
     }
 
-    function sendAllReminders() {
+    function closeWhatsAppDispatchModal() {
+      const modal = document.getElementById('whatsapp-dispatch-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function copyWaModalMessage() {
+      if (!currentWaModalData || !currentWaModalData.message) return;
+      navigator.clipboard.writeText(currentWaModalData.message).then(() => {
+        const btnText = document.getElementById('wa-modal-copy-btn-text');
+        if (btnText) {
+          const orig = btnText.innerText;
+          btnText.innerText = "Copied!";
+          setTimeout(() => btnText.innerText = orig, 2000);
+        }
+        showToastNotification("Copied WhatsApp message & UPI payment link to clipboard!");
+      });
+    }
+
+    function announceWaModalSoundbox() {
+      if (!currentWaModalData) return;
+      const c = currentWaModalData.customer;
+      const lang = currentLanguage || 'english';
+      const cleanAmt = c.due.replace(/[^0-9]/g, '');
+      const msgs = {
+        'telugu': `${c.name} గారికి వాట్సాప్‌లో ₹${cleanAmt} పేటీఎం యూపీఐ రిమైండర్ రియల్-టైమ్‌లో పంపబడింది!`,
+        'hindi': `${c.name} जी को व्हाट्सएप पर ₹${cleanAmt} का रियल-टाइम पेमेंट रिमाइंडर भेज दिया गया है!`,
+        'tamil': `${c.name} அவர்களுக்கு வாட்ஸ்அப்பில் ₹${cleanAmt} பேடிஎம் நினைவூட்டல் அனுப்பப்பட்டது!`,
+        'kannada': `${c.name} ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ಮೂಲಕ ₹${cleanAmt} ಪಾವತಿ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಲಾಗಿದೆ!`,
+        'english': `WhatsApp payment reminder dispatched in real-time to ${c.name} for ${c.due}!`
+      };
+      triggerSoundboxSpeech(msgs[lang] || msgs['english']);
+    }
+
+    // Keep backwards compatibility for sendUdharReminder
+    function sendUdharReminder(name, amountFormatted, amountNum) {
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      let c = customers.find(x => x.name.toLowerCase().includes(name.toLowerCase()));
+      if (c) {
+        sendRealtimeWhatsAppReminder(c.id);
+      } else {
+        // Fallback for custom name
+        const tempId = 'temp_' + Date.now();
+        const tempCust = {
+          id: tempId,
+          name: name,
+          due: amountFormatted,
+          phone: '+91 98450 11223',
+          notes: 'Khata Balance',
+          lang: currentLanguage
+        };
+        data.customers.unshift(tempCust);
+        sendRealtimeWhatsAppReminder(tempId);
+      }
+    }
+
+    function showToastNotification(text) {
+      let toast = document.getElementById('global-floating-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'global-floating-toast';
+        toast.className = 'fixed bottom-5 right-5 z-[9999] bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 border border-slate-700 transition-all duration-300';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <span>${text}</span>`;
+      toast.classList.remove('hidden');
+      toast.style.opacity = '1';
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.classList.add('hidden'), 300);
+      }, 4000);
+    }
+
+        function sendAllReminders() {
       const msgs = {
         'telugu': "అందరు 5 మంది కస్టమర్లకు వాట్సాప్ ద్వారా మర్యాదపూర్వక రిమైండర్లు పంపబడ్డాయి!",
         'hindi': "सभी 5 ग्राहकों को व्हाट्सएप पर 1-क्लिक लिंक के साथ विनम्र रिमाइंडर भेज दिए गए हैं!",
