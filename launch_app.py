@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 launch_app.py - Standalone Desktop Launcher for Paytm VyaparAI
-Starts FastAPI backend if not already running, and launches a dedicated native
-desktop application window using Microsoft Edge or Google Chrome app mode.
+Runs on dedicated port 8080 to prevent collision with other localhost projects.
+Launches a dedicated standalone window in Microsoft Edge or Google Chrome.
 """
 import os
 import sys
@@ -13,13 +13,14 @@ import webbrowser
 import urllib.request
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-SERVER_URL = "http://127.0.0.1:8000/"
-HEALTH_URL = "http://127.0.0.1:8000/api/profile"
+PORT = 8080
+SERVER_URL = f"http://127.0.0.1:{PORT}/"
+HEALTH_URL = f"http://127.0.0.1:{PORT}/api/profile"
 
-def is_server_running(host="127.0.0.1", port=8000):
+def is_server_running(host="127.0.0.1", port=PORT):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(1.0)
+        sock.settimeout(0.8)
         res = sock.connect_ex((host, port))
         sock.close()
         return res == 0
@@ -27,16 +28,15 @@ def is_server_running(host="127.0.0.1", port=8000):
         return False
 
 def start_backend_server():
-    print("Starting Paytm VyaparAI backend server on port 8000...")
+    print(f"Starting Paytm VyaparAI backend server on port {PORT}...")
     cmd = [
         sys.executable,
         "-m", "uvicorn",
         "app:app",
         "--host", "127.0.0.1",
-        "--port", "8000",
+        "--port", str(PORT),
         "--app-dir", APP_DIR
     ]
-    # In Windows, use CREATE_NO_WINDOW if available to prevent black command prompt
     creation_flags = 0
     if os.name == 'nt' and hasattr(subprocess, 'CREATE_NO_WINDOW'):
         creation_flags = subprocess.CREATE_NO_WINDOW
@@ -49,21 +49,19 @@ def start_backend_server():
         stderr=subprocess.DEVNULL
     )
     
-    # Wait up to 10 seconds for server to be responsive
-    for _ in range(20):
-        time.sleep(0.5)
+    # Wait for server to become responsive
+    for _ in range(25):
+        time.sleep(0.4)
         try:
             req = urllib.request.urlopen(HEALTH_URL, timeout=1.0)
             if req.status == 200:
-                print("Backend server is live and healthy!")
+                print("Paytm VyaparAI backend is live!")
                 return proc
         except Exception:
             pass
-    print("Warning: Server took longer than expected to report healthy, continuing...")
     return proc
 
 def get_browser_app_cmd():
-    # Candidates for Chromium-based browser supporting --app flag
     candidates = [
         r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
         r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
@@ -78,24 +76,23 @@ def get_browser_app_cmd():
             return [
                 path,
                 f"--app={SERVER_URL}",
-                "--window-size=1440,920",
-                "--app-id=paytm-vyapar-ai"
+                "--window-size=1440,920"
             ]
     return None
 
 def main():
     os.chdir(APP_DIR)
     
-    # 1. Ensure backend is running
+    # Ensure backend server on port 8080
     if not is_server_running():
         start_backend_server()
     else:
-        print("Backend server is already running on port 8000.")
+        print(f"Backend server is already running on port {PORT}.")
 
-    # 2. Launch App Window
+    # Open app window
     browser_cmd = get_browser_app_cmd()
     if browser_cmd:
-        print(f"Launching desktop application window via: {browser_cmd[0]}")
+        print(f"Launching desktop application: {browser_cmd[0]}")
         subprocess.Popen(browser_cmd)
     else:
         print("Opening default browser...")

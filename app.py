@@ -146,8 +146,8 @@ async def generate_speech(req: TTSRequest):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 if __name__ == "__main__":
-    print("🚀 Starting Paytm VyaparAI Server on http://127.0.0.1:8000 ...")
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    print("🚀 Starting Paytm VyaparAI Server on http://127.0.0.1:8080 ...")
+    uvicorn.run(app, host="127.0.0.1", port=8080)
 
 
 class LoginRequest(BaseModel):

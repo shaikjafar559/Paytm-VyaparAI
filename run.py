@@ -8,6 +8,6 @@ if __name__ == "__main__":
     sys.path.insert(0, current_dir)
     print("=" * 65)
     print("Starting Paytm VyaparAI - Autonomous Merchant Business Copilot")
-    print("Local Web App: http://127.0.0.1:8000")
+    print("Local Web App: http://127.0.0.1:8080")
     print("=" * 65)
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8080, reload=True)
