@@ -630,3 +630,66 @@ class MerchantCopilotEngine:
             },
             "voice_response": responses.get(lang, responses["english"])
         }
+
+    # ------------------------------------------------------------------
+    # BACKEND TRANSACTION ENGINE (Real-Time Ingestion & Passbook Query)
+    # ------------------------------------------------------------------
+    def record_transaction(self, customer_name: str, amount: float, channel: str = "QR",
+                           notes: str = "Counter Payment", phone: str = "+91 98450 77889",
+                           rrn: str = None) -> Dict[str, Any]:
+        import random, time
+        txn_id = f"TXN-{random.randint(984211, 999999)}"
+        upi_rrn = rrn or f"UPI/{random.randint(395230000000, 395299999999)}"
+        chan = channel.upper()
+        chan_label = "Khata Udhar Recovery" if chan == "KHATA" else ("Takeaway Order" if chan == "ORDER" else "Paytm Counter QR Standee")
+
+        new_txn = {
+            "id": txn_id,
+            "rrn": upi_rrn,
+            "customerName": customer_name,
+            "phone": phone,
+            "amount": float(amount),
+            "channel": chan,
+            "channelLabel": chan_label,
+            "notes": notes,
+            "timeAgo": "Just now",
+            "timestamp": time.strftime("%d %b %Y, %I:%M %p"),
+            "status": "SUCCESS"
+        }
+
+        if not hasattr(self, "transactions"):
+            self.transactions = []
+        self.transactions.insert(0, new_txn)
+
+        # Update merchant sales profile
+        self.merchant_profile["today_collection"] += float(amount)
+        self.merchant_profile["today_txns"] += 1
+
+        return {
+            "status": "SUCCESS",
+            "transaction": new_txn,
+            "today_collection": self.merchant_profile["today_collection"],
+            "today_txns": self.merchant_profile["today_txns"]
+        }
+
+    def get_transactions(self, limit: int = 50, channel: str = None) -> Dict[str, Any]:
+        if not hasattr(self, "transactions") or not self.transactions:
+            self.transactions = [
+                {"id": "TXN-984210", "rrn": "UPI/395235564993", "customerName": "Jafar", "phone": "+91 98450 11223", "amount": 1200.0, "channel": "KHATA", "channelLabel": "Khata Udhar Recovery", "notes": "Cleared: sunflower oil 1 L", "timeAgo": "Just now", "timestamp": "31 Oct 2026, 03:08 PM", "status": "SUCCESS"},
+                {"id": "TXN-984209", "rrn": "UPI/395235564882", "customerName": "Ramesh Sharma", "phone": "+91 98765 43210", "amount": 3420.0, "channel": "KHATA", "channelLabel": "Khata Udhar Recovery", "notes": "Atta 10kg & Cooking Oil", "timeAgo": "12m ago", "timestamp": "31 Oct 2026, 02:56 PM", "status": "SUCCESS"},
+                {"id": "TXN-984208", "rrn": "UPI/395235564771", "customerName": "Priya Sharma", "phone": "+91 98450 12345", "amount": 148.0, "channel": "ORDER", "channelLabel": "Takeaway Order #ORD-1042", "notes": "2 Milk, 1 Butter, 1 Maggi", "timeAgo": "28m ago", "timestamp": "31 Oct 2026, 02:40 PM", "status": "SUCCESS"},
+                {"id": "TXN-984207", "rrn": "UPI/395235564660", "customerName": "Ramesh Kumar", "phone": "+91 98450 99887", "amount": 150.0, "channel": "QR", "channelLabel": "Paytm Counter QR Standee", "notes": "Amul Milk & Bread", "timeAgo": "42m ago", "timestamp": "31 Oct 2026, 02:26 PM", "status": "SUCCESS"},
+                {"id": "TXN-984206", "rrn": "UPI/395235564559", "customerName": "Ankit Verma", "phone": "+91 98111 22334", "amount": 120.0, "channel": "QR", "channelLabel": "Paytm Counter QR Standee", "notes": "Snacks & Biscuits", "timeAgo": "1h ago", "timestamp": "31 Oct 2026, 02:08 PM", "status": "SUCCESS"}
+            ]
+
+        txns = self.transactions
+        if channel:
+            txns = [t for t in txns if t["channel"].upper() == channel.upper()]
+
+        total_coll = sum(t["amount"] for t in self.transactions)
+        return {
+            "status": "SUCCESS",
+            "total_collection": total_coll,
+            "total_count": len(self.transactions),
+            "transactions": txns[:limit]
+        }

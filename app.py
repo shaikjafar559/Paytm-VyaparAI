@@ -416,197 +416,72 @@ async def send_sms_gateway(payload: SendSmsPayload):
 
 
 # -------------------------------------------------------------
-# REAL-TIME PAYMENT TRACKER & PASSBOOK BACKEND ENGINE
+
 # -------------------------------------------------------------
-import random
-import time
-
-PAYMENT_TRANSACTIONS = [
-  {
-    "id": "TXN-984210",
-    "rrn": "UPI/395235564993",
-    "customerName": "Jafar",
-    "phone": "+91 98450 11223",
-    "amount": 1200.00,
-    "channel": "KHATA",
-    "channelLabel": "Khata Udhar Recovery",
-    "notes": "Cleared: sunflower oil 1 L",
-    "timeAgo": "Just now",
-    "timestamp": "31 Oct 2026, 03:08 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984209",
-    "rrn": "UPI/395235564882",
-    "customerName": "Ramesh Sharma",
-    "phone": "+91 98765 43210",
-    "amount": 3420.00,
-    "channel": "KHATA",
-    "channelLabel": "Khata Udhar Recovery",
-    "notes": "Atta 10kg & Cooking Oil",
-    "timeAgo": "12m ago",
-    "timestamp": "31 Oct 2026, 02:56 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984208",
-    "rrn": "UPI/395235564771",
-    "customerName": "Priya Sharma",
-    "phone": "+91 98450 12345",
-    "amount": 148.00,
-    "channel": "ORDER",
-    "channelLabel": "Takeaway Order #ORD-1042",
-    "notes": "2 Milk, 1 Butter, 1 Maggi",
-    "timeAgo": "28m ago",
-    "timestamp": "31 Oct 2026, 02:40 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984207",
-    "rrn": "UPI/395235564660",
-    "customerName": "Ramesh Kumar",
-    "phone": "+91 98450 99887",
-    "amount": 150.00,
-    "channel": "QR",
-    "channelLabel": "Paytm Counter QR Standee",
-    "notes": "Amul Milk & Bread",
-    "timeAgo": "42m ago",
-    "timestamp": "31 Oct 2026, 02:26 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984206",
-    "rrn": "UPI/395235564559",
-    "customerName": "Ankit Verma",
-    "phone": "+91 98111 22334",
-    "amount": 120.00,
-    "channel": "QR",
-    "channelLabel": "Paytm Counter QR Standee",
-    "notes": "Snacks & Biscuits",
-    "timeAgo": "1h ago",
-    "timestamp": "31 Oct 2026, 02:08 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984205",
-    "rrn": "UPI/395235564448",
-    "customerName": "Sita Ram",
-    "phone": "+91 98222 33445",
-    "amount": 35.00,
-    "channel": "QR",
-    "channelLabel": "Paytm Counter QR Standee",
-    "notes": "Thums Up 250ml",
-    "timeAgo": "1h 20m ago",
-    "timestamp": "31 Oct 2026, 01:48 PM",
-    "status": "SUCCESS"
-  },
-  {
-    "id": "TXN-984204",
-    "rrn": "UPI/395235564337",
-    "customerName": "Sharma Ji",
-    "phone": "+91 98333 44556",
-    "amount": 450.00,
-    "channel": "QR",
-    "channelLabel": "Paytm Counter QR Standee",
-    "notes": "Grocery Basket",
-    "timeAgo": "2h ago",
-    "timestamp": "31 Oct 2026, 01:08 PM",
-    "status": "SUCCESS"
-  }
-]
-
-class RecordPaymentPayload(BaseModel):
+# UNIFIED TRANSACTIONS BACKEND ENGINE FOR VYAPARAI TOOL
+# -------------------------------------------------------------
+class TransactionPayload(BaseModel):
     customer_name: str
     phone: Optional[str] = "+91 98450 77889"
     amount: float
     channel: Optional[str] = "QR"  # QR, KHATA, ORDER
     channel_label: Optional[str] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = "Counter UPI Payment"
     rrn: Optional[str] = None
 
-@app.get("/api/payments/tracker")
-async def get_payment_tracker():
-    total_coll = sum(t["amount"] for t in PAYMENT_TRANSACTIONS)
-    khata_coll = sum(t["amount"] for t in PAYMENT_TRANSACTIONS if t["channel"] == "KHATA")
-    qr_coll = sum(t["amount"] for t in PAYMENT_TRANSACTIONS if t["channel"] == "QR")
-    order_coll = sum(t["amount"] for t in PAYMENT_TRANSACTIONS if t["channel"] == "ORDER")
-    
-    engine.merchant_profile["today_collection"] = total_coll
-    engine.merchant_profile["today_txns"] = len(PAYMENT_TRANSACTIONS)
-
-    return {
+@app.get("/api/transactions")
+async def get_all_transactions(limit: int = 50, channel: Optional[str] = None):
+    res = engine.get_transactions(limit=limit, channel=channel)
+    return JSONResponse(content={
         "status": "SUCCESS",
-        "kpis": {
-            "total_collection": total_coll,
-            "khata_recovery": khata_coll,
-            "qr_standee_scans": qr_coll,
-            "takeaway_orders": order_coll,
-            "total_transactions": len(PAYMENT_TRANSACTIONS),
-            "upi_success_rate": "99.4%",
-            "avg_ticket_size": round(total_coll / max(1, len(PAYMENT_TRANSACTIONS)), 2)
-        },
-        "transactions": PAYMENT_TRANSACTIONS,
         "merchant": {
             "name": "Shaik Japhar",
             "upi_id": "8310508118@ptyes",
             "store_name": engine.merchant_profile.get("store_name", "Shop"),
             "soundbox_status": "ONLINE_DUAL_BAND"
         },
-        "server_timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-    }
+        **res
+    })
 
+@app.post("/api/transactions/record")
 @app.post("/api/payments/record")
-async def record_realtime_payment(payload: RecordPaymentPayload):
-    txn_id = f"TXN-{random.randint(984211, 999999)}"
-    rrn = payload.rrn or f"UPI/{random.randint(395230000000, 395299999999)}"
-    
-    label_map = {
-        "KHATA": "Khata Udhar Recovery",
-        "ORDER": "Takeaway Order",
-        "QR": "Paytm Counter QR Standee"
-    }
-    chan = (payload.channel or "QR").upper()
-    chan_label = payload.channel_label or label_map.get(chan, "Paytm UPI Payment")
-    notes = payload.notes or (f"Payment from {payload.customer_name}" if chan == "QR" else "Settlement Received")
+async def record_backend_transaction(payload: TransactionPayload):
+    res = engine.record_transaction(
+        customer_name=payload.customer_name,
+        amount=payload.amount,
+        channel=payload.channel or "QR",
+        notes=payload.notes or "Counter Payment",
+        phone=payload.phone or "+91 98450 77889",
+        rrn=payload.rrn
+    )
+    return JSONResponse(content=res)
 
-    new_txn = {
-        "id": txn_id,
-        "rrn": rrn,
-        "customerName": payload.customer_name,
-        "phone": payload.phone,
-        "amount": float(payload.amount),
-        "channel": chan,
-        "channelLabel": chan_label,
-        "notes": notes,
-        "timeAgo": "Just now",
-        "timestamp": time.strftime("%d %b %Y, %I:%M %p"),
-        "status": "SUCCESS"
-    }
-
-    PAYMENT_TRANSACTIONS.insert(0, new_txn)
-
-    # Update engine profile
-    engine.merchant_profile["today_collection"] = sum(t["amount"] for t in PAYMENT_TRANSACTIONS)
-    engine.merchant_profile["today_txns"] = len(PAYMENT_TRANSACTIONS)
-
+@app.get("/api/transactions/summary")
+async def get_transactions_summary():
+    coll = engine.merchant_profile.get("today_collection", 0)
+    txns = engine.merchant_profile.get("today_txns", 0)
     return {
         "status": "SUCCESS",
-        "message": "Payment recorded in backend ledger successfully",
-        "transaction": new_txn,
-        "kpis": {
-            "total_collection": engine.merchant_profile["today_collection"],
-            "total_transactions": len(PAYMENT_TRANSACTIONS)
-        }
+        "today_collection": coll,
+        "today_txns": txns,
+        "avg_ticket": round(coll / max(1, txns), 2),
+        "soundbox": "ONLINE_DUAL_BAND"
     }
 
-@app.get("/api/payments/export/csv")
-async def export_payments_csv():
-    csv_content = "Transaction ID,Timestamp,Customer Name,Phone,Channel,Notes,UPI RRN,Amount (INR),Status\n"
-    for t in PAYMENT_TRANSACTIONS:
-        csv_content += f'"{t["id"]}","{t["timestamp"]}","{t["customerName"]}","{t["phone"]}","{t["channelLabel"]}","{t["notes"]}","{t["rrn"]}","{t["amount"]}","{t["status"]}"\n'
-    
-    return Response(
-        content=csv_content,
-        media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=Paytm_Payment_Tracker_{int(time.time())}.csv"}
-    )
+@app.get("/api/payments/tracker")
+async def legacy_payments_tracker():
+    res = engine.get_transactions()
+    coll = sum(t["amount"] for t in res["transactions"])
+    return {
+        "status": "SUCCESS",
+        "kpis": {
+            "total_collection": coll,
+            "total_transactions": len(res["transactions"]),
+            "upi_success_rate": "99.4%"
+        },
+        "transactions": res["transactions"],
+        "merchant": {
+            "name": "Shaik Japhar",
+            "upi_id": "8310508118@ptyes"
+        }
+    }
