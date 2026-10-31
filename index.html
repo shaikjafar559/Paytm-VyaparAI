@@ -4763,7 +4763,261 @@
       showToastNotification(`Customer ${c.name} deleted.`);
     }
 
-    // ==========================================
+function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-paytm-cyan', 'text-paytm-navy');
+        btn.classList.add('border-transparent', 'text-slate-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+
+      const tabBtn = document.getElementById('tab-' + tabId);
+      if (tabBtn) {
+        tabBtn.classList.add('border-paytm-cyan', 'text-paytm-navy');
+        tabBtn.classList.remove('border-transparent', 'text-slate-500');
+      }
+      const contentEl = document.getElementById('content-' + tabId);
+      if (contentEl) {
+        contentEl.classList.remove('hidden');
+      }
+
+      if (tabId === 'udhar') {
+        renderKhataLedger();
+        if (typeof initCustomerMap === 'function') {
+          setTimeout(initCustomerMap, 150);
+        }
+      }
+
+      if (tabId === 'credit' && !window.chartRendered) {
+        initChart();
+      }
+
+      if (tabId === 'racks') {
+        renderDmartRacks(currentBusinessType);
+      }
+
+      if (tabId === 'orders') {
+        renderCustomerOrders();
+      }
+    }
+
+    // Microphone Trigger with Web Speech Recognition
+    function triggerMic() {
+      const mic = document.getElementById('soundbox-mic-icon');
+      const status = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          const recognition = new SpeechRecognition();
+          recognition.lang = langVoiceCodes[currentLanguage] || 'en-IN';
+          recognition.interimResults = false;
+          
+          mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+          status.innerText = dict.sb_listening_status;
+
+          recognition.onresult = function(event) {
+            const spokenText = event.results[0][0].transcript;
+            mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+            status.innerText = dict.sb_speaking_status;
+            simulateVoiceQuery(spokenText);
+          };
+
+          recognition.onerror = function() {
+            fallbackSimulatedListen();
+          };
+
+          recognition.start();
+          return;
+        } catch(e) {
+          fallbackSimulatedListen();
+        }
+      } else {
+        fallbackSimulatedListen();
+      }
+    }
+
+    function fallbackSimulatedListen() {
+      const mic = document.getElementById('soundbox-mic-icon');
+      const status = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      mic.classList.add('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+      status.innerText = dict.sb_listening_status;
+      
+      setTimeout(() => {
+        mic.classList.remove('soundbox-wave', 'bg-cyan-400', 'text-paytm-navy');
+        status.innerText = dict.sb_speaking_status;
+        const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
+        simulateVoiceQuery(list[0].query);
+      }, 1400);
+    }
+
+    function getAudioClipForQuery(query, lang) {
+      const q = query.toLowerCase();
+      // Loan intent check first to avoid overlap
+      if (q.includes('loan') || q.includes('limit') || q.includes('credit') || q.includes('लोन') || q.includes('ऋण') || q.includes('రుణం') || q.includes('లోన్') || q.includes('పరిమితి') || q.includes('கடன் வரம்பு') || q.includes('லோன்') || q.includes('வரம்பு') || q.includes('ಸಾಲದ ಮಿತಿ') || q.includes('ಲೋನ್') || q.includes('ಮಿತಿ')) {
+        return `loan_${lang}`;
+      } else if (q.includes('collection') || q.includes('sales') || q.includes('today') || q.includes('aaj') || q.includes('मुनाफा') || q.includes('बिक्री') || q.includes('కలెక్షన్') || q.includes('సేల్స్') || q.includes('ఈరోజు') || q.includes('మొత్తం') || q.includes('வசூல்') || q.includes('விற்பனை') || q.includes('இன்று') || q.includes('ಕಲೆಕ್ಷನ್') || q.includes('ಮಾರಾಟ') || q.includes('ಇಂದು') || q.includes('ಒಟ್ಟು')) {
+        return `sales_${lang}`;
+      } else if (q.includes('stock') || q.includes('reorder') || q.includes('milk') || q.includes('butter') || q.includes('ondc') || q.includes('आर्डर') || q.includes('स्टॉक') || q.includes('दूध') || q.includes('थोक') || q.includes('స్టాక్') || q.includes('సరుకు') || q.includes('పాలు') || q.includes('ఆర్డర్') || q.includes('ధర') || q.includes('இருப்பு') || q.includes('பொருட்கள்') || q.includes('பால்') || q.includes('ஆர்டர்') || q.includes('விலை') || q.includes('ದಾಸ್ತಾನು') || q.includes('ಹಾಲು') || q.includes('ಆರ್ಡರ್') || q.includes('ದರ') || q.includes('trend') || q.includes('ట్రెండింగ్')) {
+        return `stock_${lang}`;
+      } else if (q.includes('udhar') || q.includes('khata') || q.includes('verma') || q.includes('sharma') || q.includes('anil') || q.includes('उधार') || q.includes('बाकी') || q.includes('रिमाइंडर') || q.includes('బాకీ') || q.includes('బకాయి') || q.includes('రిమైండర్') || q.includes('అనిల్') || q.includes('கடன்') || q.includes('பாக்கி') || q.includes('நினைவூட்டல்') || q.includes('அனில்') || q.includes('ಸಾಲ') || q.includes('ಬಾಕಿ') || q.includes('ರಿಮೈಂಡರ್') || q.includes('ಅನಿಲ್')) {
+        return `udhar_${lang}`;
+      }
+      return `welcome_${lang}`;
+    }
+
+    async function simulateVoiceQuery(query) {
+      const stream = document.getElementById('chat-stream');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+
+      const userHtml = `
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0">${dict.user_tag}</div>
+          <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 max-w-lg">
+            <p class="font-semibold text-xs text-slate-500 mb-0.5">${dict.chat_spoken_label} (${currentLanguage.toUpperCase()})</p>
+            <p>"${query}"</p>
+          </div>
+        </div>
+      `;
+      stream.innerHTML += userHtml;
+
+      const clipKey = getAudioClipForQuery(query, currentLanguage);
+
+      try {
+        const res = await fetch('/api/copilot/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: query, language: currentLanguage, business_type: currentBusinessType })
+        });
+        const data = await res.json();
+        renderAiResponse(data.voice_response, clipKey);
+        if (data.intent === 'DMART_RACKS' || (data.action && data.action.tab === 'racks')) {
+          switchTab('racks');
+        }
+      } catch (err) {
+        fallbackClientSimulation(query, clipKey);
+      }
+    }
+
+    function fallbackClientSimulation(query, clipKey) {
+      let resp = "";
+      const lang = currentLanguage;
+      const q = (query || "").toLowerCase();
+
+      if (q.includes('rack') || q.includes('shelf') || q.includes('shelves') || q.includes('dmart') || q.includes('రెక్') || q.includes('షెల్ఫ్') || q.includes('रैक') || q.includes('ரேக்') || q.includes('ರ‍್ಯಾಕ್')) {
+        const msgs = {
+          'english': `Boss, opening DMart 3D Smart Racks view! Monitored 16 retail SKUs across 4 supermarket aisles. 2 shelves have critical stockouts (<15%). 1-Click ONDC restock is active.`,
+          'telugu': `సేత్ గారూ, డీమార్ట్ తరహా 3D స్మార్ట్ ర్యాక్స్ వీక్షణ ప్రారంభించాను! 4 ఐల్స్‌లో 16 వస్తువులు పర్యవేక్షించబడుతున్నాయి. 2 షెల్ఫ్‌లలో స్టాక్ చాలా తక్కువగా ఉంది. 1-క్లిక్ ONDC రీస్టాక్ సిద్ధంగా ఉంది.`,
+          'hindi': `सेठ जी, डीमार्ट 3D स्मार्ट रैक व्यू खुल गया है! 4 आइल्स में 16 आइटम्स मॉनिटर हो रहे हैं। 2 शेल्व्स पर गंभीर स्टॉक संकट है। 1-क्लिक ONDC रीస్టॉक तैयार है।`,
+          'tamil': `சேத் அவர்களே, டிமார்ட் 3D ஸ்மார்ட் ரேக் பார்வை திறக்கப்பட்டது! 4 பிரிவுகளில் 16 பொருட்கள் கண்காணிக்கப்படுகின்றன. 2 அலமாரிகளில் இருப்பு தீர்ந்துவிட்டது. ONDC உடனடி ரீஸ்டாக் தயார்.`,
+          'kannada': `ಸೇಠ್ ಅವರೇ, ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ ವೀಕ್ಷಣೆ ತೆರೆಯಲಾಗಿದೆ! 4 ಐಲ್‌ಗಳಲ್ಲಿ 16 ವಸ್ತುಗಳು ಲೈವ್ ಇವೆ. 2 ಕಪಾಟುಗಳಲ್ಲಿ ಸ್ಟಾಕ್ ತೀವ್ರ ಕಡಿಮೆಯಿದೆ. 1-ಕ್ಲಿಕ್ ONDC ಮರುಪೂರಣ ಸಿದ್ಧವಿದೆ.`
+        };
+        resp = msgs[lang] || msgs['english'];
+        renderAiResponse(resp, null);
+        switchTab('racks');
+        return;
+      }
+      if (clipKey.startsWith('sales')) {
+        const bizCfg = BUSINESS_CONFIGS[currentBusinessType] || BUSINESS_CONFIGS['kirana'];
+        resp = (bizCfg.initial_ai && bizCfg.initial_ai[lang]) ? bizCfg.initial_ai[lang].replace(/^"|"$/g, '') : `Boss, today's total collection reached ${bizCfg.today_collection}. Restock recommended immediately!`;
+      } else if (clipKey.startsWith('stock')) {
+        if (lang === 'telugu') resp = "మీ దుకాణంలో 3 వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి. బాలాజీ ఏజెన్సీ ONDC లో అమూల్ పాలను ₹24.20 కి ఇస్తున్నారు. రీ-ఆర్డర్ సిద్ధం చేశాను.";
+        else if (lang === 'tamil') resp = "கடையில் 3 பொருட்கள் குறைவான இருப்பில் உள்ளன. பாலாஜி ஏஜென்சி ONDC-யில் அமுல் பால் வழங்குகிறது. ஆர்டர் தயாராக உள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಂಗಡಿಯಲ್ಲಿ 3 ವಸ್ತುಗಳ ದಾಸ್ತಾನು ಕಡಿಮೆಯಾಗಿದೆ. ಬಾಲಾಜಿ ಏಜೆನ್ಸಿ ONDC ಯಲ್ಲಿ ಅಮುಲ್ ಹಾಲು ನೀಡುತ್ತಿದೆ. ಆರ್ಡರ್ ಸಿದ್ಧವಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान में 3 आइटम कम स्टॉक पर हैं। बालाजी एजेंसी ONDC पर अमूल दूध दे रही है। ऑर्डर तैयार है।";
+        else resp = "You have 3 items running low on stock. Sri Balaji Agency on ONDC is offering Amul Milk at ₹24.20. Order prepared.";
+      } else if (clipKey.startsWith('udhar')) {
+        if (lang === 'telugu') resp = "మొత్తం ₹12,450 ఉధార్ బకాయి ఉంది. అనిల్ వర్మ గారికి వాట్సాప్ రిమైండర్ మరియు పేటీఎం క్యూఆర్ లింక్ పంపాను.";
+        else if (lang === 'tamil') resp = "மொத்தம் ₹12,450 கடன் பாக்கி உள்ளது. அனில் வர்மாவுக்கு வாட்ஸ்அப் நினைவூட்டல் மற்றும் பேடிஎம் லிங்க் அனுப்பப்பட்டது.";
+        else if (lang === 'kannada') resp = "ಒಟ್ಟು ₹12,450 ಸಾಲದ ಹಣ ಬಾಕಿ ಇದೆ. ಅನಿಲ್ ವರ್ಮಾ ಅವರಿಗೆ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಮತ್ತು ಪೇಟಿಎಂ ಲಿಂಕ್ ಕಳುಹಿಸಲಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "दुकान पर कुल ₹12,450 का उधार बाकी है। अनिल वर्मा जी को व्हाट्सएप पर विनम्र रिमाइंडर और पेमेंट लिंक भेज दिया गया है।";
+        else resp = "A total of ₹12,450 in customer credit is pending. WhatsApp reminder with dynamic UPI link sent to Anil Verma.";
+      } else if (clipKey.startsWith('loan')) {
+        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
+        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
+        else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for ₹2,50,000 in instant working capital credit.";
+      } else {
+        resp = UI_TRANSLATIONS[lang].sb_ready_status;
+      }
+      renderAiResponse(resp, clipKey);
+    }
+
+    function renderAiResponse(responseText, clipKey) {
+      const stream = document.getElementById('chat-stream');
+      const micStatus = document.getElementById('speaker-status');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+
+      const safeClip = clipKey || getAudioClipForQuery(responseText, currentLanguage);
+
+      const aiHtml = `
+        <div class="flex items-start space-x-3 justify-end">
+          <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl rounded-tr-none text-slate-800 max-w-lg space-y-2 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-paytm-navy font-bold">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-volume-high text-cyan-600"></i>
+                Paytm Soundbox 4.0 (${currentLanguage.toUpperCase()})
+              </span>
+              <button onclick="playSoundboxAudio('${safeClip}', '${responseText.replace(/'/g, "\\'")}')" class="text-cyan-600 hover:text-cyan-700 flex items-center space-x-1 font-semibold">
+                <i class="fa-solid fa-play text-[10px]"></i>
+                <span>${dict.btn_play_sb_audio}</span>
+              </button>
+            </div>
+            <p class="text-slate-800 leading-relaxed">${responseText}</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-paytm-navy text-paytm-cyan flex items-center justify-center font-bold text-xs shrink-0">AI</div>
+        </div>
+      `;
+      stream.innerHTML += aiHtml;
+      stream.scrollTop = stream.scrollHeight;
+      document.getElementById('last-ai-text').innerText = responseText;
+      window.lastClipKey = safeClip;
+      micStatus.innerText = dict.sb_ready_status;
+
+      // Play Soundbox speaker audio
+      playSoundboxAudio(safeClip, responseText);
+    }
+
+    function speakLastResponse() {
+      const text = document.getElementById('last-ai-text').innerText;
+      const clip = window.lastClipKey || `sales_${currentLanguage}`;
+      playSoundboxAudio(clip, text);
+    }
+
+    function handleCustomInput() {
+      const val = document.getElementById('custom-prompt-input').value;
+      if (!val) return;
+      simulateVoiceQuery(val);
+      document.getElementById('custom-prompt-input').value = "";
+    }
+
+    // ONDC Reordering
+    function placeOrder(item, qty, amt) {
+      const toast = document.getElementById('order-toast');
+      const msg = document.getElementById('order-toast-msg');
+      const dict = UI_TRANSLATIONS[currentLanguage];
+      
+      let successMsg = "";
+      if (currentLanguage === 'telugu') {
+        successMsg = `<b>విజయం:</b> ONDC ద్వారా ${qty} <b>${item}</b> ఆర్డర్ చేయబడింది. మొత్తం <b>${amt}</b> పేటీఎం బ్యాలెన్స్ నుండి తీసివేయబడింది.`;
+      } else if (currentLanguage === 'hindi') {
+        successMsg = `<b>सफलता:</b> ONDC के माध्यम से ${qty} <b>${item}</b> ऑर्डर किया गया। कुल <b>${amt}</b> मर्चेंट बैलेंस से काटा गया।`;
+      } else if (currentLanguage === 'tamil') {
+        successMsg = `<b>வெற்றி:</b> ONDC மூலம் ${qty} <b>${item}</b> ஆர்டர் செய்யப்பட்டது. மொத்தம் <b>${amt}</b> பேடிஎம் கணக்கிலிருந்து கழிக்கப்பட்டது.`;
+      } else if (currentLanguage === 'kannada') {
+        successMsg = `<b>ಯಶಸ್ಸು:</b> ONDC ಮೂಲಕ ${qty} <b>${item}</b> ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ. ಒಟ್ಟು <b>${amt}</b> ಪೇಟಿಎಂ ಬ್ಯಾಲೆನ್ಸ್‌ನಿಂದ ಕಡಿತಗೊಳಿಸಲಾಗಿದೆ.`;
+      } else {
+        successMsg = `<b>Success:</b> ${qty} of <b>${item}</b> ordered from distributor over ONDC. Total <b>${amt}</b> deducted from Paytm Merchant Balance.`;
+      }
+
+      msg.innerHTML = successMsg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+
+        // ==========================================
     // REAL-TIME WHATSAPP DISPATCH & QR
     // ==========================================
     let currentWaModalData = null;
@@ -5057,6 +5311,7 @@
     }, 8000);
 
     window.addEventListener('DOMContentLoaded', () => {
+      renderKhataLedger();
       renderDmartRacks('kirana');
       changeLanguage('english', false);
     });
