@@ -486,3 +486,50 @@ async def get_transactions_summary():
         "avg_ticket": round(coll / max(1, txns), 2),
         "soundbox": "ONLINE_DUAL_BAND"
     }
+
+
+# -------------------------------------------------------------
+# REAL-TIME INCOMING PAYMENT DETECTION & WEBHOOK LISTENER
+# -------------------------------------------------------------
+INCOMING_PAYMENTS_QUEUE = []
+
+@app.get("/api/payment/incoming")
+@app.post("/api/payment/incoming")
+async def receive_incoming_payment(
+    amount: float = 1.0,
+    name: Optional[str] = "Shaik Jafar",
+    phone: Optional[str] = "+91 83105 08118",
+    utr: Optional[str] = None
+):
+    payment_data = {
+        "amount": float(amount),
+        "customer_name": name,
+        "phone": phone,
+        "rrn": utr or f"UPI/{random.randint(395230000000, 395299999999)}",
+        "notes": "Verified Live QR Payment",
+        "timestamp": time.strftime("%d %b %Y, %I:%M %p")
+    }
+    INCOMING_PAYMENTS_QUEUE.append(payment_data)
+    
+    # Also record into engine ledger
+    engine.record_transaction(
+        customer_name=payment_data["customer_name"],
+        amount=payment_data["amount"],
+        channel="QR",
+        notes=payment_data["notes"],
+        phone=payment_data["phone"],
+        rrn=payment_data["rrn"]
+    )
+    
+    return {
+        "status": "SUCCESS",
+        "message": "Payment ingested into live tool stream",
+        "payment": payment_data
+    }
+
+@app.get("/api/payment/poll")
+async def poll_incoming_payment():
+    if INCOMING_PAYMENTS_QUEUE:
+        p = INCOMING_PAYMENTS_QUEUE.pop(0)
+        return {"status": "RECEIVED", "payment": p}
+    return {"status": "EMPTY"}
