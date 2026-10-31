@@ -333,6 +333,10 @@ class MerchantCopilotEngine:
             return self.evaluate_merchant_credit(lang)
 
         # Inventory intent
+        # DMart Smart Racks / Shelves intent
+        elif any(w in q_lower for w in ["rack", "racks", "shelf", "shelves", "dmart", "????", "??????", "??????", "????????", "????????", "??????", "???????", "???", "??????", "???????", "?????", "????? ???", "????", "??????", "????????", "?????????", "???????", "?????", "????????", "?????????", "????????"]):
+            return self.get_dmart_racks_status(lang)
+
         elif any(w in q_lower for w in ["stock", "khatam", "order", "inventory", "reorder", "milk", "butter", "dolo", "charger", "kurti", "ondc", "స్టాక్", "సరుకు", "ఆర్డర్", "పాలు", "స్టాక్‌లో", "మందులు", "स्टॉक", "सामान", "आर्डर", "दूध", "दवा", "थोक", "இருப்பு", "பொருட்கள்", "ஆர்டர்", "பால்", "மருந்து", "விலை", "ದಾಸ್ತಾನು", "ಸ್ಟಾಕ್", "ಹಾಲು", "ಔಷಧಿ", "ಆರ್ಡರ್", "ದರ"]):
             low_stock = [item for item in self.inventory if item["stock"] <= item["reorder_threshold"]]
             low_stock_names = ", ".join([f"{item['name']} ({item['stock']})" for item in low_stock])
@@ -453,6 +457,36 @@ class MerchantCopilotEngine:
                 "daily_average_txns": self.merchant_profile["today_txns"],
                 "zero_bounce_rate": "100%",
                 "qr_collection_consistency": "98.4%"
+            },
+            "voice_response": resp
+        }
+
+    # DMart 3D Smart Racks Status via Vision AI
+    def get_dmart_racks_status(self, language: str = "english") -> Dict[str, Any]:
+        lang = language.lower().strip()
+        biz = self.current_biz
+        store_name = self.merchant_profile.get("store_name", "Shop")
+        
+        responses = {
+            "english": f"Boss, opening DMart 3D Smart Racks view for {store_name}! Monitored 16 SKUs across 4 supermarket aisles. 2 shelves have critical stockouts (<15%). 1-Click ONDC restock is active.",
+            "telugu": f"సేత్ గారూ, {store_name} కోసం డీమార్ట్ తరహా 3D స్మార్ట్ ర్యాక్స్ వీక్షణ ప్రారంభించాను! 4 ఐల్స్‌లో 16 వస్తువులు పర్యవేక్షించబడుతున్నాయి. 2 షెల్ఫ్‌లలో స్టాక్ చాలా తక్కువగా ఉంది. 1-క్లిక్ ONDC రీస్టాక్ సిద్ధంగా ఉంది.",
+            "hindi": f"सेठ जी, {store_name} के लिए डीमार्ट 3D स्मार्ट रैक व्यू खुल गया है! 4 आइल्स में 16 आइटम्स मॉनिटर हो रहे हैं। 2 शेल्व्स पर गंभीर स्टॉक संकट है। 1-क्लिक ONDC रीस्टॉक तैयार है।",
+            "tamil": f"சேத் அவர்களே, {store_name} கடைக்கான டிமார்ட் 3D ஸ்மார்ட் ரேக் பார்வை திறக்கப்பட்டது! 4 பிரிவுகளில் 16 பொருட்கள் கண்காணிக்கப்படுகின்றன. 2 அலமாரிகளில் இருப்பு தீர்ந்துவிட்டது. ONDC உடனடி ரீஸ்டாக் தயார்.",
+            "kannada": f"ಸೇಠ್ ಅವರೇ, {store_name} ಅಂಗಡಿಗೆ ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ ವೀಕ್ಷಣೆ ತೆರೆಯಲಾಗಿದೆ! 4 ಐಲ್‌ಗಳಲ್ಲಿ 16 ವಸ್ತುಗಳು ಲೈವ್ ಇವೆ. 2 ಕಪಾಟುಗಳಲ್ಲಿ ಸ್ಟಾಕ್ ತೀವ್ರ ಕಡಿಮೆಯಿದೆ. 1-ಕ್ಲಿಕ್ ONDC ಮರುಪೂರಣ ಸಿದ್ಧವಿದೆ."
+        }
+        
+        resp = responses.get(lang, responses["english"])
+        return {
+            "intent": "DMART_RACKS",
+            "language": lang,
+            "business_type": biz,
+            "monitored_skus": 16,
+            "aisles_count": 4,
+            "critical_shelves": 2,
+            "shelf_stock_value": 148250,
+            "action": {
+                "type": "SWITCH_TAB",
+                "tab": "racks"
             },
             "voice_response": resp
         }

@@ -110,6 +110,179 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.25);
     }
 
+  
+    /* ========================================================
+       5. DMART 3D SMART RACKS & CINEMATIC HYPERMARKET VIEW
+       ======================================================== */
+    .dmart-viewport {
+      perspective: 1200px;
+      transform-style: preserve-3d;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dmart-aisle-container {
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .dmart-camera-sweep {
+      animation: dmartDroneSweep 16s ease-in-out infinite alternate !important;
+    }
+    @keyframes dmartDroneSweep {
+      0% {
+        transform: rotateX(6deg) rotateY(-4deg) translateY(0px) scale(0.99);
+      }
+      50% {
+        transform: rotateX(3deg) rotateY(4deg) translateY(-6px) scale(1.01);
+      }
+      100% {
+        transform: rotateX(7deg) rotateY(0deg) translateY(-3px) scale(1);
+      }
+    }
+    
+    /* DMart Gondola Shelf Frame */
+    .gondola-frame {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .gondola-upright {
+      background: repeating-linear-gradient(
+        180deg,
+        #475569,
+        #475569 8px,
+        #1e293b 8px,
+        #1e293b 16px
+      );
+      width: 12px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 10;
+    }
+    .gondola-upright.left { left: 0; border-right: 1px solid #334155; }
+    .gondola-upright.right { right: 0; border-left: 1px solid #334155; }
+
+    /* Shelf Tier 3D Deck */
+    .shelf-tier {
+      position: relative;
+      background: linear-gradient(180deg, #334155 0%, #1e293b 65%, #0f172a 100%);
+      border-top: 2px solid #64748b;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.08), 0 8px 16px rgba(0,0,0,0.35);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .shelf-tier:hover {
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 12px 24px rgba(0,0,0,0.45);
+    }
+    .shelf-under-led {
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      transition: all 0.4s ease;
+      border-radius: 0 0 8px 8px;
+    }
+    .led-healthy {
+      background: #10b981;
+      box-shadow: 0 0 12px #10b981, 0 0 20px rgba(16, 185, 129, 0.4);
+    }
+    .led-low {
+      background: #f59e0b;
+      box-shadow: 0 0 12px #f59e0b, 0 0 20px rgba(245, 158, 11, 0.4);
+    }
+    .led-critical {
+      background: #f43f5e;
+      box-shadow: 0 0 14px #f43f5e, 0 0 24px rgba(244, 63, 94, 0.7);
+      animation: ledPulseCritical 1.2s infinite alternate;
+    }
+    @keyframes ledPulseCritical {
+      0% { opacity: 0.5; filter: drop-shadow(0 0 4px #f43f5e); }
+      100% { opacity: 1; filter: drop-shadow(0 0 16px #f43f5e); }
+    }
+
+    /* Electronic Shelf Label (ESL) Talker */
+    .esl-tag {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      border-radius: 6px;
+    }
+
+    /* 3D Product Package Visuals */
+    .product-3d-box {
+      transform-style: preserve-3d;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .product-3d-box:hover {
+      transform: translateY(-5px) scale(1.04) translateZ(8px);
+    }
+    .empty-slot-ghost {
+      border: 2px dashed #f43f5e;
+      background: rgba(244, 63, 94, 0.08);
+      animation: emptySlotPulse 1.5s infinite alternate ease-in-out;
+      border-radius: 8px;
+    }
+    @keyframes emptySlotPulse {
+      0% { opacity: 0.4; }
+      100% { opacity: 0.85; }
+    }
+
+    /* Restock Drop Animation */
+    .restock-drop-in {
+      animation: restockDrop 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes restockDrop {
+      0% { transform: translateY(-35px) scale(0.65); opacity: 0; }
+      70% { transform: translateY(3px) scale(1.06); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Lighting Modes */
+    .lighting-daylight {
+      background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
+      color: #0f172a !important;
+    }
+    .lighting-daylight .gondola-frame {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+    .lighting-daylight .shelf-tier {
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      border-top-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    .lighting-neon {
+      background: radial-gradient(ellipse at 50% 20%, #0d1a30 0%, #030712 100%) !important;
+      color: #f1f5f9 !important;
+    }
+    .lighting-neon .gondola-frame {
+      background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+      border-color: #1e293b;
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 186, 242, 0.1);
+    }
+
+    .lighting-heatmap {
+      background: radial-gradient(ellipse at 50% 30%, #1f0a14 0%, #050205 100%) !important;
+      color: #fce7f3 !important;
+    }
+    .lighting-heatmap .shelf-healthy {
+      opacity: 0.35;
+      filter: grayscale(60%);
+    }
+    .lighting-heatmap .shelf-critical {
+      opacity: 1 !important;
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.7) !important;
+      border: 1px solid #f43f5e !important;
+    }
+
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
@@ -304,6 +477,10 @@
           <i class="fa-solid fa-book-open"></i>
           <span data-i18n="hero_btn_khata">Smart Khata (₹12.4k Due)</span>
         </button>
+        <button onclick="switchTab('racks')" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold px-5 py-3 rounded-xl border border-emerald-400/30 transition flex items-center justify-center space-x-2 shrink-0">
+          <i class="fa-solid fa-boxes-stacked text-emerald-400"></i>
+          <span data-i18n="hero_btn_racks">🏬 DMart 3D Racks</span>
+        </button>
       </div>
     </div>
 
@@ -324,6 +501,11 @@
       <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
         <i class="fa-solid fa-bolt text-indigo-500"></i>
         <span data-i18n="tab_4">4. 180s Instant Cashflow Credit</span>
+      </button>
+      <button onclick="switchTab('racks')" id="tab-racks" class="tab-btn pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+        <i class="fa-solid fa-boxes-stacked text-emerald-600"></i>
+        <span data-i18n="tab_5">5. 🏬 DMart 3D Smart Racks</span>
+        <span class="ml-1 px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 animate-pulse">CINEMATIC</span>
       </button>
     </div>
 
@@ -763,6 +945,176 @@
       </div>
     </div>
 
+  
+    <!-- TAB 5: DMART 3D SMART RACKS (CINEMATIC HYPERMARKET VIEW) -->
+    <div id="content-racks" class="tab-content hidden space-y-6">
+
+      <!-- DMart Supermarket Top HUD Banner -->
+      <div class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-6 rounded-3xl text-white shadow-xl border border-emerald-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="space-y-2 max-w-xl z-10">
+          <div class="flex items-center space-x-2.5">
+            <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500 text-slate-950 uppercase tracking-wider flex items-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-store"></i>
+              <span>DMart Retail Twin</span>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-emerald-300 border border-white/15 flex items-center space-x-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span>IoT Shelf Sensors Active</span>
+            </span>
+          </div>
+          <h2 id="rack-store-heading" class="text-2xl font-black tracking-tight" data-i18n="rack_store_title">
+            DMart-Style Hypermarket Smart Racks
+          </h2>
+          <p class="text-xs text-slate-300 leading-relaxed" data-i18n="rack_store_sub">
+            Real-Time 3D Gondola Shelf Inventory & Vision AI Stock Twin. Monitor multi-tier supermarket aisles, inspect digital price labels, and execute 1-click ONDC restock.
+          </p>
+        </div>
+
+        <!-- 4 Top Live Rack Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto z-10">
+          <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15 text-center">
+            <p class="text-[11px] text-slate-300 font-semibold mb-0.5">Monitored SKUs</p>
+            <p id="rack-sku-count" class="text-xl font-black text-white">16 SKUs</p>
+            <p class="text-[10px] text-emerald-400 font-bold">4 Supermarket Aisles</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/15 text-center">
+            <p class="text-[11px] text-slate-300 font-semibold mb-0.5" data-i18n="rack_healthy_label">Healthy Shelves</p>
+            <p id="rack-healthy-badge" class="text-xl font-black text-emerald-400">12 / 16</p>
+            <p class="text-[10px] text-emerald-300 font-medium">75% Capacity</p>
+          </div>
+          <div class="bg-rose-500/20 backdrop-blur-md p-3.5 rounded-2xl border border-rose-400/30 text-center">
+            <p class="text-[11px] text-rose-200 font-semibold mb-0.5" data-i18n="rack_critical_label">Critical Stockout</p>
+            <p id="rack-critical-badge" class="text-xl font-black text-rose-300 animate-pulse">2 Shelves</p>
+            <p class="text-[10px] text-rose-200 font-medium">&lt; 15% Threshold</p>
+          </div>
+          <div class="bg-amber-500/20 backdrop-blur-md p-3.5 rounded-2xl border border-amber-400/30 text-center">
+            <p class="text-[11px] text-amber-200 font-semibold mb-0.5" data-i18n="rack_value_label">Shelf Inventory</p>
+            <p id="rack-value-badge" class="text-xl font-black text-amber-300">₹1,48,250</p>
+            <p class="text-[10px] text-amber-200 font-medium">ONDC Auto-Refill ON</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinematic Controls & Aisle Filter Bar -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <!-- Aisle Filter Pills -->
+        <div id="aisle-filter-container" class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
+          <button onclick="filterAisle('all')" id="aisle-btn-all" class="aisle-filter-pill px-3.5 py-1.5 rounded-xl text-xs font-bold bg-paytm-navy text-white shadow-sm shrink-0 transition">
+            <i class="fa-solid fa-layer-group mr-1.5"></i><span data-i18n="rack_aisle_all">All Store Aisles</span>
+          </button>
+          <button onclick="filterAisle(0)" id="aisle-btn-0" class="aisle-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition">
+            Aisle 1
+          </button>
+          <button onclick="filterAisle(1)" id="aisle-btn-1" class="aisle-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition">
+            Aisle 2
+          </button>
+          <button onclick="filterAisle(2)" id="aisle-btn-2" class="aisle-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition">
+            Aisle 3
+          </button>
+          <button onclick="filterAisle(3)" id="aisle-btn-3" class="aisle-filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition">
+            Aisle 4
+          </button>
+        </div>
+
+        <!-- Center: Cinematic Lighting Modes -->
+        <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl shrink-0">
+          <button onclick="setLightingMode('daylight')" id="light-daylight-btn" class="light-mode-btn px-3 py-1 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition">
+            <i class="fa-solid fa-sun text-amber-500 mr-1"></i> <span data-i18n="rack_mode_daylight">Daylight</span>
+          </button>
+          <button onclick="setLightingMode('neon')" id="light-neon-btn" class="light-mode-btn px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">
+            <i class="fa-solid fa-film text-cyan-500 mr-1"></i> <span data-i18n="rack_mode_neon">Cinematic Neon</span>
+          </button>
+          <button onclick="setLightingMode('heatmap')" id="light-heatmap-btn" class="light-mode-btn px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">
+            <i class="fa-solid fa-fire text-rose-500 mr-1"></i> <span data-i18n="rack_mode_heatmap">Stock Heatmap</span>
+          </button>
+        </div>
+
+        <!-- Right: Drone Sweep & Bulk 1-Click ONDC Restock -->
+        <div class="flex items-center space-x-2.5 shrink-0">
+          <button onclick="toggleCinematicSweep()" id="cam-sweep-btn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-black text-cyan-300 border border-cyan-400/40 flex items-center space-x-1.5 shadow-sm transition">
+            <i class="fa-solid fa-video text-cyan-400"></i>
+            <span id="cam-sweep-text" data-i18n="rack_cam_sweep">Cinematic Sweep: OFF</span>
+          </button>
+          <button onclick="restockAllDepletedShelves()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-bolt text-yellow-300"></i>
+            <span data-i18n="rack_restock_all">Restock Depleted (ONDC)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D DMART STAGE VIEWPORT -->
+      <div id="dmart-viewport" class="dmart-viewport lighting-neon p-6 sm:p-8 rounded-3xl border border-slate-700/50 shadow-2xl relative min-h-[640px] overflow-hidden transition-all duration-700" style="background: radial-gradient(ellipse at 50% 20%, #0d1a30 0%, #030712 100%);">
+        
+        <!-- Floor Reflection & Tile Grid -->
+        <div class="absolute inset-0 pointer-events-none opacity-20" style="background-image: linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 48px 48px;"></div>
+        
+        <!-- Aisles Container (3D Rotatable & Sweeping) -->
+        <div id="dmart-aisle-container" class="dmart-aisle-container grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 relative z-10">
+          <!-- Dynamically populated via renderDmartRacks() -->
+        </div>
+
+      </div>
+
+      <!-- Product Detail & Restock Modal (Quick Inspection) -->
+      <div id="product-inspect-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 animate-scale-up relative">
+          <button onclick="closeProductInspectModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+
+          <div class="flex items-center space-x-3">
+            <div id="inspect-icon-box" class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0 font-bold">
+              <i class="fa-solid fa-box"></i>
+            </div>
+            <div>
+              <p id="inspect-sku" class="text-[11px] font-mono text-slate-500 uppercase">SKU-001</p>
+              <h3 id="inspect-name" class="font-bold text-slate-900 text-base">Amul Taaza Milk 500ml</h3>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+            <div>
+              <span class="text-slate-500">Current Shelf Stock:</span>
+              <p id="inspect-stock" class="font-bold text-slate-800 text-sm">4 pkts</p>
+            </div>
+            <div>
+              <span class="text-slate-500">Max Rack Capacity:</span>
+              <p id="inspect-capacity" class="font-bold text-slate-800 text-sm">40 pkts</p>
+            </div>
+            <div>
+              <span class="text-slate-500">DMart Retail Price:</span>
+              <p id="inspect-price" class="font-bold text-emerald-600 text-sm">₹24.50</p>
+            </div>
+            <div>
+              <span class="text-slate-500">Daily Run Rate:</span>
+              <p id="inspect-velocity" class="font-bold text-slate-800 text-sm">38 units/day</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-1.5 text-xs">
+            <div class="flex items-center justify-between text-blue-900 font-semibold">
+              <span><i class="fa-solid fa-truck-fast mr-1 text-paytm-cyan"></i> ONDC Local Supplier</span>
+              <span class="text-emerald-700 font-bold">Lowest Wholesaler</span>
+            </div>
+            <p id="inspect-supplier" class="text-slate-600">Sri Balaji Dairy Agency ONDC (1.2 km away)</p>
+            <p class="text-[11px] text-slate-500">Delivery ETA: <b>42 minutes</b> via Express Hub</p>
+          </div>
+
+          <div class="flex items-center space-x-3 pt-2">
+            <button onclick="closeProductInspectModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50">
+              Close
+            </button>
+            <button id="inspect-restock-btn" onclick="" class="w-2/3 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold text-xs shadow-md hover:from-emerald-700 hover:to-teal-700 flex items-center justify-center space-x-1.5">
+              <i class="fa-solid fa-bolt text-yellow-300"></i>
+              <span>Confirm 1-Click ONDC Restock</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </main>
 
   <!-- JAVASCRIPT LOCALIZATION & APPLICATION LOGIC -->
@@ -808,6 +1160,7 @@
         },
         prompts: {
           'english': [
+        { icon: "fa-store", label: "🏬 DMart 3D racks & stock view", query: "Show DMart store racks view and depleted shelves" },
             { icon: "fa-chart-line", label: "Today's sales & total collection", query: "What is today's total collection and fastest selling item?" },
             { icon: "fa-boxes-stacked", label: "Check low stock & reorder milk", query: "Which items are low in stock? Reorder Amul milk" },
             { icon: "fa-receipt", label: "Anil Verma udhar & WhatsApp reminder", query: "Check pending udhar for Anil Verma and send reminder" },
@@ -816,6 +1169,7 @@
             { icon: "fa-truck-fast", label: "Compare distributor prices on ONDC", query: "Show lowest ONDC distributor rates for restocking" }
           ],
           'telugu': [
+        { icon: "fa-store", label: "🏬 డీమార్ట్ 3D ర్యాక్స్ & స్టాక్", query: "డీమార్ట్ తరహా 3D ర్యాక్స్ మరియు స్టాక్ చూపించు" },
             { icon: "fa-chart-line", label: "ఈరోజు సేల్స్ & మొత్తం కలెక్షన్ ఎంత?", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
             { icon: "fa-boxes-stacked", label: "స్టాక్ చెక్ చేయి & పాలు రీ-ఆర్డర్ పెట్టు", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? అమూల్ పాలు ఆర్డర్ చేయి" },
             { icon: "fa-receipt", label: "అనిల్ వర్మ గారి బాకీ ఎంత? రిమైండర్ పంపు", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
@@ -824,6 +1178,7 @@
             { icon: "fa-truck-fast", label: "ONDC డిస్ట్రిబ్యూటర్ హోల్‌సేల్ ధరలు చూపించు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
           ],
           'hindi': [
+        { icon: "fa-store", label: "🏬 डीमार्ट 3D रैक व खाली शेल्व्स", query: "दुकान के डीमार्ट रैक और स्टॉक स्थिति दिखाओ" },
             { icon: "fa-chart-line", label: "आज का कुल मुनाफा और बिक्री कलेक्शन", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
             { icon: "fa-boxes-stacked", label: "दुकान में कौन सा सामान खत्म है? दूध ऑर्डर करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? दूध आर्डर करो" },
             { icon: "fa-receipt", label: "अनिल वर्मा का बकाया कितना है? रिमाइंडर भेजो", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
@@ -832,6 +1187,7 @@
             { icon: "fa-truck-fast", label: "ONDC पर सबसे सस्ता थोक डिस्ट्रीब्यूटर ढूंढो", query: "ONDC थोक भाव दिखाओ" }
           ],
           'tamil': [
+        { icon: "fa-store", label: "🏬 டிமார்ட் 3D ரேக்குகள் இருப்பு", query: "டிமார்ட் ரேக் பார்வை மற்றும் இருப்பு காட்டு" },
             { icon: "fa-chart-line", label: "இன்றைய மொத்த விற்பனை மற்றும் வசூல் எவ்வளவு?", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
             { icon: "fa-boxes-stacked", label: "இருப்பு குறைவான பொருட்கள் & பால் மறுஆர்டர்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? அமுல் பால் ஆர்டர் செய்" },
             { icon: "fa-receipt", label: "அனில் வர்மா கடன் பாக்கி நினைவூட்டல் அனுப்பு", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
@@ -840,6 +1196,7 @@
             { icon: "fa-truck-fast", label: "ONDC விநியோகஸ்தர் குறைந்த மொத்த விலை காட்டு", query: "ONDC மொத்த விலையை காட்டு" }
           ],
           'kannada': [
+        { icon: "fa-store", label: "🏬 ಡಿಮಾರ್ಟ್ 3D ರ‍್ಯಾಕ್ಸ್ & ದಾಸ್ತಾನು", query: "ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ 3D ರ‍್ಯಾಕ್ ಮತ್ತು ದಾಸ್ತಾನು ತೋರಿಸಿ" },
             { icon: "fa-chart-line", label: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಮತ್ತು ಆದಾಯ ಎಷ್ಟು?", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
             { icon: "fa-boxes-stacked", label: "ದಾಸ್ತಾನು ಪರಿಶೀಲಿಸಿ & ಹಾಲು ಮರು-ಆರ್ಡರ್ ಮಾಡಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಅಮುಲ್ ಹಾಲು ಆರ್ಡರ್ ಮಾಡಿ" },
             { icon: "fa-receipt", label: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಸಾಲದ ಹಣ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
@@ -1520,6 +1877,7 @@
 
 
     function switchBusiness(bizType) {
+      renderDmartRacks(bizType);
       if (!BUSINESS_CONFIGS[bizType]) return;
       currentBusinessType = bizType;
       const cfg = BUSINESS_CONFIGS[bizType];
@@ -1614,6 +1972,19 @@
 
     const UI_TRANSLATIONS = {
       'english': {
+        tab_5: "5. 🏬 DMart 3D Smart Racks (Cinematic)",
+        hero_btn_racks: "🏬 DMart 3D Racks",
+        rack_store_title: "DMart-Style Hypermarket Smart Racks",
+        rack_store_sub: "Real-Time 3D Gondola Shelf Inventory & Vision AI Stock Twin. Monitor multi-tier supermarket aisles and execute 1-click ONDC restock.",
+        rack_aisle_all: "All Store Aisles",
+        rack_mode_daylight: "Daylight",
+        rack_mode_neon: "Cinematic Neon",
+        rack_mode_heatmap: "Stock Heatmap",
+        rack_cam_sweep: "Cinematic Sweep: OFF",
+        rack_restock_all: "Restock Depleted (ONDC)",
+        rack_healthy_label: "Healthy Shelves",
+        rack_critical_label: "Critical Stockout",
+        rack_value_label: "Shelf Inventory",
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:',
         tag_copilot: "Live Multi-Agent",
         initial_user_msg: "\"Boss, how much is today's total collection and what is the fastest selling item?\"",
@@ -1715,6 +2086,19 @@
         credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
       },
       'telugu': {
+        tab_5: "5. 🏬 డీమార్ట్ 3D స్మార్ట్ ర్యాక్స్ (సినిమాటిక్)",
+        hero_btn_racks: "🏬 డీమార్ట్ 3D ర్యాక్స్",
+        rack_store_title: "డీమార్ట్ తరహా హైపర్‌మార్కెట్ స్మార్ట్ ర్యాక్స్",
+        rack_store_sub: "రియల్ టైమ్ 3D గోండోలా షెల్ఫ్ స్టాక్ & విషన్ ఏఐ ట్విన్. 4 ఐల్స్ పర్యవేక్షించి, 1-క్లిక్ ద్వారా ONDC రీస్టాక్ చేయండి.",
+        rack_aisle_all: "అన్ని ఐల్స్",
+        rack_mode_daylight: "డేలైట్",
+        rack_mode_neon: "సినిమాటిక్ నియాన్",
+        rack_mode_heatmap: "స్టాక్ హీట్‌మ్యాప్",
+        rack_cam_sweep: "సినిమాటిక్ స్వీప్: OFF",
+        rack_restock_all: "ఖాళీ ర్యాక్‌లు నింపండి (ONDC)",
+        rack_healthy_label: "సరిపడా స్టాక్ ఉన్నవి",
+        rack_critical_label: "తీవ్ర కొరత",
+        rack_value_label: "షెల్ఫ్ సరుకు విలువ",
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> అడగడానికి సూచనలు:',
         tag_copilot: "లైవ్ మల్టీ-ఏజెంట్",
         initial_user_msg: "\"సేత్ గారూ, ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?\"",
@@ -1816,6 +2200,19 @@
         credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
       },
       'hindi': {
+        tab_5: "5. 🏬 डीमार्ट 3D स्मार्ट रैक्स (सिनेमैटिक)",
+        hero_btn_racks: "🏬 डीमार्ट 3D रैक्स",
+        rack_store_title: "डीमार्ट स्टाइल हाइपरमार्केट स्मार्ट रैक्स",
+        rack_store_sub: "रियल-टाइम 3D गोंडोला शेल्फ स्टॉक और विज़न AI डिजिटल ट्विन। 4 सुपरमार्केट आइल्स की जांच करें और 1-क्लिक ONDC रीस्टॉक करें।",
+        rack_aisle_all: "सभी आइल्स",
+        rack_mode_daylight: "डेलाइट",
+        rack_mode_neon: "सिनेमैटिक नियॉन",
+        rack_mode_heatmap: "स्टॉक हीटमैप",
+        rack_cam_sweep: "सिनेमैटिक स्वीप: OFF",
+        rack_restock_all: "खाली रैक तुरंत भरें (ONDC)",
+        rack_healthy_label: "सुरक्षित शेल्व्स",
+        rack_critical_label: "स्टॉक संकट",
+        rack_value_label: "शेल्फ माल मूल्य",
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> पूछने के लिए सुझाव:',
         tag_copilot: "लाइव मल्टी-एजेंट",
         initial_user_msg: "\"सेठ जी, आज का कुल मुनाफा और सबसे तेज बिकने वाला आइटम कौन सा है?\"",
@@ -1917,6 +2314,19 @@
         credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
       },
       'tamil': {
+        tab_5: "5. 🏬 டிமார்ட் 3D ஸ்மார்ட் ரேக்குகள் (சினிமாட்டிக்)",
+        hero_btn_racks: "🏬 டிமார்ட் 3D ரேக்குகள்",
+        rack_store_title: "டிமார்ட் பாணி ஹைப்பர்மார்க்கெட் ஸ்மார்ட் ரேக்குகள்",
+        rack_store_sub: "நிகழ்நேர 3D அலமாரி இருப்பு மற்றும் விஷன் AI ட்வின். 4 பகுதிகளை பார்வையிட்டு 1-கிளிக் ONDC மறுபடியும் ஆர்டர் செய்க.",
+        rack_aisle_all: "அனைத்து இடங்களும்",
+        rack_mode_daylight: "பகல் வெளிச்சம்",
+        rack_mode_neon: "சினிமாட்டிக் நியான்",
+        rack_mode_heatmap: "இருப்பு எச்சரிக்கை",
+        rack_cam_sweep: "கேமரா சுழற்சி: OFF",
+        rack_restock_all: "காலியான ரேக்குகள் நிரப்புக (ONDC)",
+        rack_healthy_label: "சீரான அலமாரிகள்",
+        rack_critical_label: "தீவிர பற்றாக்குறை",
+        rack_value_label: "இருப்பு மதிப்பு",
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> கேட்க பரிந்துரைகள்:',
         tag_copilot: "நேரலை மல்டி-ஏஜென்ட்",
         initial_user_msg: "\"முதலாளி, இன்று மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?\"",
@@ -2018,6 +2428,19 @@
         credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
       },
       'kannada': {
+        tab_5: "5. 🏬 ಡಿಮಾರ್ಟ್ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ (ಸಿನಿಮ್ಯಾಟಿಕ್)",
+        hero_btn_racks: "🏬 ಡಿಮಾರ್ಟ್ 3D ರ‍್ಯಾಕ್ಸ್",
+        rack_store_title: "ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ ಸೂಪರ್‌ಮಾರ್ಕೆಟ್ ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್",
+        rack_store_sub: "ನೈಜ ಸಮಯದ 3D ಕಪಾಟಿನ ದಾಸ್ತಾನು ಮತ್ತು ವಿಷನ್ AI ಟ್ವಿನ್. 4 ಸೂಪರ್‌ಮಾರ್ಕೆಟ್ ಐಲ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ 1-ಕ್ಲಿಕ್ ONDC ಮರು-ಆರ್ಡರ್ ಮಾಡಿ.",
+        rack_aisle_all: "ಎಲ್ಲಾ ಐಲ್‌ಗಳು",
+        rack_mode_daylight: "ಡೇಲೈಟ್",
+        rack_mode_neon: "ಸಿನಿಮ್ಯಾಟಿಕ್ ನಿಯಾನ್",
+        rack_mode_heatmap: "ತುರ್ತು ಹೀಟ್‌ಮ್ಯಾಪ್",
+        rack_cam_sweep: "ಕ್ಯಾಮೆರಾ ಸ್ವೀಪ್: OFF",
+        rack_restock_all: "ಖಾಲಿ ರ‍್ಯಾಕ್‌ಗಳನ್ನು ತುಂಬಿ (ONDC)",
+        rack_healthy_label: "ಉತ್ತಮ ಕಪಾಟುಗಳು",
+        rack_critical_label: "ತೀವ್ರ ಕೊರತೆ",
+        rack_value_label: "ದಾಸ್ತಾನು ಮೌಲ್ಯ",
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> ಕೇಳಲು ಸಲಹೆಗಳು:',
         tag_copilot: "ಲೈವ್ ಮಲ್ಟಿ-ಏಜೆಂಟ್",
         initial_user_msg: "\"ಸೇಠ್ ಅವರೇ, ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?\"",
@@ -2372,6 +2795,673 @@
       simulateVoiceQuery(list[0].query);
     }
 
+    
+    // ==========================================
+    // DMART 3D SMART RACKS ENGINE & BUSINESS DATA
+    // ==========================================
+    let currentLightingMode = 'neon';
+    let isDroneSweepActive = false;
+    let currentAisleFilter = 'all';
+
+    const DMART_RACKS_DATA = {
+      'kirana': {
+        store_title: 'Sri Lakshmi Kirana • DMart Hypermarket Retail Twin',
+        aisles: [
+          {
+            id: 0,
+            number: '01',
+            name: 'Chilled Dairy, Butter & Fresh Milk',
+            icon: 'fa-snowflake',
+            category_color: 'emerald',
+            shelves: [
+              { id: 'k_0_0', sku: 'AMUL-MILK-500', name: 'Amul Taaza Milk 500ml', tier: 'Tier 1 (Eye-Level Prime)', stock: 4, capacity: 40, threshold: 15, mrp: 27.0, dmart_price: 24.50, discount: '9% OFF', status: 'CRITICAL', velocity: '38 pkts/day', supplier: 'Sri Balaji Dairy Agency ONDC (1.2 km)', icon: 'fa-bottle-droplet', color: 'from-blue-600 to-cyan-500', pkg_type: 'pouch', reorder_qty: 36 },
+              { id: 'k_0_1', sku: 'NAND-CURD-500', name: 'Nandini Curd 500g Pouch', tier: 'Tier 2 (Mid Reach)', stock: 8, capacity: 30, threshold: 12, mrp: 28.0, dmart_price: 26.00, discount: '7% OFF', status: 'LOW', velocity: '22 pkts/day', supplier: 'KMF Karnataka Milk Federation ONDC', icon: 'fa-jar', color: 'from-sky-500 to-indigo-600', pkg_type: 'tub', reorder_qty: 22 },
+              { id: 'k_0_2', sku: 'AMUL-BTR-100', name: 'Amul Salted Butter 100g', tier: 'Tier 3 (High Volume)', stock: 6, capacity: 25, threshold: 10, mrp: 58.0, dmart_price: 51.00, discount: '12% OFF', status: 'LOW', velocity: '14 pkts/day', supplier: 'Metro Cash & Carry ONDC', icon: 'fa-cube', color: 'from-amber-400 to-yellow-500', pkg_type: 'box', reorder_qty: 19 },
+              { id: 'k_0_3', sku: 'MD-PANEER-200', name: 'Mother Dairy Paneer 200g', tier: 'Tier 4 (Base Deck)', stock: 22, capacity: 25, threshold: 8, mrp: 95.0, dmart_price: 84.00, discount: '11% OFF', status: 'HEALTHY', velocity: '8 pkts/day', supplier: 'Mother Dairy Fresh Hub ONDC', icon: 'fa-cubes', color: 'from-emerald-500 to-teal-600', pkg_type: 'box', reorder_qty: 10 }
+            ]
+          },
+          {
+            id: 1,
+            number: '02',
+            name: 'Staples, Chakki Atta & Edible Oils',
+            icon: 'fa-wheat-awn',
+            category_color: 'amber',
+            shelves: [
+              { id: 'k_1_0', sku: 'AASH-ATTA-5KG', name: 'Aashirvaad Chakki Atta 5kg', tier: 'Tier 1 (Eye-Level Prime)', stock: 5, capacity: 20, threshold: 8, mrp: 265.0, dmart_price: 232.00, discount: '12% OFF', status: 'LOW', velocity: '12 bags/day', supplier: 'ITC Wholesale Distribution ONDC', icon: 'fa-bag-shopping', color: 'from-amber-600 to-orange-700', pkg_type: 'bag', reorder_qty: 15 },
+              { id: 'k_1_1', sku: 'FORT-OIL-1L', name: 'Fortune Sunflower Oil 1L', tier: 'Tier 2 (Mid Reach)', stock: 18, capacity: 30, threshold: 10, mrp: 145.0, dmart_price: 124.00, discount: '14% OFF', status: 'HEALTHY', velocity: '16 pkts/day', supplier: 'Adani Wilmar Supply ONDC', icon: 'fa-bottle-water', color: 'from-yellow-500 to-amber-600', pkg_type: 'pouch', reorder_qty: 12 },
+              { id: 'k_1_2', sku: 'IG-RICE-5KG', name: 'India Gate Basmati Rice 5kg', tier: 'Tier 3 (High Volume)', stock: 14, capacity: 20, threshold: 6, mrp: 380.0, dmart_price: 315.00, discount: '17% OFF', status: 'HEALTHY', velocity: '6 bags/day', supplier: 'KRBL Agro Depot ONDC', icon: 'fa-sack-dollar', color: 'from-amber-700 to-amber-900', pkg_type: 'bag', reorder_qty: 10 },
+              { id: 'k_1_3', sku: 'TATA-DAL-1KG', name: 'Tata Sampann Toor Dal 1kg', tier: 'Tier 4 (Base Deck)', stock: 28, capacity: 35, threshold: 8, mrp: 185.0, dmart_price: 158.00, discount: '15% OFF', status: 'HEALTHY', velocity: '9 pkts/day', supplier: 'Tata Consumer Products Hub', icon: 'fa-box-open', color: 'from-orange-500 to-red-600', pkg_type: 'pouch', reorder_qty: 10 }
+            ]
+          },
+          {
+            id: 2,
+            number: '03',
+            name: 'Biscuits, FMCG Snacks & Soft Drinks',
+            icon: 'fa-cookie-bite',
+            category_color: 'orange',
+            shelves: [
+              { id: 'k_2_0', sku: 'MAGGI-4PK', name: 'Maggi 2-Min Noodles 4-Pack', tier: 'Tier 1 (Eye-Level Prime)', stock: 3, capacity: 35, threshold: 12, mrp: 56.0, dmart_price: 48.00, discount: '14% OFF', status: 'CRITICAL', velocity: '28 pkts/day', supplier: 'Nestle Super Wholesaler ONDC', icon: 'fa-bowl-food', color: 'from-yellow-400 to-red-500', pkg_type: 'box', reorder_qty: 32 },
+              { id: 'k_2_1', sku: 'THUMS-750', name: 'Thums Up Charged 750ml', tier: 'Tier 2 (Mid Reach)', stock: 8, capacity: 30, threshold: 15, mrp: 45.0, dmart_price: 36.00, discount: '20% OFF', status: 'LOW', velocity: '24 bots/day', supplier: 'Hindustan Coca-Cola Beverages ONDC', icon: 'fa-wine-bottle', color: 'from-red-600 to-rose-950', pkg_type: 'bottle', reorder_qty: 22 },
+              { id: 'k_2_2', sku: 'PARLE-G-250', name: 'Parle-G Gold Biscuits 250g', tier: 'Tier 3 (High Volume)', stock: 38, capacity: 50, threshold: 12, mrp: 30.0, dmart_price: 25.00, discount: '16% OFF', status: 'HEALTHY', velocity: '32 pkts/day', supplier: 'Parle Products Depot ONDC', icon: 'fa-cookie', color: 'from-amber-300 to-amber-500', pkg_type: 'box', reorder_qty: 15 },
+              { id: 'k_2_3', sku: 'TATA-TEA-250', name: 'Tata Tea Gold Premium 250g', tier: 'Tier 4 (Base Deck)', stock: 25, capacity: 30, threshold: 8, mrp: 160.0, dmart_price: 138.00, discount: '14% OFF', status: 'HEALTHY', velocity: '11 pkts/day', supplier: 'Tata Consumer Products Hub', icon: 'fa-mug-hot', color: 'from-amber-600 to-yellow-700', pkg_type: 'jar', reorder_qty: 10 }
+            ]
+          },
+          {
+            id: 3,
+            number: '04',
+            name: 'Spices, Salts & Home Hygiene',
+            icon: 'fa-spray-can-sparkles',
+            category_color: 'teal',
+            shelves: [
+              { id: 'k_3_0', sku: 'EV-MASALA-100', name: 'Everest Garam Masala 100g', tier: 'Tier 1 (Eye-Level Prime)', stock: 16, capacity: 25, threshold: 8, mrp: 88.0, dmart_price: 74.00, discount: '16% OFF', status: 'HEALTHY', velocity: '7 boxes/day', supplier: 'Everest Spices Super Stockist', icon: 'fa-pepper-hot', color: 'from-red-600 to-rose-800', pkg_type: 'box', reorder_qty: 10 },
+              { id: 'k_3_1', sku: 'TATA-SALT-1KG', name: 'Tata Salt Vacuum Iodised 1kg', tier: 'Tier 2 (Mid Reach)', stock: 32, capacity: 40, threshold: 10, mrp: 28.0, dmart_price: 24.00, discount: '14% OFF', status: 'HEALTHY', velocity: '19 pkts/day', supplier: 'Tata Consumer Chemicals ONDC', icon: 'fa-box', color: 'from-sky-400 to-blue-600', pkg_type: 'pouch', reorder_qty: 15 },
+              { id: 'k_3_2', sku: 'SURF-EX-1KG', name: 'Surf Excel Easy Wash 1kg', tier: 'Tier 3 (High Volume)', stock: 12, capacity: 20, threshold: 6, mrp: 145.0, dmart_price: 122.00, discount: '16% OFF', status: 'HEALTHY', velocity: '8 bags/day', supplier: 'Hindustan Unilever ONDC Partner', icon: 'fa-shirt', color: 'from-blue-600 to-indigo-800', pkg_type: 'bag', reorder_qty: 10 },
+              { id: 'k_3_3', sku: 'DETTOL-HW-200', name: 'Dettol Handwash Pump 200ml', tier: 'Tier 4 (Base Deck)', stock: 15, capacity: 25, threshold: 6, mrp: 99.0, dmart_price: 82.00, discount: '17% OFF', status: 'HEALTHY', velocity: '6 bots/day', supplier: 'Reckitt Benckiser ONDC Hub', icon: 'fa-pump-soap', color: 'from-emerald-500 to-green-700', pkg_type: 'bottle', reorder_qty: 12 }
+            ]
+          }
+        ]
+      },
+      'pharmacy': {
+        store_title: 'Apollo Health Pharmacy • DMart Smart Meds Twin',
+        aisles: [
+          {
+            id: 0,
+            number: '01',
+            name: 'Rx Antibiotics & Insulin Cold Chiller',
+            icon: 'fa-prescription',
+            category_color: 'cyan',
+            shelves: [
+              { id: 'p_0_0', sku: 'INSULIN-100IU', name: 'Human Insulin Regular 100IU', tier: 'Tier 1 (Chiller 2°-8°C)', stock: 3, capacity: 20, threshold: 8, mrp: 165.0, dmart_price: 138.00, discount: '16% OFF', status: 'CRITICAL', velocity: '11 vials/day', supplier: 'Novo Nordisk Regional Depot ONDC', icon: 'fa-syringe', color: 'from-blue-600 to-indigo-700', pkg_type: 'vial', reorder_qty: 17 },
+              { id: 'p_0_1', sku: 'AZITHRO-500', name: 'Azithromycin 500mg Strip', tier: 'Tier 2 (Prescription Top)', stock: 7, capacity: 25, threshold: 12, mrp: 118.0, dmart_price: 92.00, discount: '22% OFF', status: 'LOW', velocity: '14 strips/day', supplier: 'Cipla Super Pharma ONDC', icon: 'fa-tablets', color: 'from-sky-500 to-blue-700', pkg_type: 'strip', reorder_qty: 18 },
+              { id: 'p_0_2', sku: 'AUGMENTIN-625', name: 'Augmentin 625 Duo Strip', tier: 'Tier 3 (Prescription Mid)', stock: 16, capacity: 25, threshold: 8, mrp: 205.0, dmart_price: 172.00, discount: '16% OFF', status: 'HEALTHY', velocity: '10 strips/day', supplier: 'GSK India Pharma ONDC', icon: 'fa-capsules', color: 'from-emerald-600 to-teal-800', pkg_type: 'strip', reorder_qty: 10 },
+              { id: 'p_0_3', sku: 'AMOX-500', name: 'Amoxicillin 500mg Capsules', tier: 'Tier 4 (Bulk Dispensary)', stock: 20, capacity: 30, threshold: 8, mrp: 88.0, dmart_price: 68.00, discount: '22% OFF', status: 'HEALTHY', velocity: '9 strips/day', supplier: 'Alkem Labs Distribution', icon: 'fa-pills', color: 'from-purple-600 to-indigo-800', pkg_type: 'box', reorder_qty: 12 }
+            ]
+          },
+          {
+            id: 1,
+            number: '02',
+            name: 'Fast-Moving Analgesics & Fever Care',
+            icon: 'fa-pills',
+            category_color: 'rose',
+            shelves: [
+              { id: 'p_1_0', sku: 'DOLO-650', name: 'Dolo 650mg Paracetamol 15s', tier: 'Tier 1 (Eye-Level Prime)', stock: 5, capacity: 40, threshold: 18, mrp: 34.0, dmart_price: 26.50, discount: '22% OFF', status: 'CRITICAL', velocity: '42 strips/day', supplier: 'Micro Labs Limited ONDC', icon: 'fa-tablets', color: 'from-rose-500 to-red-700', pkg_type: 'strip', reorder_qty: 35 },
+              { id: 'p_1_1', sku: 'CROCIN-ADV', name: 'Crocin Advance 500mg 15s', tier: 'Tier 2 (Mid Reach)', stock: 26, capacity: 35, threshold: 10, mrp: 24.0, dmart_price: 19.00, discount: '20% OFF', status: 'HEALTHY', velocity: '18 strips/day', supplier: 'GSK Consumer Healthcare', icon: 'fa-pills', color: 'from-red-500 to-orange-600', pkg_type: 'strip', reorder_qty: 15 },
+              { id: 'p_1_2', sku: 'COMBIFLAM', name: 'Combiflam Pain Relief Strip', tier: 'Tier 3 (High Volume)', stock: 9, capacity: 30, threshold: 12, mrp: 48.0, dmart_price: 39.00, discount: '18% OFF', status: 'LOW', velocity: '16 strips/day', supplier: 'Sanofi India Distribution', icon: 'fa-tablets', color: 'from-amber-500 to-red-600', pkg_type: 'strip', reorder_qty: 21 },
+              { id: 'p_1_3', sku: 'SARIDON-10', name: 'Saridon Fast Headache Relief', tier: 'Tier 4 (Counter Rack)', stock: 30, capacity: 40, threshold: 10, mrp: 42.0, dmart_price: 34.00, discount: '19% OFF', status: 'HEALTHY', velocity: '14 strips/day', supplier: 'Piramal Pharma Solutions', icon: 'fa-capsules', color: 'from-pink-600 to-rose-700', pkg_type: 'strip', reorder_qty: 15 }
+            ]
+          },
+          {
+            id: 2,
+            number: '03',
+            name: 'Cough Syrups, Respiratory & Balms',
+            icon: 'fa-jar',
+            category_color: 'amber',
+            shelves: [
+              { id: 'p_2_0', sku: 'BENADRYL-100', name: 'Benadryl Cough Syrup 100ml', tier: 'Tier 1 (Eye-Level Prime)', stock: 8, capacity: 25, threshold: 12, mrp: 125.0, dmart_price: 105.00, discount: '16% OFF', status: 'LOW', velocity: '15 bots/day', supplier: 'Johnson & Johnson Meds ONDC', icon: 'fa-wine-bottle', color: 'from-amber-600 to-rose-800', pkg_type: 'bottle', reorder_qty: 17 },
+              { id: 'p_2_1', sku: 'ASCORIL-D', name: 'Ascoril-D Cough Drops Jar', tier: 'Tier 2 (Mid Reach)', stock: 18, capacity: 25, threshold: 8, mrp: 75.0, dmart_price: 62.00, discount: '17% OFF', status: 'HEALTHY', velocity: '9 jars/day', supplier: 'Glenmark Pharma Supply', icon: 'fa-jar', color: 'from-orange-500 to-amber-600', pkg_type: 'jar', reorder_qty: 10 },
+              { id: 'p_2_2', sku: 'VICKS-50G', name: 'Vicks Vaporub Balm 50g', tier: 'Tier 3 (High Volume)', stock: 22, capacity: 30, threshold: 8, mrp: 160.0, dmart_price: 135.00, discount: '15% OFF', status: 'HEALTHY', velocity: '12 tubs/day', supplier: 'Procter & Gamble Health ONDC', icon: 'fa-pump-soap', color: 'from-teal-600 to-emerald-800', pkg_type: 'tub', reorder_qty: 12 },
+              { id: 'p_2_3', sku: 'OTRIVIN-10ML', name: 'Otrivin Oxy Fast Nasal Spray', tier: 'Tier 4 (Eye-Dropper)', stock: 14, capacity: 20, threshold: 6, mrp: 112.0, dmart_price: 94.00, discount: '16% OFF', status: 'HEALTHY', velocity: '7 sprays/day', supplier: 'Haleon India Supply Depot', icon: 'fa-spray-can', color: 'from-blue-500 to-cyan-600', pkg_type: 'spray', reorder_qty: 10 }
+            ]
+          },
+          {
+            id: 3,
+            number: '04',
+            name: 'First Aid, Rehydration & Immunity',
+            icon: 'fa-kit-medical',
+            category_color: 'emerald',
+            shelves: [
+              { id: 'p_3_0', sku: 'ELECTRAL-21G', name: 'Electral WHO-Formula ORS 21g', tier: 'Tier 1 (Eye-Level Prime)', stock: 45, capacity: 60, threshold: 20, mrp: 22.0, dmart_price: 17.50, discount: '20% OFF', status: 'HEALTHY', velocity: '35 pkts/day', supplier: 'FDC Limited Distribution', icon: 'fa-envelope-open-text', color: 'from-emerald-500 to-green-700', pkg_type: 'pouch', reorder_qty: 25 },
+              { id: 'p_3_1', sku: 'DETTOL-250ML', name: 'Dettol Antiseptic Liquid 250ml', tier: 'Tier 2 (Mid Reach)', stock: 11, capacity: 25, threshold: 8, mrp: 145.0, dmart_price: 125.00, discount: '14% OFF', status: 'HEALTHY', velocity: '8 bots/day', supplier: 'Reckitt Benckiser ONDC Hub', icon: 'fa-bottle-droplet', color: 'from-amber-600 to-yellow-600', pkg_type: 'bottle', reorder_qty: 14 },
+              { id: 'p_3_2', sku: 'HANSAPLAST-JAR', name: 'Hansaplast Bandage Jar 100s', tier: 'Tier 3 (High Volume)', stock: 18, capacity: 25, threshold: 6, mrp: 199.0, dmart_price: 165.00, discount: '17% OFF', status: 'HEALTHY', velocity: '6 jars/day', supplier: 'Beiersdorf India Healthcare', icon: 'fa-bandage', color: 'from-red-500 to-rose-700', pkg_type: 'jar', reorder_qty: 10 },
+              { id: 'p_3_3', sku: 'LIMCEE-500', name: 'Limcee Vitamin C 500mg 15s', tier: 'Tier 4 (Wellness Rack)', stock: 24, capacity: 35, threshold: 10, mrp: 32.0, dmart_price: 24.00, discount: '25% OFF', status: 'HEALTHY', velocity: '15 strips/day', supplier: 'Abbott Healthcare ONDC', icon: 'fa-lemon', color: 'from-yellow-400 to-orange-500', pkg_type: 'strip', reorder_qty: 15 }
+            ]
+          }
+        ]
+      },
+      'cafe': {
+        store_title: 'Kaapi Cafe & Darshini • DMart Food Service Pantry Twin',
+        aisles: [
+          {
+            id: 0,
+            number: '01',
+            name: 'Espresso Bar, Specialty Beans & Craft Syrups',
+            icon: 'fa-mug-hot',
+            category_color: 'amber',
+            shelves: [
+              { id: 'c_0_0', sku: 'COFFEE-ROAST-1KG', name: 'Chikmagalur Roast Coffee 1kg', tier: 'Tier 1 (Barista Eye-Level)', stock: 3, capacity: 15, threshold: 6, mrp: 650.0, dmart_price: 540.00, discount: '17% OFF', status: 'CRITICAL', velocity: '5 bags/day', supplier: 'Western Ghats Coffee Planters ONDC', icon: 'fa-mug-saucer', color: 'from-amber-800 to-stone-900', pkg_type: 'bag', reorder_qty: 12 },
+              { id: 'c_0_1', sku: 'MONIN-VANILLA', name: 'Monin Vanilla Syrup 700ml', tier: 'Tier 2 (Syrup Rail)', stock: 2, capacity: 10, threshold: 4, mrp: 850.0, dmart_price: 720.00, discount: '15% OFF', status: 'LOW', velocity: '2 bots/day', supplier: 'Beverage Craft Syrups Depot', icon: 'fa-wine-bottle', color: 'from-yellow-400 to-amber-600', pkg_type: 'bottle', reorder_qty: 8 },
+              { id: 'c_0_2', sku: 'MONIN-HAZEL', name: 'Monin Roasted Hazelnut 700ml', tier: 'Tier 3 (Syrup Rail)', stock: 6, capacity: 10, threshold: 3, mrp: 850.0, dmart_price: 720.00, discount: '15% OFF', status: 'HEALTHY', velocity: '2 bots/day', supplier: 'Beverage Craft Syrups Depot', icon: 'fa-wine-bottle', color: 'from-amber-600 to-amber-900', pkg_type: 'bottle', reorder_qty: 5 },
+              { id: 'c_0_3', sku: 'HERSHEY-CHOC', name: "Hershey's Chocolate Sauce 1.2kg", tier: 'Tier 4 (Toppings Bar)', stock: 8, capacity: 12, threshold: 3, mrp: 380.0, dmart_price: 320.00, discount: '16% OFF', status: 'HEALTHY', velocity: '3 bots/day', supplier: 'Hershey India Wholesaler ONDC', icon: 'fa-bottle-droplet', color: 'from-stone-700 to-stone-900', pkg_type: 'bottle', reorder_qty: 5 }
+            ]
+          },
+          {
+            id: 1,
+            number: '02',
+            name: 'Commercial Dairy & Chilled Kitchen Buffer',
+            icon: 'fa-bowl-rice',
+            category_color: 'blue',
+            shelves: [
+              { id: 'c_1_0', sku: 'NAND-MILK-1L', name: 'Nandini Full Cream Milk 1L', tier: 'Tier 1 (Chiller Top)', stock: 6, capacity: 45, threshold: 25, mrp: 54.0, dmart_price: 47.00, discount: '13% OFF', status: 'CRITICAL', velocity: '36 pkts/day', supplier: 'KMF Karnataka Milk Federation Hub', icon: 'fa-bottle-droplet', color: 'from-blue-600 to-sky-500', pkg_type: 'pouch', reorder_qty: 39 },
+              { id: 'c_1_1', sku: 'AMUL-CREAM-1L', name: 'Amul Whipping Dairy Cream 1L', tier: 'Tier 2 (Chiller Mid)', stock: 5, capacity: 15, threshold: 6, mrp: 220.0, dmart_price: 188.00, discount: '14% OFF', status: 'LOW', velocity: '4 packs/day', supplier: 'Amul Commercial Dairy ONDC', icon: 'fa-box', color: 'from-sky-400 to-blue-700', pkg_type: 'box', reorder_qty: 10 },
+              { id: 'c_1_2', sku: 'BRIT-CHEESE-400', name: 'Britannia Cheese Slices 400g', tier: 'Tier 3 (Chiller Low)', stock: 12, capacity: 20, threshold: 5, mrp: 260.0, dmart_price: 225.00, discount: '13% OFF', status: 'HEALTHY', velocity: '4 packs/day', supplier: 'Britannia Commercial Supply', icon: 'fa-cheese', color: 'from-yellow-400 to-amber-500', pkg_type: 'box', reorder_qty: 8 },
+              { id: 'c_1_3', sku: 'MM-PANEER-1KG', name: 'Milky Mist Fresh Paneer 1kg', tier: 'Tier 4 (Bulk Chiller Tub)', stock: 7, capacity: 10, threshold: 3, mrp: 360.0, dmart_price: 310.00, discount: '14% OFF', status: 'HEALTHY', velocity: '3 blocks/day', supplier: 'Milky Mist Agro ONDC', icon: 'fa-cube', color: 'from-emerald-500 to-teal-700', pkg_type: 'block', reorder_qty: 4 }
+            ]
+          },
+          {
+            id: 2,
+            number: '03',
+            name: 'Dry Provisions, Bulk Grains & Fry Oils',
+            icon: 'fa-wheat-awn',
+            category_color: 'yellow',
+            shelves: [
+              { id: 'c_2_0', sku: 'IDLI-RICE-25KG', name: 'Idli Boiled Rice 25kg Sack', tier: 'Tier 1 (Heavy Pallet Deck)', stock: 2, capacity: 8, threshold: 4, mrp: 1150.0, dmart_price: 980.00, discount: '15% OFF', status: 'LOW', velocity: '2 bags/day', supplier: 'Karnataka Agro Milling Wholesale', icon: 'fa-sack-xmark', color: 'from-amber-600 to-yellow-800', pkg_type: 'sack', reorder_qty: 6 },
+              { id: 'c_2_1', sku: 'URAD-DAL-10KG', name: 'Premium Urad Dal Gota 10kg', tier: 'Tier 2 (Bulk Shelf)', stock: 3, capacity: 10, threshold: 4, mrp: 1350.0, dmart_price: 1180.00, discount: '13% OFF', status: 'LOW', velocity: '2 bags/day', supplier: 'APMC Yeshwantpur Wholesale Hub', icon: 'fa-bag-shopping', color: 'from-stone-500 to-stone-700', pkg_type: 'sack', reorder_qty: 7 },
+              { id: 'c_2_2', sku: 'MAIDA-10KG', name: 'Maida All-Purpose Flour 10kg', tier: 'Tier 3 (Baking Shelf)', stock: 6, capacity: 10, threshold: 3, mrp: 420.0, dmart_price: 360.00, discount: '14% OFF', status: 'HEALTHY', velocity: '2 bags/day', supplier: 'Sunfresh Agro Flour Mill', icon: 'fa-box', color: 'from-stone-300 to-stone-500', pkg_type: 'sack', reorder_qty: 5 },
+              { id: 'c_2_3', sku: 'FORT-OIL-15L', name: 'Fortune Soyabean Oil 15L Tin', tier: 'Tier 4 (Bulk Fry Deck)', stock: 4, capacity: 6, threshold: 2, mrp: 1850.0, dmart_price: 1620.00, discount: '12% OFF', status: 'HEALTHY', velocity: '1 tin/day', supplier: 'Adani Wilmar Commercial ONDC', icon: 'fa-oil-well', color: 'from-amber-500 to-yellow-600', pkg_type: 'tin', reorder_qty: 3 }
+            ]
+          },
+          {
+            id: 3,
+            number: '04',
+            name: 'Commercial Seasonings, Sambar & Sauces',
+            icon: 'fa-pepper-hot',
+            category_color: 'rose',
+            shelves: [
+              { id: 'c_3_0', sku: 'SAMBAR-POWDER-5KG', name: 'Udupi Hotel Sambar Powder 5kg', tier: 'Tier 1 (Kitchen Rack)', stock: 8, capacity: 10, threshold: 3, mrp: 1450.0, dmart_price: 1250.00, discount: '14% OFF', status: 'HEALTHY', velocity: '2 tubs/day', supplier: 'MTR Food Service Solutions', icon: 'fa-bowl-rice', color: 'from-red-600 to-orange-700', pkg_type: 'tub', reorder_qty: 3 },
+              { id: 'c_3_1', sku: 'PERI-PERI-1KG', name: 'Peri Peri Fry Sprinkler 1kg', tier: 'Tier 2 (Snack Dispenser)', stock: 4, capacity: 8, threshold: 2, mrp: 480.0, dmart_price: 399.00, discount: '17% OFF', status: 'HEALTHY', velocity: '1 can/day', supplier: 'Keya Food Ingredients Depot', icon: 'fa-fire', color: 'from-orange-600 to-red-600', pkg_type: 'can', reorder_qty: 4 },
+              { id: 'c_3_2', sku: 'OREGANO-500G', name: 'Italian Dried Oregano 500g', tier: 'Tier 3 (Pizza Rack)', stock: 5, capacity: 8, threshold: 2, mrp: 390.0, dmart_price: 320.00, discount: '18% OFF', status: 'HEALTHY', velocity: '1 jar/day', supplier: 'Urban Platter Foodservice', icon: 'fa-leaf', color: 'from-emerald-600 to-green-800', pkg_type: 'jar', reorder_qty: 3 },
+              { id: 'c_3_3', sku: 'CHILLI-FLAKES-500G', name: 'Crushed Red Chilli Flakes 500g', tier: 'Tier 4 (Condiments Bar)', stock: 6, capacity: 8, threshold: 2, mrp: 340.0, dmart_price: 280.00, discount: '18% OFF', status: 'HEALTHY', velocity: '1 jar/day', supplier: 'Catch Spices Food Service ONDC', icon: 'fa-pepper-hot', color: 'from-red-600 to-rose-700', pkg_type: 'jar', reorder_qty: 3 }
+            ]
+          }
+        ]
+      },
+      'garments': {
+        store_title: 'Trends Fashion Mart • DMart Retail Apparel Gondolas',
+        aisles: [
+          {
+            id: 0,
+            number: '01',
+            name: 'Festive Ethnic Wear, Kurtis & Sarees',
+            icon: 'fa-vest',
+            category_color: 'purple',
+            shelves: [
+              { id: 'g_0_0', sku: 'KURTI-RAYON-M', name: 'Rayon Floral Printed Kurti M', tier: 'Tier 1 (Prime Hanger Display)', stock: 3, capacity: 25, threshold: 10, mrp: 699.0, dmart_price: 449.00, discount: '36% OFF', status: 'CRITICAL', velocity: '8 pcs/day', supplier: 'Surat Textile Hub Direct ONDC', icon: 'fa-vest-patches', color: 'from-pink-600 to-purple-800', pkg_type: 'hanger', reorder_qty: 22 },
+              { id: 'g_0_1', sku: 'ANARKALI-XL', name: 'Embroidered Anarkali Set XL', tier: 'Tier 2 (Ethnic Showcase)', stock: 4, capacity: 15, threshold: 5, mrp: 1499.0, dmart_price: 999.00, discount: '33% OFF', status: 'LOW', velocity: '3 pcs/day', supplier: 'Jaipur Crafts Fashion Depot', icon: 'fa-person-dress', color: 'from-rose-600 to-pink-800', pkg_type: 'hanger', reorder_qty: 11 },
+              { id: 'g_0_2', sku: 'DUPATTA-SILK', name: 'Banarasi Silk Dupatta Blue', tier: 'Tier 3 (Folded Organza Deck)', stock: 25, capacity: 30, threshold: 8, mrp: 599.0, dmart_price: 399.00, discount: '33% OFF', status: 'HEALTHY', velocity: '6 pcs/day', supplier: 'Varanasi Weavers ONDC Network', icon: 'fa-ribbon', color: 'from-blue-600 to-indigo-900', pkg_type: 'box', reorder_qty: 8 },
+              { id: 'g_0_3', sku: 'CHIKANKARI-L', name: 'Lucknowi Chikankari Kurti L', tier: 'Tier 4 (Designer Shelf)', stock: 14, capacity: 20, threshold: 6, mrp: 899.0, dmart_price: 599.00, discount: '33% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Awadh Handloom Artisans ONDC', icon: 'fa-vest', color: 'from-teal-500 to-emerald-700', pkg_type: 'hanger', reorder_qty: 8 }
+            ]
+          },
+          {
+            id: 1,
+            number: '02',
+            name: 'Denim Jeans Cubby Wall & Trousers',
+            icon: 'fa-socks',
+            category_color: 'blue',
+            shelves: [
+              { id: 'g_1_0', sku: 'JEANS-SLIM-32', name: 'Men Slim Fit Denim Waist 32', tier: 'Tier 1 (Cubby 32-Prime)', stock: 5, capacity: 25, threshold: 10, mrp: 1299.0, dmart_price: 799.00, discount: '38% OFF', status: 'LOW', velocity: '7 pcs/day', supplier: 'Bellary Jeans Cluster Direct ONDC', icon: 'fa-tags', color: 'from-blue-700 to-indigo-900', pkg_type: 'cubby', reorder_qty: 20 },
+              { id: 'g_1_1', sku: 'JEANS-HIGH-30', name: 'Women High-Rise Denim 30', tier: 'Tier 2 (Cubby 30-Women)', stock: 16, capacity: 25, threshold: 8, mrp: 1399.0, dmart_price: 849.00, discount: '39% OFF', status: 'HEALTHY', velocity: '6 pcs/day', supplier: 'Arvind Lifestyle Brands ONDC', icon: 'fa-tags', color: 'from-indigo-600 to-blue-900', pkg_type: 'cubby', reorder_qty: 10 },
+              { id: 'g_1_2', sku: 'JEANS-BLACK-34', name: 'Jet Black Straight Denim 34', tier: 'Tier 3 (Cubby 34-Men)', stock: 18, capacity: 25, threshold: 8, mrp: 1199.0, dmart_price: 749.00, discount: '38% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Raymond Denim Manufacturing', icon: 'fa-tags', color: 'from-slate-800 to-black', pkg_type: 'cubby', reorder_qty: 10 },
+              { id: 'g_1_3', sku: 'JEANS-WASH-32', name: 'Vintage Relaxed Denim 32', tier: 'Tier 4 (Base Cubby)', stock: 12, capacity: 20, threshold: 6, mrp: 1299.0, dmart_price: 799.00, discount: '38% OFF', status: 'HEALTHY', velocity: '4 pcs/day', supplier: 'LNJ Denim Works ONDC', icon: 'fa-tags', color: 'from-sky-700 to-blue-800', pkg_type: 'cubby', reorder_qty: 8 }
+            ]
+          },
+          {
+            id: 2,
+            number: '03',
+            name: 'Everyday Casual Shirts, Polos & Linens',
+            icon: 'fa-shirt',
+            category_color: 'teal',
+            shelves: [
+              { id: 'g_2_0', sku: 'SHIRT-CHECK-L', name: 'Casual Cotton Check Shirt L', tier: 'Tier 1 (Folded Table Top)', stock: 6, capacity: 20, threshold: 8, mrp: 899.0, dmart_price: 549.00, discount: '39% OFF', status: 'LOW', velocity: '6 pcs/day', supplier: 'Tirupur Knitwear Garment Hub', icon: 'fa-shirt', color: 'from-red-600 to-blue-800', pkg_type: 'stack', reorder_qty: 14 },
+              { id: 'g_2_1', sku: 'SHIRT-LINEN-M', name: 'Pure White Linen Shirt M', tier: 'Tier 2 (Mid Stack)', stock: 15, capacity: 20, threshold: 6, mrp: 1199.0, dmart_price: 749.00, discount: '38% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Linen Club Grasim ONDC', icon: 'fa-shirt', color: 'from-slate-100 to-slate-300', pkg_type: 'stack', reorder_qty: 8 },
+              { id: 'g_2_2', sku: 'SHIRT-OXFORD-XL', name: 'Blue Striped Oxford Shirt XL', tier: 'Tier 3 (High Volume)', stock: 14, capacity: 20, threshold: 6, mrp: 999.0, dmart_price: 599.00, discount: '40% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Zodiac Clothing Wholesale', icon: 'fa-shirt', color: 'from-blue-400 to-indigo-600', pkg_type: 'stack', reorder_qty: 8 },
+              { id: 'g_2_3', sku: 'POLO-PIQUE-M', name: 'Classic Pique Polo T-Shirt M', tier: 'Tier 4 (Base Shelf)', stock: 22, capacity: 30, threshold: 8, mrp: 699.0, dmart_price: 399.00, discount: '43% OFF', status: 'HEALTHY', velocity: '8 pcs/day', supplier: 'Tirupur Exporters Cluster ONDC', icon: 'fa-shirt', color: 'from-emerald-600 to-teal-800', pkg_type: 'stack', reorder_qty: 10 }
+            ]
+          },
+          {
+            id: 3,
+            number: '04',
+            name: 'Athleisure, Training Joggers & Shorts',
+            icon: 'fa-person-running',
+            category_color: 'stone',
+            shelves: [
+              { id: 'g_3_0', sku: 'JOGGER-DRY-L', name: 'Dri-Fit Training Joggers L', tier: 'Tier 1 (Prime Grid)', stock: 8, capacity: 25, threshold: 10, mrp: 899.0, dmart_price: 549.00, discount: '39% OFF', status: 'LOW', velocity: '7 pcs/day', supplier: 'Shiv Naresh Sports Wear ONDC', icon: 'fa-person-running', color: 'from-slate-700 to-slate-900', pkg_type: 'stack', reorder_qty: 17 },
+              { id: 'g_3_1', sku: 'TRACK-FLEECE-M', name: 'Heavyweight Fleece Pants M', tier: 'Tier 2 (Mid Grid)', stock: 16, capacity: 25, threshold: 8, mrp: 999.0, dmart_price: 599.00, discount: '40% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Ludhiana Woollen Mills Depot', icon: 'fa-person-running', color: 'from-stone-600 to-stone-800', pkg_type: 'stack', reorder_qty: 10 },
+              { id: 'g_3_2', sku: 'LEGGINGS-BLK', name: 'Cotton Stretch Leggings Free', tier: 'Tier 3 (Bottom Stack)', stock: 26, capacity: 35, threshold: 8, mrp: 499.0, dmart_price: 299.00, discount: '40% OFF', status: 'HEALTHY', velocity: '9 pcs/day', supplier: 'Dollar Industries Apparel ONDC', icon: 'fa-socks', color: 'from-slate-900 to-black', pkg_type: 'stack', reorder_qty: 12 },
+              { id: 'g_3_3', sku: 'SHORTS-GYM-M', name: 'Quick-Dry Running Shorts M', tier: 'Tier 4 (Hanger Bar)', stock: 19, capacity: 25, threshold: 6, mrp: 599.0, dmart_price: 349.00, discount: '42% OFF', status: 'HEALTHY', velocity: '6 pcs/day', supplier: 'Wildcraft Sports Gear ONDC', icon: 'fa-person-running', color: 'from-indigo-600 to-blue-800', pkg_type: 'stack', reorder_qty: 8 }
+            ]
+          }
+        ]
+      },
+      'electronics': {
+        store_title: 'Royal Tech Hub • DMart Gadgets & Mobile Accessories Wall',
+        aisles: [
+          {
+            id: 0,
+            number: '01',
+            name: 'Fast Chargers & GaN Power Adapters',
+            icon: 'fa-bolt',
+            category_color: 'cyan',
+            shelves: [
+              { id: 'e_0_0', sku: 'CHG-20W-PD', name: '20W Type-C Fast Adapter', tier: 'Tier 1 (Eye-Level Wall Peg)', stock: 4, capacity: 30, threshold: 12, mrp: 699.0, dmart_price: 399.00, discount: '43% OFF', status: 'CRITICAL', velocity: '18 pcs/day', supplier: 'Foxconn India Supply Hub ONDC', icon: 'fa-plug', color: 'from-cyan-500 to-blue-600', pkg_type: 'box', reorder_qty: 26 },
+              { id: 'e_0_1', sku: 'CHG-65W-GAN', name: '65W GaN Dual Fast Charger', tier: 'Tier 2 (High Power Peg)', stock: 6, capacity: 20, threshold: 8, mrp: 1899.0, dmart_price: 1199.00, discount: '37% OFF', status: 'LOW', velocity: '5 pcs/day', supplier: 'Portronics Digital Wholesaler', icon: 'fa-bolt-lightning', color: 'from-purple-600 to-indigo-800', pkg_type: 'box', reorder_qty: 14 },
+              { id: 'e_0_2', sku: 'CAR-CHG-30W', name: 'Dual USB Fast Car Charger 30W', tier: 'Tier 3 (Automotive Peg)', stock: 14, capacity: 25, threshold: 6, mrp: 499.0, dmart_price: 299.00, discount: '40% OFF', status: 'HEALTHY', velocity: '7 pcs/day', supplier: 'Ambrane Electronics ONDC', icon: 'fa-car-battery', color: 'from-slate-600 to-slate-800', pkg_type: 'box', reorder_qty: 10 },
+              { id: 'e_0_3', sku: 'QI-PAD-15W', name: 'Magnetic 15W Qi Wireless Pad', tier: 'Tier 4 (Showcase Shelf)', stock: 12, capacity: 20, threshold: 5, mrp: 1299.0, dmart_price: 799.00, discount: '38% OFF', status: 'HEALTHY', velocity: '4 pcs/day', supplier: 'Spigen India Authorized Distributor', icon: 'fa-circle-notch', color: 'from-emerald-500 to-teal-700', pkg_type: 'box', reorder_qty: 8 }
+            ]
+          },
+          {
+            id: 1,
+            number: '02',
+            name: '9D Tempered Glass Screen Guard Wall',
+            icon: 'fa-mobile-screen',
+            category_color: 'blue',
+            shelves: [
+              { id: 'e_1_0', sku: 'GLASS-IP15', name: '9D Tempered Glass iPhone 15', tier: 'Tier 1 (Apple Slot Dispenser)', stock: 9, capacity: 50, threshold: 20, mrp: 299.0, dmart_price: 129.00, discount: '57% OFF', status: 'LOW', velocity: '22 pcs/day', supplier: 'National Market Bengaluru Tech Hub', icon: 'fa-shield-halved', color: 'from-blue-600 to-cyan-700', pkg_type: 'slot', reorder_qty: 41 },
+              { id: 'e_1_1', sku: 'GLASS-REDMI', name: '9D Curved Glass Redmi Note', tier: 'Tier 2 (Xiaomi Slot Dispenser)', stock: 28, capacity: 50, threshold: 15, mrp: 249.0, dmart_price: 99.00, discount: '60% OFF', status: 'HEALTHY', velocity: '19 pcs/day', supplier: 'Lamington Road Importers ONDC', icon: 'fa-mobile', color: 'from-orange-500 to-red-600', pkg_type: 'slot', reorder_qty: 25 },
+              { id: 'e_1_2', sku: 'GLASS-SAM-S24', name: '9D Matte Glass Samsung S24', tier: 'Tier 3 (Samsung Slot Dispenser)', stock: 32, capacity: 50, threshold: 15, mrp: 299.0, dmart_price: 129.00, discount: '57% OFF', status: 'HEALTHY', velocity: '14 pcs/day', supplier: 'Gaffar Market Delhi Electronics', icon: 'fa-mobile-screen-button', color: 'from-indigo-600 to-purple-800', pkg_type: 'slot', reorder_qty: 20 },
+              { id: 'e_1_3', sku: 'GLASS-PRIVACY', name: 'Privacy Anti-Spy Screen Guard', tier: 'Tier 4 (Universal Slot)', stock: 18, capacity: 40, threshold: 10, mrp: 399.0, dmart_price: 169.00, discount: '58% OFF', status: 'HEALTHY', velocity: '9 pcs/day', supplier: 'Shenzhen Direct Trade Port ONDC', icon: 'fa-user-secret', color: 'from-slate-800 to-black', pkg_type: 'slot', reorder_qty: 15 }
+            ]
+          },
+          {
+            id: 2,
+            number: '03',
+            name: 'Wireless Bluetooth Neckbands & TWS Buds',
+            icon: 'fa-headphones',
+            category_color: 'purple',
+            shelves: [
+              { id: 'e_2_0', sku: 'AUDIO-NECK', name: 'Magnetic Bluetooth Neckband', tier: 'Tier 1 (Prime Hanger Display)', stock: 5, capacity: 25, threshold: 10, mrp: 999.0, dmart_price: 599.00, discount: '40% OFF', status: 'LOW', velocity: '8 pcs/day', supplier: 'boAt Lifestyle Direct ONDC', icon: 'fa-headphones-simple', color: 'from-rose-600 to-red-800', pkg_type: 'box', reorder_qty: 20 },
+              { id: 'e_2_1', sku: 'TWS-BOAT-AIR', name: 'boAt Airdopes True Wireless', tier: 'Tier 2 (TWS Showcase Shelf)', stock: 20, capacity: 30, threshold: 8, mrp: 1499.0, dmart_price: 899.00, discount: '40% OFF', status: 'HEALTHY', velocity: '9 pcs/day', supplier: 'Imagine Marketing Private Ltd', icon: 'fa-ear-listen', color: 'from-cyan-600 to-blue-700', pkg_type: 'box', reorder_qty: 12 },
+              { id: 'e_2_2', sku: 'TWS-NOISE-ANC', name: 'Noise Buds ANC Active Cancel', tier: 'Tier 3 (Premium Tech Shelf)', stock: 14, capacity: 20, threshold: 6, mrp: 2199.0, dmart_price: 1399.00, discount: '36% OFF', status: 'HEALTHY', velocity: '5 pcs/day', supplier: 'Nexxbase Marketing ONDC Hub', icon: 'fa-volume-high', color: 'from-indigo-600 to-violet-800', pkg_type: 'box', reorder_qty: 8 },
+              { id: 'e_2_3', sku: 'EARPHONE-3.5', name: 'BassPro In-Ear Heavy Bass', tier: 'Tier 4 (Budget Wire Peg)', stock: 35, capacity: 45, threshold: 12, mrp: 399.0, dmart_price: 199.00, discount: '50% OFF', status: 'HEALTHY', velocity: '14 pcs/day', supplier: 'Zebronics India Wholesaler', icon: 'fa-music', color: 'from-teal-500 to-emerald-700', pkg_type: 'box', reorder_qty: 15 }
+            ]
+          },
+          {
+            id: 3,
+            number: '04',
+            name: 'Braided Fast Cables & MagSafe Power Banks',
+            icon: 'fa-battery-full',
+            category_color: 'emerald',
+            shelves: [
+              { id: 'e_3_0', sku: 'CABLE-65W-TYPEC', name: 'Braided 65W Type-C to C', tier: 'Tier 1 (Cable Carousel)', stock: 35, capacity: 50, threshold: 15, mrp: 399.0, dmart_price: 199.00, discount: '50% OFF', status: 'HEALTHY', velocity: '16 pcs/day', supplier: 'Stuffcool India Distribution', icon: 'fa-ethernet', color: 'from-blue-500 to-cyan-600', pkg_type: 'box', reorder_qty: 20 },
+              { id: 'e_3_1', sku: 'CABLE-LIGHTNING', name: 'Apple Certified Lightning Cable', tier: 'Tier 2 (MFi Peg)', stock: 15, capacity: 30, threshold: 8, mrp: 499.0, dmart_price: 249.00, discount: '50% OFF', status: 'HEALTHY', velocity: '8 pcs/day', supplier: 'Anker Innovations India Hub', icon: 'fa-bolt', color: 'from-slate-200 to-slate-400', pkg_type: 'box', reorder_qty: 15 },
+              { id: 'e_3_2', sku: 'PB-10000-MAG', name: '10000mAh Magnetic Power Bank', tier: 'Tier 3 (Heavy Power Shelf)', stock: 8, capacity: 20, threshold: 6, mrp: 1999.0, dmart_price: 1299.00, discount: '35% OFF', status: 'LOW', velocity: '6 pcs/day', supplier: 'Mi Xiaomi India Logistics ONDC', icon: 'fa-battery-three-quarters', color: 'from-amber-500 to-orange-600', pkg_type: 'box', reorder_qty: 12 },
+              { id: 'e_3_3', sku: 'CASE-ARMOR-MAG', name: 'Heavy Duty MagSafe Armor Case', tier: 'Tier 4 (Showcase Wall)', stock: 22, capacity: 35, threshold: 8, mrp: 499.0, dmart_price: 249.00, discount: '50% OFF', status: 'HEALTHY', velocity: '10 pcs/day', supplier: 'Ringke Korea Partner India', icon: 'fa-shield', color: 'from-slate-700 to-slate-900', pkg_type: 'box', reorder_qty: 15 }
+            ]
+          }
+        ]
+      }
+    };
+
+    // Render DMart 3D Racks View
+    function renderDmartRacks(bizType = currentBusinessType) {
+      const data = DMART_RACKS_DATA[bizType] || DMART_RACKS_DATA['kirana'];
+      const container = document.getElementById('dmart-aisle-container');
+      if (!container) return;
+
+      // Update Heading & Subtitle
+      const heading = document.getElementById('rack-store-heading');
+      if (heading) heading.innerText = data.store_title;
+
+      let totalSkus = 0;
+      let healthyCount = 0;
+      let criticalCount = 0;
+      let totalValue = 0;
+
+      let aislesHtml = '';
+
+      data.aisles.forEach((aisle, aIdx) => {
+        const isHidden = (currentAisleFilter !== 'all' && currentAisleFilter !== aIdx) ? 'hidden' : '';
+
+        let shelvesHtml = '';
+        aisle.shelves.forEach((shelf) => {
+          totalSkus++;
+          if (shelf.status === 'HEALTHY') healthyCount++;
+          if (shelf.status === 'CRITICAL') criticalCount++;
+          totalValue += (shelf.stock * shelf.dmart_price);
+
+          const pct = Math.min(100, Math.round((shelf.stock / shelf.capacity) * 100));
+          const isCritical = shelf.status === 'CRITICAL';
+          const isLow = shelf.status === 'LOW';
+
+          const ledClass = isCritical ? 'led-critical' : (isLow ? 'led-low' : 'led-healthy');
+          const statusBadgeClass = isCritical
+            ? 'bg-rose-500 text-white animate-pulse'
+            : (isLow ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-emerald-500 text-slate-950 font-bold');
+
+          const statusText = isCritical ? 'CRITICAL (&lt;15%)' : (isLow ? 'LOW BUFFER' : 'HEALTHY');
+
+          // 3D Visual Packaging and Missing Phantoms
+          let visualUnitsHtml = '';
+          const displayUnits = Math.min(4, Math.max(1, Math.round(shelf.stock / (shelf.capacity / 4))));
+          for (let u = 0; u < displayUnits; u++) {
+            visualUnitsHtml += `
+              <div class="product-3d-box w-10 h-14 sm:w-11 sm:h-16 rounded-xl bg-gradient-to-br ${shelf.color} border border-white/20 shadow-md flex flex-col items-center justify-between p-1.5 shrink-0 text-white cursor-pointer select-none" onclick="inspectShelfProduct('${shelf.id}')" title="Click to inspect ${shelf.name}">
+                <div class="w-full flex items-center justify-between text-[8px] opacity-80">
+                  <span class="font-mono">DM</span>
+                  <i class="fa-solid ${shelf.icon}"></i>
+                </div>
+                <div class="text-[9px] font-black text-center leading-tight line-clamp-1 w-full">
+                  ${shelf.name.split(' ')[0]}
+                </div>
+                <div class="text-[8px] bg-black/40 px-1 py-0.5 rounded font-mono font-bold w-full text-center">
+                  ₹${shelf.dmart_price.toFixed(0)}
+                </div>
+              </div>
+            `;
+          }
+
+          // If critical or low, show dotted empty phantom slots
+          if (isCritical || isLow) {
+            const emptyGhosts = 4 - displayUnits;
+            for (let g = 0; g < emptyGhosts; g++) {
+              visualUnitsHtml += `
+                <div class="empty-slot-ghost w-10 h-14 sm:w-11 sm:h-16 rounded-xl flex flex-col items-center justify-center text-rose-400 p-1 shrink-0 cursor-pointer" onclick="restockShelfItem('${shelf.id}')" title="Depleted Slot! Click to 1-Click Restock via ONDC">
+                  <i class="fa-solid fa-plus text-xs"></i>
+                  <span class="text-[7.5px] font-black uppercase tracking-wider text-center">Empty</span>
+                </div>
+              `;
+            }
+          }
+
+          shelvesHtml += `
+            <div id="shelf-tier-${shelf.id}" class="shelf-tier ${isCritical ? 'shelf-critical' : 'shelf-healthy'} p-3 rounded-2xl relative mb-4">
+              <!-- Tier Tag & Status Indicator -->
+              <div class="flex items-center justify-between text-[11px] mb-2">
+                <span class="text-slate-300 font-semibold flex items-center space-x-1.5">
+                  <i class="fa-solid fa-layer-group text-slate-400 text-xs"></i>
+                  <span>${shelf.tier}</span>
+                </span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase font-black tracking-wide ${statusBadgeClass}">
+                  ${statusText}
+                </span>
+              </div>
+
+              <!-- 3D Shelf Surface Deck with Physical Product Display -->
+              <div class="bg-black/25 rounded-xl p-2.5 flex items-end justify-center gap-2 mb-2 min-h-[76px] relative overflow-hidden border border-white/5">
+                ${visualUnitsHtml}
+              </div>
+
+              <!-- Electronic Shelf Label (ESL Digital Talker Bar) -->
+              <div class="esl-tag p-2.5 rounded-xl flex flex-col space-y-1.5 shadow-sm">
+                <div class="flex items-center justify-between text-xs">
+                  <div class="font-bold text-slate-900 truncate pr-1" title="${shelf.name}">
+                    ${shelf.name}
+                  </div>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 shrink-0">
+                    ${shelf.discount}
+                  </span>
+                </div>
+
+                <div class="flex items-baseline justify-between text-[11px] font-mono">
+                  <div class="space-x-1.5">
+                    <span class="text-slate-400 line-through text-[10px]">MRP ₹${shelf.mrp.toFixed(2)}</span>
+                    <span class="text-emerald-700 font-black text-xs">DMart ₹${shelf.dmart_price.toFixed(2)}</span>
+                  </div>
+                  <div class="text-slate-800 font-bold">
+                    <span id="stock-val-${shelf.id}" class="text-xs ${isCritical ? 'text-rose-600 font-black' : (isLow ? 'text-amber-600' : 'text-emerald-700')}">${shelf.stock}</span> / ${shelf.capacity} pkts
+                  </div>
+                </div>
+
+                <!-- Live Capacity Bar -->
+                <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                  <div id="stock-bar-${shelf.id}" class="h-full rounded-full transition-all duration-500 ${isCritical ? 'bg-rose-500' : (isLow ? 'bg-amber-500' : 'bg-emerald-500')}" style="width: ${pct}%;"></div>
+                </div>
+
+                <!-- Restock Button & ONDC Action -->
+                <div class="flex items-center justify-between pt-1">
+                  <span class="text-[9.5px] text-slate-500 truncate max-w-[130px]" title="${shelf.supplier}">
+                    <i class="fa-solid fa-truck-fast text-paytm-cyan mr-0.5"></i> ${shelf.supplier.split(' ')[0]} Hub
+                  </span>
+                  <button onclick="restockShelfItem('${shelf.id}')" class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow flex items-center space-x-1 transition active:scale-95">
+                    <i class="fa-solid fa-bolt text-yellow-300"></i>
+                    <span>+${shelf.reorder_qty} ONDC</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Glowing Under-Shelf LED Bar -->
+              <div id="led-strip-${shelf.id}" class="shelf-under-led ${ledClass}"></div>
+            </div>
+          `;
+        });
+
+        aislesHtml += `
+          <div id="aisle-card-${aIdx}" class="gondola-frame p-4 relative ${isHidden} flex flex-col justify-between transition-all duration-500">
+            <div class="gondola-upright left"></div>
+            <div class="gondola-upright right"></div>
+
+            <!-- Overhead DMart Hanging Signboard -->
+            <div class="bg-gradient-to-r from-emerald-800 to-emerald-950 p-3 rounded-2xl border border-emerald-500/40 text-white mb-4 shadow-md relative z-10">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-7 h-7 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shadow">
+                    ${aisle.number}
+                  </span>
+                  <div>
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300">DMart Supermarket Aisle</p>
+                    <h4 class="font-extrabold text-xs sm:text-sm text-white line-clamp-1">${aisle.name}</h4>
+                  </div>
+                </div>
+                <i class="fa-solid ${aisle.icon} text-emerald-400 text-base"></i>
+              </div>
+            </div>
+
+            <!-- 4 Gondola Shelf Tiers -->
+            <div class="space-y-1 relative z-10">
+              ${shelvesHtml}
+            </div>
+
+            <!-- Bottom Upright Base Plate -->
+            <div class="pt-2 text-center text-[10px] text-slate-400 font-mono flex items-center justify-between relative z-10 border-t border-slate-700/40 mt-1">
+              <span>RACK-G${aisle.number} • VISION AI</span>
+              <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check-circle"></i> WEIGHT BALANCED</span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = aislesHtml;
+
+      // Update Top Metrics Badges
+      const healthyEl = document.getElementById('rack-healthy-badge');
+      if (healthyEl) healthyEl.innerText = `${healthyCount} / ${totalSkus}`;
+
+      const critEl = document.getElementById('rack-critical-badge');
+      if (critEl) {
+        critEl.innerText = `${criticalCount} Shelves`;
+        if (criticalCount === 0) {
+          critEl.classList.remove('text-rose-300', 'animate-pulse');
+          critEl.classList.add('text-emerald-400');
+        } else {
+          critEl.classList.add('text-rose-300', 'animate-pulse');
+          critEl.classList.remove('text-emerald-400');
+        }
+      }
+
+      const valEl = document.getElementById('rack-value-badge');
+      if (valEl) valEl.innerText = `₹${totalValue.toLocaleString('en-IN')}`;
+
+      // Update Aisle Filter button labels for active trade
+      data.aisles.forEach((aisle, idx) => {
+        const btn = document.getElementById('aisle-btn-' + idx);
+        if (btn) btn.innerText = `Aisle ${aisle.number}: ${aisle.name.split(',')[0].split('&')[0].trim()}`;
+      });
+    }
+
+    // Aisle Filter Handler
+    function filterAisle(aisleIdx) {
+      currentAisleFilter = aisleIdx;
+      document.querySelectorAll('.aisle-filter-pill').forEach(btn => {
+        btn.classList.remove('bg-paytm-navy', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      });
+
+      const activeBtn = document.getElementById(aisleIdx === 'all' ? 'aisle-btn-all' : 'aisle-btn-' + aisleIdx);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+        activeBtn.classList.add('bg-paytm-navy', 'text-white');
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const card = document.getElementById('aisle-card-' + i);
+        if (card) {
+          if (aisleIdx === 'all' || aisleIdx === i) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        }
+      }
+    }
+
+    // Lighting Mode Toggle
+    function setLightingMode(mode) {
+      currentLightingMode = mode;
+      const viewport = document.getElementById('dmart-viewport');
+      if (!viewport) return;
+
+      viewport.classList.remove('lighting-daylight', 'lighting-neon', 'lighting-heatmap');
+      viewport.classList.add('lighting-' + mode);
+
+      document.querySelectorAll('.light-mode-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+
+      const activeBtn = document.getElementById('light-' + mode + '-btn');
+      if (activeBtn) {
+        activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-600');
+      }
+    }
+
+    // Cinematic Drone Sweep Walkthrough
+    function toggleCinematicSweep() {
+      isDroneSweepActive = !isDroneSweepActive;
+      const container = document.getElementById('dmart-aisle-container');
+      const btn = document.getElementById('cam-sweep-btn');
+      const text = document.getElementById('cam-sweep-text');
+
+      if (!container || !btn) return;
+
+      if (isDroneSweepActive) {
+        container.classList.add('dmart-camera-sweep');
+        btn.classList.add('bg-cyan-500', 'text-slate-950', 'border-cyan-300');
+        btn.classList.remove('bg-slate-900', 'text-cyan-300');
+        text.innerText = 'Cinematic Sweep: ON';
+      } else {
+        container.classList.remove('dmart-camera-sweep');
+        btn.classList.remove('bg-cyan-500', 'text-slate-950', 'border-cyan-300');
+        btn.classList.add('bg-slate-900', 'text-cyan-300');
+        text.innerText = 'Cinematic Sweep: OFF';
+      }
+    }
+
+    // 1-Click Shelf Item Restock via ONDC
+    function restockShelfItem(shelfId) {
+      const data = DMART_RACKS_DATA[currentBusinessType] || DMART_RACKS_DATA['kirana'];
+      let targetShelf = null;
+
+      data.aisles.forEach(a => {
+        a.shelves.forEach(s => {
+          if (s.id === shelfId) targetShelf = s;
+        });
+      });
+
+      if (!targetShelf) return;
+
+      // Update shelf object
+      const addedQty = targetShelf.reorder_qty;
+      targetShelf.stock = Math.min(targetShelf.capacity, targetShelf.stock + addedQty);
+      targetShelf.status = 'HEALTHY';
+
+      // Play Soundbox Chime & Voice
+      if (typeof speakFallbackSpeech === 'function') {
+        const welcomeTexts = {
+          'english': `Restocked ${targetShelf.name} on Aisle shelf! Added ${addedQty} units via ONDC.`,
+          'telugu': `${targetShelf.name} షెల్ఫ్‌లో ${addedQty} యూనిట్లు ONDC ద్వారా విజయవంతంగా రీస్టాక్ చేయబడ్డాయి!`,
+          'hindi': `${targetShelf.name} रैक पर ONDC से ${addedQty} यूनिट्स सफलतापूर्वक रीस्टॉक हो गई हैं!`,
+          'tamil': `${targetShelf.name} அலமாரியில் ${addedQty} பொருட்கள் ONDC மூலம் வெற்றிகரமாக நிரப்பப்பட்டது!`,
+          'kannada': `${targetShelf.name} ಕಪಾಟಿಗೆ ONDC ಮೂಲಕ ${addedQty} ಯೂನಿಟ್‌ಗಳು ಯಶಸ್ವಿಯಾಗಿ ಭರ್ತಿಯಾಗಿವೆ!`
+        };
+        speakFallbackSpeech(welcomeTexts[currentLanguage] || welcomeTexts['english']);
+      }
+
+      // Re-render Racks
+      renderDmartRacks(currentBusinessType);
+
+      // Flash celebratory effect on shelf
+      const shelfTierEl = document.getElementById('shelf-tier-' + shelfId);
+      if (shelfTierEl) {
+        shelfTierEl.classList.add('restock-drop-in');
+        setTimeout(() => shelfTierEl.classList.remove('restock-drop-in'), 700);
+      }
+    }
+
+    // Restock All Depleted Shelves in 1-Click
+    function restockAllDepletedShelves() {
+      const data = DMART_RACKS_DATA[currentBusinessType] || DMART_RACKS_DATA['kirana'];
+      let restockedCount = 0;
+
+      data.aisles.forEach(a => {
+        a.shelves.forEach(s => {
+          if (s.status === 'CRITICAL' || s.status === 'LOW') {
+            s.stock = s.capacity;
+            s.status = 'HEALTHY';
+            restockedCount++;
+          }
+        });
+      });
+
+      if (typeof speakFallbackSpeech === 'function') {
+        const msgs = {
+          'english': `All ${restockedCount} depleted store shelves fully replenished via ONDC Express! Inventory capacity restored to 100%.`,
+          'telugu': `షాప్‌లోని ఖాళీగా ఉన్న ${restockedCount} షెల్ఫ్‌లు ONDC ఎక్స్‌ప్రెస్ ద్వారా పూర్తిగా రీస్టాక్ చేయబడ్డాయి!`,
+          'hindi': `दुकान के सभी ${restockedCount} खाली रैक ONDC एक्सप्रेस से पूरी तरह भर दिए गए हैं! इन्वेंट्री 100% फुल।`,
+          'tamil': `காலியாக இருந்த ${restockedCount} அலமாரிகளும் ONDC மூலம் முழுமையாக நிரப்பப்பட்டன! இருப்பு 100%.`,
+          'kannada': `ಖಾಲಿಯಾಗಿದ್ದ ಎಲ್ಲಾ ${restockedCount} ಕಪಾಟುಗಳು ONDC ಮೂಲಕ ಸಂಪೂರ್ಣ ಮರುಪೂರಣಗೊಂಡಿವೆ!`
+        };
+        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
+      }
+
+      renderDmartRacks(currentBusinessType);
+    }
+
+    // Inspect Shelf Product Detail Modal
+    function inspectShelfProduct(shelfId) {
+      const data = DMART_RACKS_DATA[currentBusinessType] || DMART_RACKS_DATA['kirana'];
+      let targetShelf = null;
+
+      data.aisles.forEach(a => {
+        a.shelves.forEach(s => {
+          if (s.id === shelfId) targetShelf = s;
+        });
+      });
+
+      if (!targetShelf) return;
+
+      document.getElementById('inspect-sku').innerText = targetShelf.sku;
+      document.getElementById('inspect-name').innerText = targetShelf.name;
+      document.getElementById('inspect-stock').innerText = `${targetShelf.stock} pkts / units`;
+      document.getElementById('inspect-capacity').innerText = `${targetShelf.capacity} pkts / units`;
+      document.getElementById('inspect-price').innerText = `₹${targetShelf.dmart_price.toFixed(2)}`;
+      document.getElementById('inspect-velocity').innerText = targetShelf.velocity;
+      document.getElementById('inspect-supplier').innerText = targetShelf.supplier;
+
+      const restockBtn = document.getElementById('inspect-restock-btn');
+      restockBtn.onclick = function() {
+        closeProductInspectModal();
+        restockShelfItem(shelfId);
+      };
+
+      document.getElementById('product-inspect-modal').classList.remove('hidden');
+    }
+
+    function closeProductInspectModal() {
+      const modal = document.getElementById('product-inspect-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('border-paytm-cyan', 'text-paytm-navy');
@@ -2385,6 +3475,10 @@
 
       if (tabId === 'credit' && !window.chartRendered) {
         initChart();
+      }
+
+      if (tabId === 'racks') {
+        renderDmartRacks(currentBusinessType);
       }
     }
 
@@ -2480,6 +3574,9 @@
         });
         const data = await res.json();
         renderAiResponse(data.voice_response, clipKey);
+        if (data.intent === 'DMART_RACKS' || (data.action && data.action.tab === 'racks')) {
+          switchTab('racks');
+        }
       } catch (err) {
         fallbackClientSimulation(query, clipKey);
       }
@@ -2488,6 +3585,21 @@
     function fallbackClientSimulation(query, clipKey) {
       let resp = "";
       const lang = currentLanguage;
+      const q = (query || "").toLowerCase();
+
+      if (q.includes('rack') || q.includes('shelf') || q.includes('shelves') || q.includes('dmart') || q.includes('రెక్') || q.includes('షెల్ఫ్') || q.includes('रैक') || q.includes('ரேக்') || q.includes('ರ‍್ಯಾಕ್')) {
+        const msgs = {
+          'english': `Boss, opening DMart 3D Smart Racks view! Monitored 16 retail SKUs across 4 supermarket aisles. 2 shelves have critical stockouts (<15%). 1-Click ONDC restock is active.`,
+          'telugu': `సేత్ గారూ, డీమార్ట్ తరహా 3D స్మార్ట్ ర్యాక్స్ వీక్షణ ప్రారంభించాను! 4 ఐల్స్‌లో 16 వస్తువులు పర్యవేక్షించబడుతున్నాయి. 2 షెల్ఫ్‌లలో స్టాక్ చాలా తక్కువగా ఉంది. 1-క్లిక్ ONDC రీస్టాక్ సిద్ధంగా ఉంది.`,
+          'hindi': `सेठ जी, डीमार्ट 3D स्मार्ट रैक व्यू खुल गया है! 4 आइल्स में 16 आइटम्स मॉनिटर हो रहे हैं। 2 शेल्व्स पर गंभीर स्टॉक संकट है। 1-क्लिक ONDC रीస్టॉक तैयार है।`,
+          'tamil': `சேத் அவர்களே, டிமார்ட் 3D ஸ்மார்ட் ரேக் பார்வை திறக்கப்பட்டது! 4 பிரிவுகளில் 16 பொருட்கள் கண்காணிக்கப்படுகின்றன. 2 அலமாரிகளில் இருப்பு தீர்ந்துவிட்டது. ONDC உடனடி ரீஸ்டாக் தயார்.`,
+          'kannada': `ಸೇಠ್ ಅವರೇ, ಡಿಮಾರ್ಟ್ ಶೈಲಿಯ 3D ಸ್ಮಾರ್ಟ್ ರ‍್ಯಾಕ್ಸ್ ವೀಕ್ಷಣೆ ತೆರೆಯಲಾಗಿದೆ! 4 ಐಲ್‌ಗಳಲ್ಲಿ 16 ವಸ್ತುಗಳು ಲೈವ್ ಇವೆ. 2 ಕಪಾಟುಗಳಲ್ಲಿ ಸ್ಟಾಕ್ ತೀವ್ರ ಕಡಿಮೆಯಿದೆ. 1-ಕ್ಲಿಕ್ ONDC ಮರುಪೂರಣ ಸಿದ್ಧವಿದೆ.`
+        };
+        resp = msgs[lang] || msgs['english'];
+        renderAiResponse(resp, null);
+        switchTab('racks');
+        return;
+      }
       if (clipKey.startsWith('sales')) {
         const bizCfg = BUSINESS_CONFIGS[currentBusinessType] || BUSINESS_CONFIGS['kirana'];
         resp = (bizCfg.initial_ai && bizCfg.initial_ai[lang]) ? bizCfg.initial_ai[lang].replace(/^"|"$/g, '') : `Boss, today's total collection reached ${bizCfg.today_collection}. Restock recommended immediately!`;
@@ -2689,6 +3801,7 @@
     }, 8000);
 
     window.addEventListener('DOMContentLoaded', () => {
+      renderDmartRacks('kirana');
       changeLanguage('english', false);
     });
   </script>

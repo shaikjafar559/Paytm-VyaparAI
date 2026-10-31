@@ -5,6 +5,22 @@
 
 ---
 
+### 6. ?? DMart 3D Smart Racks (Cinematic Visual Retail Twin)
+- **Hypermarket 3D Gondolas:** Simulates physical multi-tier supermarket retail racks with slotted uprights, overhead DMart aisle signs, and electronic shelf labels (ESL).
+- **Vision AI Stock Twin:** Real-time visual depiction of stocked packages, phantom empty slots for depleted items, and glowing LED shelf edge strips (?? Healthy, ?? Low Buffer, ?? Critical <15%).
+- **Multi-Business Retail Layouts:** Instant adaptation across 5 merchant trades:
+  - *Kirana & Grocery:* Dairy Chiller, Grains & Atta, FMCG & Snacks, Spices & Cleaners.
+  - *Pharmacy:* Cold Rx Antibiotics & Insulin, OTC Analgesics, Cough Syrups, First Aid & ORS.
+  - *Cafe & Restaurant:* Espresso Bar & Syrups, Dairy Buffers, Bulk Dry Pantry, Commercial Seasonings.
+  - *Apparel & Garments:* Festive Kurtis, Denim Jeans Cubbies, Cotton Shirts, Activewear Joggers.
+  - *Mobile & Electronics:* Fast Chargers, 9D Tempered Glass Wall, Wireless Audio, Braided Cables & Power Banks.
+- **Cinematic Visual Controls:**
+  - ?? **Daylight Supermarket:** Crisp clean hypermarket lighting.
+  - ?? **Cinematic Neon Chiller:** Atmospheric high-contrast studio lighting with neon shelf LEDs.
+  - ?? **Critical Stock Heatmap:** Highlights empty shelves with radiant red warning halos.
+  - ?? **Cinematic Drone Sweep:** Smooth 3D isometric camera dolly gliding across aisles.
+- **1-Click ONDC Restock:** Instant shelf replenishment animation and Soundbox voice confirmation across 5 Indic languages (English, Telugu, Hindi, Tamil, Kannada)!
+
 ## 📌 Problem Statement & Why This Wins
 Small shopkeepers in India love Paytm for its **Soundbox** and **UPI payments**, but they struggle with:
 1. **Inventory Blindspots:** Fast-selling items (milk, edible oil) run out during evening peak hours without warning.
