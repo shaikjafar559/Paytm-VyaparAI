@@ -41,6 +41,10 @@ app.mount("/audio", StaticFiles(directory=static_audio_dir), name="audio")
 class QueryRequest(BaseModel):
     query: str
     language: Optional[str] = "english"
+    business_type: Optional[str] = "kirana"
+
+class BusinessSwitchRequest(BaseModel):
+    business_type: str = "kirana"
 
 class RemindRequest(BaseModel):
     customer_id: str
@@ -68,8 +72,13 @@ async def get_profile():
 
 @app.post("/api/copilot/query")
 async def process_query(req: QueryRequest):
-    result = engine.process_query(req.query, req.language)
+    result = engine.process_query(req.query, req.language, req.business_type)
     return JSONResponse(content=result)
+
+@app.post("/api/business/switch")
+async def switch_business(req: BusinessSwitchRequest):
+    res = engine.set_business_type(req.business_type)
+    return JSONResponse(content=res)
 
 @app.get("/api/inventory")
 async def get_inventory():

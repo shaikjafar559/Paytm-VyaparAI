@@ -48,6 +48,20 @@
       100% { height: 22px; }
     }
 
+  
+    .biz-pill {
+      background-color: rgba(10, 25, 47, 0.7);
+      border: 1px solid rgba(0, 186, 242, 0.3);
+      color: #cbd5e1;
+    }
+    .biz-pill.active {
+      background-color: #00BAF2;
+      color: #002970;
+      border-color: #00BAF2;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(0, 186, 242, 0.45);
+    }
+
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
@@ -91,6 +105,36 @@
         </div>
 
         
+      </div>
+    </div>
+
+        <!-- MULTI-BUSINESS PURPOSE CATEGORY SELECTOR -->
+    <div class="bg-blue-900/60 border-t border-blue-800/80 px-4 py-2">
+      <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2 text-xs">
+        <div class="flex items-center gap-2 text-slate-300 shrink-0">
+          <span class="w-6 h-6 rounded-lg bg-paytm-cyan text-paytm-navy flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-store"></i></span>
+          <span class="font-bold text-white tracking-wide">Multi-Business Mode:</span>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button onclick="switchBusiness('kirana')" id="biz-kirana" class="biz-pill active px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-basket-shopping text-cyan-300"></i> Kirana & Grocery
+          </button>
+          <button onclick="switchBusiness('pharmacy')" id="biz-pharmacy" class="biz-pill px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-pills text-emerald-400"></i> Pharmacy & Medical
+          </button>
+          <button onclick="switchBusiness('restaurant')" id="biz-restaurant" class="biz-pill px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-mug-hot text-amber-400"></i> Cafe & Restaurant
+          </button>
+          <button onclick="switchBusiness('apparel')" id="biz-apparel" class="biz-pill px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-shirt text-purple-300"></i> Garments & Apparel
+          </button>
+          <button onclick="switchBusiness('electronics')" id="biz-electronics" class="biz-pill px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-mobile-screen-button text-cyan-400"></i> Mobile & Electronics
+          </button>
+        </div>
+        <div class="text-[11px] text-cyan-200/90 font-semibold flex items-center gap-1 shrink-0">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i> <span id="current-biz-label">Sri Lakshmi Kirana & General Store</span>
+        </div>
       </div>
     </div>
 
@@ -303,29 +347,14 @@
           <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full" data-i18n="demand_live_tag">Live Trends</span>
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-3" id="radar-trends-container">
+          <!-- Dynamically populated based on active business -->
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
             <div class="flex justify-between items-center mb-1">
-              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item1_title">Cold Drinks & Juices</span>
+              <span class="text-xs font-bold text-slate-800">Cold Drinks & Juices</span>
               <span class="text-xs font-bold text-emerald-600">+44% Surge</span>
             </div>
-            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item1_desc">Heatwave trigger: Temperatures +3.5°C above normal. Area kiranas restocking 2x volume.</p>
-          </div>
-
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item2_title">Pooja Ghee & Flowers</span>
-              <span class="text-xs font-bold text-indigo-600">+32% Ahead</span>
-            </div>
-            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item2_desc">Weekend temple footfall: Local stores building inventory buffers before Friday rush.</p>
-          </div>
-
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-1">
-              <span class="text-xs font-bold text-slate-800" data-i18n="trend_item3_title">Stagnant Working Capital</span>
-              <span class="text-xs font-bold text-rose-600" data-i18n="trend_item3_badge">3 SKUs Dead</span>
-            </div>
-            <p class="text-[11px] text-slate-500 leading-snug" data-i18n="trend_item3_desc">Brand X Nachos has 0 sales in 14 days. Recommending 10% bundle promotion with Thums Up.</p>
+            <p class="text-[11px] text-slate-500 leading-snug">Heatwave trigger: Temperatures +3.5°C above normal. Restocking 2x volume.</p>
           </div>
         </div>
 
@@ -357,7 +386,7 @@
                 <th class="p-3.5" data-i18n="th_action">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 font-medium">
+            <tbody class="divide-y divide-slate-100 font-medium" id="ondc-table-body">
               <tr>
                 <td class="p-3.5 font-bold text-slate-800" data-i18n="sku1_name">Amul Taaza Milk 500ml</td>
                 <td class="p-3.5 text-rose-600 font-bold" data-i18n="sku1_stock">4 pkts (Critical)</td>
@@ -517,7 +546,7 @@
         
         <div class="p-5 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl border border-indigo-200 space-y-2">
           <span class="text-xs font-bold text-indigo-700 uppercase" data-i18n="loan_preapproved_label">Pre-Approved Working Capital</span>
-          <div class="text-3xl font-black text-indigo-900">₹2,50,000</div>
+          <div class="text-3xl font-black text-indigo-900"><span id="credit-limit-badge">₹2,50,000</span></div>
           <div class="flex items-center space-x-1 text-xs text-emerald-600 font-bold">
             <i class="fa-solid fa-circle-check"></i>
             <span data-i18n="loan_speed_tag">Instant Disbursal in 180s</span>
@@ -563,7 +592,7 @@
         </div>
 
         <div id="credit-success-toast" class="hidden p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs rounded-2xl flex items-center justify-between shadow-sm">
-          <span data-i18n="credit_toast_msg"><b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day.</span>
+          <span data-i18n="credit_toast_msg"><b>🎉 Disbursal Complete:</b> <span id="credit-limit-badge">₹2,50,000</span> credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day.</span>
         </div>
       </div>
     </div>
@@ -576,6 +605,509 @@
     let qrcodeInstance = null;
 
     // Full 5-Language UI Dictionary
+    
+    // ==========================================
+    // MULTI-BUSINESS CONFIGURATIONS & PROFILES
+    // ==========================================
+    let currentBusinessType = 'kirana';
+
+    const BUSINESS_CONFIGS = {
+      'kirana': {
+        id: 'kirana',
+        name: 'Sri Lakshmi Kirana & General Store',
+        today_collection: '₹18,420',
+        today_txns: 64,
+        credit_limit: '₹2,50,000',
+        stock_alert: 'Stock Alert: Amul Taaza Milk (< 15% threshold)',
+        initial_user: {
+          'english': ""Boss, how much is today's total collection and what is the fastest selling item?"",
+          'telugu': ""సేత్ గారూ, ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?"",
+          'hindi': ""सेठ जी, आज का टोटल कलेक्शन कितना हुआ और सबसे ज्यादा क्या बिका?"",
+          'tamil': ""சேத் அவர்களே, இன்று மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?"",
+          'kannada': ""ಸೇಠ್ ಅವರೇ, ಇಂದು ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?""
+        },
+        initial_ai: {
+          'english': ""Boss, today's total collection reached ₹18,420 across 64 transactions. The top-selling product was 'Amul Taaza Milk 500ml' (38 packets). Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!"",
+          'telugu': ""సేత్ గారూ, ఈరోజు సాయంత్రం 7 గంటల వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది (64 లావాదేవీలు). అత్యధికంగా అమ్ముడైన వస్తువు 'అమూల్ తాజా పాలు 500ml' (38 ప్యాకెట్లు). హెచ్చరిక: అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, వెంటనే రీస్టాక్ చేయండి!"",
+          'hindi': ""सेठ जी, आज शाम 7 बजे तक कुल ₹18,420 का कलेक्शन हुआ है (64 transactions). सबसे तेज़ बिकने वाला आइटम 'अमूल दूध 500ml' रहा। सिर्फ 4 पैकेट बचे हैं, तुरंत ONDC से रीस्टॉक करें!"",
+          'tamil': ""சேத் அவர்களே, இன்று மாலை வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது (64 பரிவர்த்தனைகள்). அதிகம் விற்பனையான பொருள் 'அமுல் பால் 500ml'. வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!"",
+          'kannada': ""ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ (64 ವಹಿವಾಟುಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದದ್ದು 'ಅಮುಲ್ ಹಾಲು 500ml'. ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ರೀಸ್ಟಾಕ್ ಮಾಡಿ!""
+        },
+        welcome_voice: {
+          'english': "Paytm Soundbox configured for Sri Lakshmi Kirana and General Store.",
+          'telugu': "పేటీఎం సౌండ్‌బాక్స్ ఇప్పుడు శ్రీ లక్ష్మి కిరాణా జనరల్ స్టోర్ మోడ్‌లో ఉంది.",
+          'hindi': "पेटीएम साउंडबॉक्स अब श्री लक्ष्मी किराना और जनरल स्टोर मोड में सेट है।",
+          'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் இப்போது ஸ்ரீ லக்ஷ்மி மளிகைக் கடைக்கு அமைக்கப்பட்டது.",
+          'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಈಗ ಶ್ರೀ ಲಕ್ಷ್ಮಿ ಕಿರಾಣಿ ಅಂಗಡಿ ಮೋಡ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ."
+        },
+        prompts: {
+          'english': [
+            { icon: "fa-chart-line", label: "Today's sales & total collection", query: "What is today's total collection and fastest selling item?" },
+            { icon: "fa-boxes-stacked", label: "Check low stock & reorder milk", query: "Which items are low in stock? Reorder Amul milk" },
+            { icon: "fa-receipt", label: "Anil Verma udhar & WhatsApp reminder", query: "Check pending udhar for Anil Verma and send reminder" },
+            { icon: "fa-building-columns", label: "Instant pre-approved loan limit", query: "What is my pre-approved working capital loan limit?" },
+            { icon: "fa-fire-flame-curved", label: "2-KM neighborhood demand trends", query: "What items are trending in my 2km neighborhood?" },
+            { icon: "fa-truck-fast", label: "Compare distributor prices on ONDC", query: "Show lowest ONDC distributor rates for restocking" }
+          ],
+          'telugu': [
+            { icon: "fa-chart-line", label: "ఈరోజు సేల్స్ & మొత్తం కలెక్షన్ ఎంత?", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+            { icon: "fa-boxes-stacked", label: "స్టాక్ చెక్ చేయి & పాలు రీ-ఆర్డర్ పెట్టు", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? అమూల్ పాలు ఆర్డర్ చేయి" },
+            { icon: "fa-receipt", label: "అనిల్ వర్మ గారి బాకీ ఎంత? రిమైండర్ పంపు", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
+            { icon: "fa-building-columns", label: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత?" },
+            { icon: "fa-fire-flame-curved", label: "పరిసరాల్లో ఏ సరుకులు ఎక్కువ అమ్ముడవుతున్నాయి?", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+            { icon: "fa-truck-fast", label: "ONDC డిస్ట్రిబ్యూటర్ హోల్‌సేల్ ధరలు చూపించు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+          ],
+          'hindi': [
+            { icon: "fa-chart-line", label: "आज का कुल मुनाफा और बिक्री कलेक्शन", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+            { icon: "fa-boxes-stacked", label: "दुकान में कौन सा सामान खत्म है? दूध ऑर्डर करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? दूध आर्डर करो" },
+            { icon: "fa-receipt", label: "अनिल वर्मा का बकाया कितना है? रिमाइंडर भेजो", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+            { icon: "fa-building-columns", label: "मेरी 180 सेकंड लोन लिमिट कितनी है?", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+            { icon: "fa-fire-flame-curved", label: "आस-पास के इलाके में कौन सा सामान ज्यादा बिक रहा है?", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+            { icon: "fa-truck-fast", label: "ONDC पर सबसे सस्ता थोक डिस्ट्रीब्यूटर ढूंढो", query: "ONDC थोक भाव दिखाओ" }
+          ],
+          'tamil': [
+            { icon: "fa-chart-line", label: "இன்றைய மொத்த விற்பனை மற்றும் வசூல் எவ்வளவு?", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+            { icon: "fa-boxes-stacked", label: "இருப்பு குறைவான பொருட்கள் & பால் மறுஆர்டர்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? அமுல் பால் ஆர்டர் செய்" },
+            { icon: "fa-receipt", label: "அனில் வர்மா கடன் பாக்கி நினைவூட்டல் அனுப்பு", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+            { icon: "fa-building-columns", label: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+            { icon: "fa-fire-flame-curved", label: "அருகிலுள்ள பகுதியில் அதிகம் விற்கும் பொருட்கள் எவை?", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+            { icon: "fa-truck-fast", label: "ONDC விநியோகஸ்தர் குறைந்த மொத்த விலை காட்டு", query: "ONDC மொத்த விலையை காட்டு" }
+          ],
+          'kannada': [
+            { icon: "fa-chart-line", label: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಮತ್ತು ಆದಾಯ ಎಷ್ಟು?", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+            { icon: "fa-boxes-stacked", label: "ದಾಸ್ತಾನು ಪರಿಶೀಲಿಸಿ & ಹಾಲು ಮರು-ಆರ್ಡರ್ ಮಾಡಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಅಮುಲ್ ಹಾಲು ಆರ್ಡರ್ ಮಾಡಿ" },
+            { icon: "fa-receipt", label: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಸಾಲದ ಹಣ ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+            { icon: "fa-building-columns", label: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+            { icon: "fa-fire-flame-curved", label: "ಸುತ್ತಮುತ್ತಲಿನ ಪ್ರದೇಶದಲ್ಲಿ ಯಾವ ವಸ್ತುಗಳು ಹೆಚ್ಚು ಮಾರಾಟವಾಗುತ್ತಿವೆ?", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+            { icon: "fa-truck-fast", label: "ONDC ಸಗಟು ವಿತರಕರ ಕಡಿಮೆ ದರಗಳನ್ನು ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+          ]
+        },
+        radar: [
+          { title: "Cold Drinks & Juices", badge: "+44% Surge", color: "emerald", desc: "Heatwave trigger: Temperatures +3.5°C above normal. Area kiranas restocking 2x volume." },
+          { title: "Pooja Ghee & Flowers", badge: "+32% Ahead", color: "indigo", desc: "Weekend temple footfall: Local stores building inventory buffers before Friday rush." },
+          { title: "Stagnant Working Capital", badge: "3 SKUs Dead", color: "rose", desc: "Brand X Nachos has 0 sales in 14 days. Recommending 10% bundle promotion with Thums Up." }
+        ],
+        ondc: [
+          { item: "Amul Taaza Milk 500ml", stock: "4 pkts (Critical)", stockClass: "text-rose-600 font-bold", dist: "Sri Balaji Dairy Agency (1.2 km)", rate: "₹24.20 / pkt", oldRate: "₹25.50", btn: "Reorder (50 pkts)", qty: "50 pkts", amt: "₹1,210" },
+          { item: "Thums Up 750ml", stock: "8 bottles (Low)", stockClass: "text-amber-600 font-bold", dist: "Metro Cash & Carry ONDC", rate: "₹35.50 / bot", oldRate: "", btn: "Reorder (24 bots)", qty: "24 bottles", amt: "₹852" },
+          { item: "Amul Butter 100g", stock: "6 pkts (Low)", stockClass: "text-amber-600 font-bold", dist: "Karnataka Dairy Federation ONDC", rate: "₹50.50 / pkt", oldRate: "", btn: "Reorder (20 pkts)", qty: "20 pkts", amt: "₹1,010" }
+        ]
+      },
+      'pharmacy': {
+        id: 'pharmacy',
+        name: 'Sanjivani MedPlus Pharmacy & Wellness',
+        today_collection: '₹24,850',
+        today_txns: 88,
+        credit_limit: '₹3,50,000',
+        stock_alert: 'Stock Alert: Dolo 650mg & Azithromycin (< 15% threshold)',
+        initial_user: {
+          'english': ""Doc, what is today's medicine counter sales and fast-moving OTC product?"",
+          'telugu': ""ఈరోజు మందుల అమ్మకాలు మరియు ఫాస్ట్ మూవింగ్ మెడిసిన్ ఏది?"",
+          'hindi': ""आज की दवाओं की बिक्री और सबसे तेज बिकने वाली दवा कौन सी है?"",
+          'tamil': ""இன்று மருந்து விற்பனை மற்றும் அதிகம் விற்கும் மாத்திரை எது?"",
+          'kannada': ""ಇಂದಿನ ಔಷಧಿ ಮಾರಾಟ ಮತ್ತು ಹೆಚ್ಚು ಬೇಡಿಕೆಯಿರುವ ಮಾತ್ರೆ ಯಾವುದು?""
+        },
+        initial_ai: {
+          'english': ""Doctor, today's pharmacy collection reached ₹24,850 across 88 prescriptions. Top item: 'Dolo 650mg Tablets' (42 strips). Alert: Dolo 650 has only 5 strips left, immediate ONDC restock recommended!"",
+          'telugu': ""ఈరోజు ఫార్మసీ కలెక్షన్ ₹24,850 కి చేరింది (88 ప్రిస్క్రిప్షన్లు). అత్యధికంగా అమ్ముడైనది 'డోలో 650mg' (42 స్ట్రిప్స్). హెచ్చరిక: కేవలం 5 స్ట్రిప్స్ మాత్రమే ఉన్నాయి, వెంటనే ONDC ద్వారా రీస్టాక్ చేయండి!"",
+          'hindi': ""आज मेडिकल स्टोर का कलेक्शन ₹24,850 रहा (88 ग्राहक)। सबसे तेज बिकने वाली दवा 'डोलो 650mg' रही। सिर्फ 5 स्ट्रिप बची हैं, तुरंत ONDC से होलसेल आर्डर करें!"",
+          'tamil': ""இன்று மருந்தக வசூல் ₹24,850 (88 ரசீதுகள்). அதிகம் விற்றது 'டோலோ 650mg' (42 அட்டைகள்). எச்சரிக்கை: வெறும் 5 அட்டைகளே உள்ளன, உடனே ONDC-யில் ரீஸ்டாக் செய்யுங்கள்!"",
+          'kannada': ""ಇಂದು ಮೆಡಿಕಲ್ ಶಾಪ್ ಕಲೆಕ್ಷನ್ ₹24,850 ಆಗಿದೆ (88 ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದದ್ದು 'ಡೋಲೋ 650mg' (42 ಸ್ಟ್ರಿಪ್). ಕೇವಲ 5 ಸ್ಟ್ರಿಪ್ ಉಳಿದಿದೆ, ತಕ್ಷಣವೇ ONDC ಯಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ!""
+        },
+        welcome_voice: {
+          'english': "Paytm Soundbox configured for Sanjivani MedPlus Pharmacy and Wellness.",
+          'telugu': "పేటీఎం సౌండ్‌బాక్స్ ఇప్పుడు సంజీవని ఫార్మసీ స్టోర్ మోడ్‌లో ఉంది.",
+          'hindi': "पेटीएम साउंडबॉक्स अब संजिवनी मेडिकल स्टोर और फार्मेसी मोड में सेट है।",
+          'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் இப்போது சஞ்சீவனி பார்மசி கடைக்கு அமைக்கப்பட்டது.",
+          'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಈಗ ಸಂಜೀವನಿ ಮೆಡಿಕಲ್ ಸ್ಟೋರ್ ಮೋಡ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ."
+        },
+        prompts: {
+          'english': [
+            { icon: "fa-prescription-bottle-medical", label: "Today's medicine sales & OTC collection", query: "What is today's total collection and fastest selling medicine?" },
+            { icon: "fa-boxes-stacked", label: "Check low stock & reorder Dolo 650", query: "Which medicines are low in stock? Reorder Dolo 650" },
+            { icon: "fa-receipt", label: "Dr. Mehra Clinic pending bill reminder", query: "Check pending udhar for Dr. Mehra Clinic and send reminder" },
+            { icon: "fa-building-columns", label: "Pre-approved pharma credit limit", query: "What is my pre-approved pharmacy inventory credit limit?" },
+            { icon: "fa-virus", label: "Seasonal viral fever medicine trends", query: "What medicines are trending in 2km neighborhood?" },
+            { icon: "fa-truck-medical", label: "Compare pharma wholesale on ONDC", query: "Show lowest ONDC pharmaceutical wholesale rates" }
+          ],
+          'telugu': [
+            { icon: "fa-prescription-bottle-medical", label: "ఈరోజు మందుల సేల్స్ & మొత్తం కలెక్షన్", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+            { icon: "fa-boxes-stacked", label: "డోలో 650 స్టాక్ చెక్ & రీ-ఆర్డర్", query: "ఏ మందులు తక్కువ స్టాక్‌లో ఉన్నాయి? డోలో రీ-ఆర్డర్ చేయి" },
+            { icon: "fa-receipt", label: "డాక్టర్ మెహ్రా క్లినిక్ పాత బాకీ రిమైండర్", query: "డాక్టర్ మెహ్రా క్లినిక్ పాత బాకీ ఎంత? రిమైండర్ పంపు" },
+            { icon: "fa-building-columns", label: "ఫార్మసీ పేటీఎం లోన్ లిమిట్ ఎంత?", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం" },
+            { icon: "fa-virus", label: "పరిసరాల్లో ఏ మందుల డిమాండ్ ఎక్కువ?", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+            { icon: "fa-truck-medical", label: "ONDC లో హోల్‌సేల్ మెడిసిన్ రేట్లు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+          ],
+          'hindi': [
+            { icon: "fa-prescription-bottle-medical", label: "आज की दवा बिक्री और टोटल कलेक्शन", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+            { icon: "fa-boxes-stacked", label: "डोलो 650 स्टॉक चेक व री-ऑर्डर", query: "दुकान में कौन सा सामान खत्म हो रहा है? डोलो आर्डर करो" },
+            { icon: "fa-receipt", label: "डॉ. मेहरा क्लीनिक पुराना उधार रिमाइंडर", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+            { icon: "fa-building-columns", label: "मेडिकल स्टोर 180 सेकंड लोन लिमिट", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+            { icon: "fa-virus", label: "इलाके में वायरल फीवर दवा ट्रेंड्स", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+            { icon: "fa-truck-medical", label: "ONDC पर सस्ती थोक दवाइयां ढूंढो", query: "ONDC थोक भाव दिखाओ" }
+          ],
+          'tamil': [
+            { icon: "fa-prescription-bottle-medical", label: "இன்றைய மருந்துகள் விற்பனை மற்றும் வசூல்", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+            { icon: "fa-boxes-stacked", label: "டோலோ 650 இருப்பு சரிபார்த்து மறுஆர்டர்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? டோலோ ஆர்டர் செய்" },
+            { icon: "fa-receipt", label: "டாக்டர் மெஹ்ரா கிளினிக் கடன் நினைவூட்டல்", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+            { icon: "fa-building-columns", label: "மருத்துவக் கடை அனுமதிக்கப்பட்ட கடன்", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+            { icon: "fa-virus", label: "பகுதியில் அதிகம் தேவைப்படும் மருந்துகள்", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+            { icon: "fa-truck-medical", label: "ONDC மொத்த மருந்து விலையை காட்டு", query: "ONDC மொத்த விலையை காட்டு" }
+          ],
+          'kannada': [
+            { icon: "fa-prescription-bottle-medical", label: "ಇಂದಿನ ಔಷಧಿ ಮಾರಾಟ ಮತ್ತು ಒಟ್ಟು ಕಲೆಕ್ಷನ್", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+            { icon: "fa-boxes-stacked", label: "ಡೋಲೋ 650 ದಾಸ್ತಾನು ಮರು-ಆರ್ಡರ್ ಮಾಡಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಡೋಲೋ ಆರ್ಡರ್ ಮಾಡಿ" },
+            { icon: "fa-receipt", label: "ಡಾ. ಮೆಹ್ರಾ ಕ್ಲಿನಿಕ್ ಹಳೆ ಬಾಕಿ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+            { icon: "fa-building-columns", label: "ಮೆಡಿಕಲ್ ಶಾಪ್ ಮುಂಚಿತ ಸಾಲದ ಮಿತಿ", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+            { icon: "fa-virus", label: "ಸುತ್ತಮುತ್ತ ಹೆಚ್ಚು ಬೇಡಿಕೆಯಿರುವ ಔಷಧಿಗಳು", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+            { icon: "fa-truck-medical", label: "ONDC ಸಗಟು ಔಷಧಿ ದರಗಳನ್ನು ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+          ]
+        },
+        radar: [
+          { title: "Seasonal Flu & Paracetamol", badge: "+58% Surge", color: "emerald", desc: "Viral breakout in surrounding 2km wards. Clinic prescriptions spiking." },
+          { title: "ORS & Dehydration Electrolytes", badge: "+36% Surge", color: "indigo", desc: "Humid afternoon heat driving ORS sachet demand." },
+          { title: "Slow Moving Antacid Brands", badge: "Brand Z Dead", color: "rose", desc: "Brand Z Gel has zero sales in 20 days. Return batch for credit note." }
+        ],
+        ondc: [
+          { item: "Dolo 650mg Tablets Strip", stock: "5 strips (Critical)", stockClass: "text-rose-600 font-bold", dist: "Karnataka Medico Wholesale ONDC", rate: "₹25.50 / strip", oldRate: "₹34.00", btn: "Reorder (50 strips)", qty: "50 strips", amt: "₹1,275" },
+          { item: "Azithromycin 500mg Strip", stock: "7 strips (Low)", stockClass: "text-amber-600 font-bold", dist: "Cipla Direct B2B Distributor", rate: "₹67.00 / strip", oldRate: "₹89.00", btn: "Reorder (20 strips)", qty: "20 strips", amt: "₹1,340" },
+          { item: "Benadryl Cough Syrup 100ml", stock: "8 bottles (Low)", stockClass: "text-amber-600 font-bold", dist: "Apollo Supply Chain ONDC", rate: "₹90.00 / bot", oldRate: "₹120.00", btn: "Reorder (25 bots)", qty: "25 bottles", amt: "₹2,250" }
+        ]
+      },
+      'restaurant': {
+        id: 'restaurant',
+        name: 'Udupi Grand Cafe & Tiffin Express',
+        today_collection: '₹32,600',
+        today_txns: 142,
+        credit_limit: '₹4,00,000',
+        stock_alert: 'Stock Alert: Nandini Full Cream Milk (< 15% threshold)',
+        initial_user: {
+          'english': ""Manager, what is today's dining collection and milk buffer for evening rush?"",
+          'telugu': ""ఈరోజు హోటల్ కలెక్షన్ ఎంత? సాయంత్రం రద్దీకి పాలు సరిపోతాయా?"",
+          'hindi': ""आज की रेस्टोरेंट बिक्री कितनी हुई और शाम की चाय के लिए दूध का स्टॉक क्या है?"",
+          'tamil': ""இன்று உணவக வசூல் எவ்வளவு? மாலை நேரத்திற்கு பால் போதுமா?"",
+          'kannada': ""ಇಂದಿನ ಹೋಟೆಲ್ ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಸಂಜೆಯ ರಶ್‌ಗೆ ಹಾಲಿನ ದಾಸ್ತಾನು ಎಷ್ಟಿದೆ?""
+        },
+        initial_ai: {
+          'english': ""Boss, restaurant collection reached ₹32,600 across 142 orders. Top item: 'Special Filter Coffee' (140 cups). Alert: Only 6 Nandini milk packets left before evening rush, 1-click ONDC restock recommended!"",
+          'telugu': ""సేత్ గారూ, రెస్టారెంట్ కలెక్షన్ ₹32,600 కి చేరింది (142 ఆర్డర్లు). టాప్ ఐటమ్: 'స్పెషల్ ఫిల్టర్ కాఫీ' (140 కప్పులు). హెచ్చరిక: సాయంత్రం రద్దీకి కేవలం 6 పాలు మాత్రమే ఉన్నాయి, వెంటనే రీస్టాక్ చేయండి!"",
+          'hindi': ""होटल का आज का गल्ला ₹32,600 रहा (142 ऑर्डर्स)। सबसे ज्यादा 'फ़िल्टर कॉफ़ी' बिकी। शाम की चाय के लिए सिर्फ 6 पैकेट दूध बचा है, तुरंत ONDC से रीस्टॉक करें!"",
+          'tamil': ""உணவக வசூல் ₹32,600 (142 ஆர்டர்கள்). அதிகம் விற்றது 'ஸ்பெஷல் பில்டர் காபி'. மாலை நேரத்திற்கு வெறும் 6 பால் பாக்கெட்டுகளே உள்ளன, உடனே ரீஸ்டாக் செய்யவும்!"",
+          'kannada': ""ಹೋಟೆಲ್ ಕಲೆಕ್ಷನ್ ₹32,600 ಆಗಿದೆ (142 ಆರ್ಡರ್‌ಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದದ್ದು 'ಸ್ಪೆಷಲ್ ಫಿಲ್ಟರ್ ಕಾಫಿ'. ಸಂಜೆಯ ರಶ್‌ಗೆ ಕೇವಲ 6 ಪ್ಯಾಕೆಟ್ ಹಾಲು ಉಳಿದಿದೆ, ತಕ್ಷಣವೇ ಆರ್ಡರ್ ಮಾಡಿ!""
+        },
+        welcome_voice: {
+          'english': "Paytm Soundbox configured for Udupi Grand Cafe and Tiffin Express.",
+          'telugu': "పేటీఎం సౌండ్‌బాక్స్ ఇప్పుడు ఉడిపి గ్రాండ్ కేఫ్ అండ్ టిఫిన్ మోడ్‌లో ఉంది.",
+          'hindi': "पेटीएम साउंडबॉक्स अब उडुपी ग्रैंड कैफे और रेस्टोरेंट मोड में सेट है।",
+          'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் இப்போது உடுப்பி கிராண்ட் உணவகத்திற்கு அமைக்கப்பட்டது.",
+          'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಈಗ ಉಡುಪಿ ಗ್ರ್ಯಾಂಡ್ ಕೆಫೆ ಹೋಟೆಲ್ ಮೋಡ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ."
+        },
+        prompts: {
+          'english': [
+            { icon: "fa-mug-hot", label: "Today's dining & counter collection", query: "What is today's total collection and fastest selling item?" },
+            { icon: "fa-boxes-stacked", label: "Check milk & coffee decoction stock", query: "Which items are low in stock? Reorder Nandini milk" },
+            { icon: "fa-receipt", label: "Tech Corp catering khata reminder", query: "Check pending udhar for Tech Corp and send reminder" },
+            { icon: "fa-building-columns", label: "Kitchen modernization credit limit", query: "What is my pre-approved working capital loan limit?" },
+            { icon: "fa-clock", label: "Evening office tea rush demand trends", query: "What items are trending in my 2km neighborhood?" },
+            { icon: "fa-truck-ramp-box", label: "ONDC dairy & grocery wholesale rates", query: "Show lowest ONDC distributor rates for restocking" }
+          ],
+          'telugu': [
+            { icon: "fa-mug-hot", label: "ఈరోజు హోటల్ సేల్స్ & కలెక్షన్", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+            { icon: "fa-boxes-stacked", label: "నందిని పాలు & కాఫీ స్టాక్ చెక్ చేయి", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? పాలు ఆర్డర్ చేయి" },
+            { icon: "fa-receipt", label: "టెక్ కార్ప్ క్యాటరింగ్ బాకీ రిమైండర్", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
+            { icon: "fa-building-columns", label: "రెస్టారెంట్ పేటీఎం లోన్ లిమిట్ ఎంత?", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం" },
+            { icon: "fa-clock", label: "సాయంత్రం రద్దీ కోసం డిమాండ్ ట్రెండ్స్", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+            { icon: "fa-truck-ramp-box", label: "ONDC డెయిరీ & హోటల్ సరుకుల రేట్లు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+          ],
+          'hindi': [
+            { icon: "fa-mug-hot", label: "आज की होटल बिक्री और कुल गल्ला", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+            { icon: "fa-boxes-stacked", label: "नंदिनी दूध और कॉफ़ी का स्टॉक चेक करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? दूध आर्डर करो" },
+            { icon: "fa-receipt", label: "टेक कॉर्प ऑफिस कैटरिंग का बकाया", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+            { icon: "fa-building-columns", label: "रेस्टोरेंट के लिए 180 सेकंड लोन लिमिट", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+            { icon: "fa-clock", label: "शाम की चाय के लिए क्या ट्रेंड चल रहा है?", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+            { icon: "fa-truck-ramp-box", label: "ONDC पर दूध और ग्रोसरी का थोक भाव", query: "ONDC थोक भाव दिखाओ" }
+          ],
+          'tamil': [
+            { icon: "fa-mug-hot", label: "இன்றைய ஹோட்டல் விற்பனை மற்றும் வசூல்", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+            { icon: "fa-boxes-stacked", label: "நந்தினி பால் மற்றும் காபி இருப்பு", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? பால் ஆர்டர் செய்" },
+            { icon: "fa-receipt", label: "டெக் கார்ப் கேட்டரிங் கடன் நினைவூட்டல்", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+            { icon: "fa-building-columns", label: "உணவக உடனடி கடன் வரம்பு எவ்வளவு?", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+            { icon: "fa-clock", label: "மாலை நேர உணவுத் தேவை நிலவரம்", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+            { icon: "fa-truck-ramp-box", label: "ONDC மொத்த பால் சமையல் பொருள் விலை", query: "ONDC மொத்த விலையை காட்டு" }
+          ],
+          'kannada': [
+            { icon: "fa-mug-hot", label: "ಇಂದಿನ ಹೋಟೆಲ್ ಮಾರಾಟ ಮತ್ತು ಕಲೆಕ್ಷನ್", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+            { icon: "fa-boxes-stacked", label: "ನಂದಿನಿ ಹಾಲು ಮತ್ತು ಕಾಫಿ ದಾಸ್ತಾನು ಚೆಕ್", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಹಾಲು ಆರ್ಡರ್ ಮಾಡಿ" },
+            { icon: "fa-receipt", label: "ಟೆಕ್ ಕಾರ್ಪ್ ಕ್ಯಾಟರಿಂಗ್ ಬಾಕಿ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+            { icon: "fa-building-columns", label: "ರೆಸ್ಟೋರೆಂಟ್ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+            { icon: "fa-clock", label: "ಸಂಜೆಯ ರಶ್ ಬೇಡಿಕೆ ವಿವರ ತಿಳಿಸಿ", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+            { icon: "fa-truck-ramp-box", label: "ONDC ಹಾಲಿನ ಸಗಟು ದರ ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+          ]
+        },
+        radar: [
+          { title: "Evening Office Coffee Rush", badge: "+52% Surge", color: "emerald", desc: "Office return driving 4 PM - 7 PM tea peak. Restock Nandini milk." },
+          { title: "Ghee Roast & Dosa Delivery", badge: "+34% Surge", color: "indigo", desc: "Weekend online delivery surges on Swiggy/Zomato." },
+          { title: "Packaged Soda Low Margin", badge: "-25% Drop", color: "rose", desc: "Customers preferring fresh buttermilk & nimbu soda." }
+        ],
+        ondc: [
+          { item: "Nandini Full Cream Milk 1L", stock: "6 pkts (Critical)", stockClass: "text-rose-600 font-bold", dist: "Karnataka Dairy KMF ONDC", rate: "₹47.50 / pkt", oldRate: "₹54.00", btn: "Reorder (40 pkts)", qty: "40 pkts", amt: "₹1,900" },
+          { item: "Chikmagalur Roast Coffee 1kg", stock: "3 bags (Low)", stockClass: "text-amber-600 font-bold", dist: "Chikmagalur Planters B2B ONDC", rate: "₹410.00 / bag", oldRate: "₹550.00", btn: "Reorder (10 bags)", qty: "10 bags", amt: "₹4,100" },
+          { item: "Idli Boiled Rice 25kg Bag", stock: "2 bags (Low)", stockClass: "text-amber-600 font-bold", dist: "Bangalore Rice Traders ONDC", rate: "₹930.00 / bag", oldRate: "₹1200.00", btn: "Reorder (5 bags)", qty: "5 bags", amt: "₹4,650" }
+        ]
+      },
+      'apparel': {
+        id: 'apparel',
+        name: 'Trends Fashion & Readymade Garments',
+        today_collection: '₹42,500',
+        today_txns: 36,
+        credit_limit: '₹5,00,000',
+        stock_alert: 'Stock Alert: Rayon Printed Kurti Medium (< 15% threshold)',
+        initial_user: {
+          'english': ""Boss, what is today's boutique garment sales and festive kurti stock?"",
+          'telugu': ""ఈరోజు బట్టల సేల్స్ ఎంత? పండుగ కుర్తీల స్టాక్ సరిపోతుందా?"",
+          'hindi': ""आज कपड़ों की दुकान की बिक्री और कुर्तियों का स्टॉक कैसा है?"",
+          'tamil': ""இன்று துணிக்கடை விற்பனை மற்றும் குர்தி இருப்பு நிலவரம் என்ன?"",
+          'kannada': ""ಇಂದಿನ ಬಟ್ಟೆ ವ್ಯಾಪಾರ ಎಷ್ಟು ಮತ್ತು ಹಬ್ಬದ ಕುರ್ತಿಗಳ ದಾಸ್ತಾನು ಎಷ್ಟಿದೆ?""
+        },
+        initial_ai: {
+          'english': ""Boss, boutique collection reached ₹42,500 across 36 sales. Top item: 'Rayon Printed Kurti M' (28 pcs). Alert: Only 3 pieces left in Medium size, Surat textile hub reorder recommended!"",
+          'telugu': ""సేత్ గారూ, బొటిక్ కలెక్షన్ ₹42,500 కి చేరింది (36 బిల్లులు). టాప్ ఐటమ్: 'ప్రింటెడ్ కుర్తీ' (28 పీసులు). హెచ్చరిక: మీడియం సైజులో కేవలం 3 మాత్రమే మిగిలాయి, వెంటనే ONDC ద్వారా ఆర్డర్ చేయండి!"",
+          'hindi': ""दुकान का आज का कलेक्शन ₹42,500 रहा (36 ग्राहक)। सबसे ज्यादा 'रेयान प्रिंटेड कुर्ती' बिकी। मीडियम साइज में सिर्फ 3 पीस बचे हैं, तुरंत सूरत टेक्सटाइल हब से ONDC रीस्टॉक करें!"",
+          'tamil': ""துணிக்கடை வசூல் ₹42,500 (36 வாடிக்கையாளர்கள்). அதிகம் விற்றது 'பிரிண்டட் குர்தி'. மீடியம் அளவில் வெறும் 3 துணிகளே உள்ளன, உடனே ONDC மூலம் ரீஸ்டாக் செய்யவும்!"",
+          'kannada': ""ಬಟ್ಟೆ ಅಂಗಡಿ ಕಲೆಕ್ಷನ್ ₹42,500 ಆಗಿದೆ (36 ಬಿಲ್‌ಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದದ್ದು 'ಪ್ರಿಂಟೆಡ್ ಕುರ್ತಿ'. ಮೀಡಿಯಂ ಸೈಜ್‌ನಲ್ಲಿ ಕೇವಲ 3 ಪೀಸ್ ಉಳಿದಿದೆ, ತಕ್ಷಣವೇ ONDC ಯಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ!""
+        },
+        welcome_voice: {
+          'english': "Paytm Soundbox configured for Trends Fashion and Garments.",
+          'telugu': "పేటీఎం సౌండ్‌బాక్స్ ఇప్పుడు ట్రెండ్స్ ఫ్యాషన్ అండ్ గార్మెంట్స్ మోడ్‌లో ఉంది.",
+          'hindi': "पेटीएम साउंडबॉक्स अब ट्रेंड्स फैशन और गारमेंट्स मोड में सेट है।",
+          'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் இப்போது ட்ரெண்ட்ஸ் பேஷன் கடைக்கு அமைக்கப்பட்டது.",
+          'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಈಗ ಟ್ರೆಂಡ್ಸ್ ಫ್ಯಾಷನ್ ಬಟ್ಟೆ ಅಂಗಡಿ ಮೋಡ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ."
+        },
+        prompts: {
+          'english': [
+            { icon: "fa-shirt", label: "Today's garment sales & collection", query: "What is today's total collection and fastest selling item?" },
+            { icon: "fa-boxes-stacked", label: "Check printed Kurtis & denim stock", query: "Which items are low in stock? Reorder printed kurtis" },
+            { icon: "fa-receipt", label: "Geeta Boutique fabric udhar reminder", query: "Check pending udhar for Geeta Boutique and send reminder" },
+            { icon: "fa-building-columns", label: "Festive working capital credit limit", query: "What is my pre-approved working capital loan limit?" },
+            { icon: "fa-sparkles", label: "Wedding & festival ethnic trends", query: "What items are trending in my 2km neighborhood?" },
+            { icon: "fa-truck-fast", label: "Surat textile wholesale rates on ONDC", query: "Show lowest ONDC distributor rates for restocking" }
+          ],
+          'telugu': [
+            { icon: "fa-shirt", label: "ఈరోజు బట్టల సేల్స్ & మొత్తం కలెక్షన్", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+            { icon: "fa-boxes-stacked", label: "కుర్తీలు & జీన్స్ స్టాక్ చెక్ చేయి", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? కుర్తీలు ఆర్డర్ చేయి" },
+            { icon: "fa-receipt", label: "గీత బోటిక్ పాత బాకీ రిమైండర్ పంపు", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
+            { icon: "fa-building-columns", label: "గార్మెంట్స్ షాప్ లోన్ లిమిట్ ఎంత?", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం" },
+            { icon: "fa-sparkles", label: "రాబోయే పండుగల బట్టల ట్రెండ్స్ ఏంటి?", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+            { icon: "fa-truck-fast", label: "సూరత్ టెక్స్‌టైల్ ONDC హోల్‌సేల్ రేట్లు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+          ],
+          'hindi': [
+            { icon: "fa-shirt", label: "आज की कपड़ों की बिक्री और कलेक्शन", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+            { icon: "fa-boxes-stacked", label: "कुर्ती और जीन्स का स्टॉक चेक करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? कुर्ती आर्डर करो" },
+            { icon: "fa-receipt", label: "गीता बुटीक पुराना उधार रिमाइंडर", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+            { icon: "fa-building-columns", label: "कपड़ों की दुकान के लिए लोन लिमिट", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+            { icon: "fa-sparkles", label: "शादी और त्योहारों के नए फैशन ट्रेंड", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+            { icon: "fa-truck-fast", label: "ONDC पर सूरत टेक्सटाइल का थोक भाव", query: "ONDC थोक भाव दिखाओ" }
+          ],
+          'tamil': [
+            { icon: "fa-shirt", label: "இன்றைய ஆடைகள் விற்பனை மற்றும் வசூல்", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+            { icon: "fa-boxes-stacked", label: "குர்தி மற்றும் ஜீன்ஸ் இருப்பு மறுஆர்டர்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? குர்தி ஆர்டர் செய்" },
+            { icon: "fa-receipt", label: "கீதா பூட்டிக் துணி கடன் நினைவூட்டல்", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+            { icon: "fa-building-columns", label: "துணிக்கடை அனுமதிக்கப்பட்ட கடன்", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+            { icon: "fa-sparkles", label: "பண்டிகை கால ஆடை வடிவமைப்பு நிலவரம்", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+            { icon: "fa-truck-fast", label: "ONDC சூரத் ஜவுளி மொத்த விலை", query: "ONDC மொத்த விலையை காட்டு" }
+          ],
+          'kannada': [
+            { icon: "fa-shirt", label: "ಇಂದಿನ ಬಟ್ಟೆ ವ್ಯಾಪಾರ ಮತ್ತು ಕಲೆಕ್ಷನ್", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+            { icon: "fa-boxes-stacked", label: "ಕುರ್ತಿ ಮತ್ತು ಜೀನ್ಸ್ ದಾಸ್ತಾನು ಪರಿಶೀಲಿಸಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಕುರ್ತಿ ಆರ್ಡರ್ ಮಾಡಿ" },
+            { icon: "fa-receipt", label: "ಗೀತಾ ಬೂಟಿಕ್ ಹಳೆ ಬಾಕಿ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+            { icon: "fa-building-columns", label: "ಬಟ್ಟೆ ಅಂಗಡಿ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+            { icon: "fa-sparkles", label: "ಹಬ್ಬದ ಹೊಸ ಫ್ಯಾಷನ್ ಬೇಡಿಕೆ ತಿಳಿಸಿ", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+            { icon: "fa-truck-fast", label: "ONDC ಸೂರತ್ ಬಟ್ಟೆ ಸಗಟು ದರ ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+          ]
+        },
+        radar: [
+          { title: "Festive Ethnic Kurti Surge", badge: "+64% Surge", color: "emerald", desc: "Upcoming wedding & festival season shopping driving kurti sales." },
+          { title: "Cotton Summer Casuals", badge: "+38% Surge", color: "indigo", desc: "Warm afternoons driving breathable pastel casual shirt demand." },
+          { title: "Heavy Winter Jackets Dead", badge: "Zero Sales", color: "rose", desc: "Clearance sale at 30% discount recommended to unlock working capital." }
+        ],
+        ondc: [
+          { item: "Rayon Printed Kurti (Medium)", stock: "3 pcs (Critical)", stockClass: "text-rose-600 font-bold", dist: "Surat Textile Hub on ONDC", rate: "₹310.00 / pc", oldRate: "₹599.00", btn: "Reorder (30 pcs)", qty: "30 pcs", amt: "₹9,300" },
+          { item: "Casual Cotton Shirt Large", stock: "6 pcs (Low)", stockClass: "text-amber-600 font-bold", dist: "Tirupur Knitwear B2B ONDC", rate: "₹270.00 / pc", oldRate: "₹499.00", btn: "Reorder (20 pcs)", qty: "20 pcs", amt: "₹5,400" },
+          { item: "Men Slim Fit Denim 32", stock: "5 pcs (Low)", stockClass: "text-amber-600 font-bold", dist: "Bellary Denim Factory ONDC", rate: "₹465.00 / pc", oldRate: "₹899.00", btn: "Reorder (15 pcs)", qty: "15 pcs", amt: "₹6,975" }
+        ]
+      },
+      'electronics': {
+        id: 'electronics',
+        name: 'Digital Hub Mobile & Repair Center',
+        today_collection: '₹21,300',
+        today_txns: 45,
+        credit_limit: '₹3,00,000',
+        stock_alert: 'Stock Alert: 20W Type-C Fast Charger (< 15% threshold)',
+        initial_user: {
+          'english': ""Boss, what is today's mobile repair collection and fast charger stock?"",
+          'telugu': ""ఈరోజు మొబైల్ రిపేర్ సేల్స్ ఎంత? టైప్-సి ఛార్జర్లు ఉన్నాయా?"",
+          'hindi': ""आज की मोबाइल रिपेयरिंग बिक्री और फ़ास्ट चार्जर का स्टॉक कैसा है?"",
+          'tamil': ""இன்று மொபைல் சர்வீஸ் வசூல் மற்றும் பாஸ்ட் சார்ஜர் இருப்பு என்ன?"",
+          'kannada': ""ಇಂದಿನ ಮೊಬೈಲ್ ರಿಪೇರಿ ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಫಾಸ್ಟ್ ಚಾರ್ಜರ್‌ಗಳ ದಾಸ್ತಾನು ಎಷ್ಟಿದೆ?""
+        },
+        initial_ai: {
+          'english': ""Boss, repair center collection reached ₹21,300 across 45 jobs. Top item: '20W Type-C Fast Charger' (19 units). Alert: Only 4 fast chargers left in stock, SP Road B2B restock recommended!"",
+          'telugu': ""సేత్ గారూ, మొబైల్ సెంటర్ కలెక్షన్ ₹21,300 కి చేరింది (45 బిల్లులు). టాప్ ఐటమ్: '20W టైప్-సి ఛార్జర్' (19 యూనిట్లు). హెచ్చరిక: కేవలం 4 ఛార్జర్లు మాత్రమే మిగిలాయి, వెంటనే రీస్టాక్ చేయండి!"",
+          'hindi': ""दुकान का आज का कलेक्शन ₹21,300 रहा (45 ग्राहक)। सबसे ज्यादा '20W टाइप-सी चार्जर' बिका। सिर्फ 4 चार्जर बचे हैं, तुरंत SP रोड B2B से ONDC आर्डर करें!"",
+          'tamil': ""மொபைல் கடை வசூல் ₹21,300 (45 வேலைகள்). அதிகம் விற்றது '20W டைப்-சி சார்ஜர்'. வெறும் 4 சார்ஜர்களே உள்ளன, உடனே ONDC மூலம் ரீஸ்டாக் செய்யவும்!"",
+          'kannada': ""ರಿಪೇರಿ ಸೆಂಟರ್ ಕಲೆಕ್ಷನ್ ₹21,300 ಆಗಿದೆ (45 ಬಿಲ್‌ಗಳು). ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದದ್ದು '20W ಟೈಪ್-ಸಿ ಚಾರ್ಜರ್'. ಕೇವಲ 4 ಚಾರ್ಜರ್ ಉಳಿದಿದೆ, ತಕ್ಷಣವೇ ONDC ಯಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ!""
+        },
+        welcome_voice: {
+          'english': "Paytm Soundbox configured for Digital Hub Mobile and Electronics.",
+          'telugu': "పేటీఎం సౌండ్‌బాక్స్ ఇప్పుడు డిజిటల్ హబ్ మొబైల్ ఎలక్ట్రానిక్స్ మోడ్‌లో ఉంది.",
+          'hindi': "पेटीएम साउंडबॉक्स अब डिजिटल हब मोबाइल और इलेक्ट्रॉनिक्स मोड में सेट है।",
+          'tamil': "பேடிஎம் சவுண்ட்பாக்ஸ் இப்போது டிஜிட்டல் ஹப் மொபைல் கடைக்கு அமைக்கப்பட்டது.",
+          'kannada': "ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಈಗ ಡಿಜಿಟಲ್ ಹಬ್ ಮೊಬೈಲ್ ಸೆಂಟರ್ ಮೋಡ್‌ನಲ್ಲಿ ಸಿದ್ಧವಾಗಿದೆ."
+        },
+        prompts: {
+          'english': [
+            { icon: "fa-mobile-screen-button", label: "Today's gadget sales & repair collection", query: "What is today's total collection and fastest selling item?" },
+            { icon: "fa-boxes-stacked", label: "Check Type-C chargers & tempered glass", query: "Which items are low in stock? Reorder Type-C chargers" },
+            { icon: "fa-receipt", label: "Express Phone Repairs IC service dues", query: "Check pending udhar for Express Phone Repairs and send reminder" },
+            { icon: "fa-building-columns", label: "Electronics inventory credit limit", query: "What is my pre-approved working capital loan limit?" },
+            { icon: "fa-bolt", label: "Fast charging & audio accessory trends", query: "What items are trending in my 2km neighborhood?" },
+            { icon: "fa-truck-fast", label: "SP Road tech wholesale rates on ONDC", query: "Show lowest ONDC distributor rates for restocking" }
+          ],
+          'telugu': [
+            { icon: "fa-mobile-screen-button", label: "ఈరోజు మొబైల్ సేల్స్ & రిపేర్ కలెక్షన్", query: "ఈరోజు మొత్తం కలెక్షన్ ఎంత మరియు ఫాస్ట్ సెల్లింగ్ ఐటమ్ ఏది?" },
+            { icon: "fa-boxes-stacked", label: "ఛార్జర్లు & గ్లాస్ స్టాక్ చెక్ చేయి", query: "ఏ వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి? ఛార్జర్లు ఆర్డర్ చేయి" },
+            { icon: "fa-receipt", label: "ఎక్స్‌ప్రెస్ రిపేర్స్ పాత బాకీ రిమైండర్", query: "అనిల్ వర్మ గారి పాత బకాయి ఎంత? వాట్సాప్ రిమైండర్ పంపు" },
+            { icon: "fa-building-columns", label: "ఎలక్ట్రానిక్స్ షాప్ లోన్ లిమిట్ ఎంత?", query: "నా పేటీఎం లోన్ లిమిట్ ఎంత? తక్షణ రుణం" },
+            { icon: "fa-bolt", label: "మార్కెట్లో ఏ గాడ్జెట్స్ ఎక్కువ ట్రెండింగ్?", query: "పరిసరాల్లో ఏ వస్తువులు ఎక్కువ ట్రెండింగ్‌లో ఉన్నాయి?" },
+            { icon: "fa-truck-fast", label: "ఎస్పీ రోడ్ టెక్ ONDC హోల్‌సేల్ రేట్లు", query: "ONDC లో హోల్‌సేల్ రేట్లు చూపించు" }
+          ],
+          'hindi': [
+            { icon: "fa-mobile-screen-button", label: "आज की मोबाइल बिक्री व रिपेयरिंग गल्ला", query: "आज का टोटल मुनाफा और सबसे तेज बिकने वाला आइटम बताओ" },
+            { icon: "fa-boxes-stacked", label: "फास्ट चार्जर व ग्लास स्टॉक चेक करो", query: "दुकान में कौन सा सामान खत्म हो रहा है? चार्जर आर्डर करो" },
+            { icon: "fa-receipt", label: "एक्सप्रेस रिपेयर पुराना बिल रिमाइंडर", query: "अनिल वर्मा का पुराना उधार कितना बाकी है? रिमाइंडर भेजो" },
+            { icon: "fa-building-columns", label: "इलेक्ट्रॉनिक्स दुकान की 180s लोन लिमिट", query: "मेरी प्री-अप्रूव्ड वर्किंग कैपिटल लोन लिमिट कितनी है?" },
+            { icon: "fa-bolt", label: "आस-पास कौन से गैजेट्स ज्यादा बिक रहे हैं?", query: "आस-पास के इलाके में क्या ट्रेंड चल रहा है?" },
+            { icon: "fa-truck-fast", label: "ONDC पर इलेक्ट्रॉनिक्स का थोक भाव", query: "ONDC थोक भाव दिखाओ" }
+          ],
+          'tamil': [
+            { icon: "fa-mobile-screen-button", label: "இன்றைய மொபைல் விற்பனை மற்றும் சர்வீஸ்", query: "இன்று மாலை வரை மொத்த வசூல் எவ்வளவு மற்றும் அதிகம் விற்ற பொருள் எது?" },
+            { icon: "fa-boxes-stacked", label: "டைப்-சி சார்ஜர் கிளாஸ் இருப்பு சரிபார்", query: "எந்த பொருட்கள் குறைவான இருப்பில் உள்ளன? சார்ஜர் ஆர்டர் செய்" },
+            { icon: "fa-receipt", label: "எக்ஸ்பிரஸ் சர்வீஸ் பழைய பாக்கி நினைவூட்டல்", query: "அனில் வர்மா பாக்கி எவ்வளவு? வாટ્સஅப் நினைவூட்டல் அனுப்பு" },
+            { icon: "fa-building-columns", label: "எலக்ட்ரானிக்ஸ் கடை அனுமதிக்கப்பட்ட கடன்", query: "எனக்கு அனுமதிக்கப்பட்ட கடன் வரம்பு எவ்வளவு?" },
+            { icon: "fa-bolt", label: "சந்தையில் அதிகம் விற்கும் சாதனங்கள் எவை?", query: "அருகிலுள்ள பகுதியில் என்ன தேவை அதிகம்?" },
+            { icon: "fa-truck-fast", label: "ONDC எலக்ட்ரானிக்ஸ் மொத்த விலையை காட்டு", query: "ONDC மொத்த விலையை காட்டு" }
+          ],
+          'kannada': [
+            { icon: "fa-mobile-screen-button", label: "ಇಂದಿನ ಮೊಬೈಲ್ ಮಾರಾಟ ಮತ್ತು ರಿಪೇರಿ", query: "ಇಂದಿನ ಒಟ್ಟು ಕಲೆಕ್ಷನ್ ಎಷ್ಟು ಮತ್ತು ಅತಿ ಹೆಚ್ಚು ಮಾರಾಟವಾದ ವಸ್ತು ಯಾವುದು?" },
+            { icon: "fa-boxes-stacked", label: "ಟೈಪ್-ಸಿ ಚಾರ್ಜರ್ ದಾಸ್ತಾನು ಚೆಕ್ ಮಾಡಿ", query: "ಯಾವ ವಸ್ತುಗಳ ಸ್ಟಾಕ್ ಕಡಿಮೆಯಾಗಿದೆ? ಚಾರ್ಜರ್ ಆರ್ಡರ್ ಮಾಡಿ" },
+            { icon: "fa-receipt", label: "ಎಕ್ಸ್‌ಪ್ರೆಸ್ ರಿಪೇರ್ಸ್ ಹಳೆ ಬಾಕಿ ರಿಮೈಂಡರ್", query: "ಅನಿಲ್ ವರ್ಮಾ ಅವರ ಬಾಕಿ ಹಣ ಎಷ್ಟು? ವಾಟ್ಸಾಪ್ ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿ" },
+            { icon: "fa-building-columns", label: "ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ ಶಾಪ್ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?", query: "ನನ್ನ ಮುಂಚಿತ ಅನುಮೋದಿತ ಸಾಲದ ಮಿತಿ ಎಷ್ಟು?" },
+            { icon: "fa-bolt", label: "ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಹೆಚ್ಚು ಟ್ರೆಂಡಿಂಗ್ ಗ್ಯಾಜೆಟ್‌ಗಳು", query: "ಸುತ್ತಮುತ್ತಲಿನ ಬೇಡಿಕೆ ತಿಳಿಸಿ" },
+            { icon: "fa-truck-fast", label: "SP ರೋಡ್ ಸಗಟು ದರಗಳನ್ನು ತೋರಿಸಿ", query: "ONDC ಸಗಟು ದರ ತೋರಿಸಿ" }
+          ]
+        },
+        radar: [
+          { title: "Type-C Fast Charging Surge", badge: "+55% Surge", color: "emerald", desc: "New smartphone purchases driving 20W PD charger sales spike." },
+          { title: "9D Tempered Screen Protection", badge: "+42% Surge", color: "indigo", desc: "High weekend footfall on SP road tech market hub." },
+          { title: "Micro-USB Legacy Cables Dead", badge: "-65% Drop", color: "rose", desc: "Old standard phased out across phones. Bundle free with repairs." }
+        ],
+        ondc: [
+          { item: "20W Type-C Fast Charger", stock: "4 units (Critical)", stockClass: "text-rose-600 font-bold", dist: "SP Road Tech Wholesale ONDC", rate: "₹135.00 / unit", oldRate: "₹299.00", btn: "Reorder (30 units)", qty: "30 units", amt: "₹4,050" },
+          { item: "9D Tempered Glass Protector", stock: "9 pcs (Low)", stockClass: "text-amber-600 font-bold", dist: "Nehru Place Electronics B2B", rate: "₹16.50 / pc", oldRate: "₹99.00", btn: "Reorder (50 pcs)", qty: "50 pcs", amt: "₹825" },
+          { item: "Wireless Bluetooth Neckband", stock: "5 units (Low)", stockClass: "text-amber-600 font-bold", dist: "Shenzhen India Direct ONDC", rate: "₹265.00 / unit", oldRate: "₹599.00", btn: "Reorder (15 units)", qty: "15 units", amt: "₹3,975" }
+        ]
+      }
+    };
+
+    function switchBusiness(bizType) {
+      if (!BUSINESS_CONFIGS[bizType]) return;
+      currentBusinessType = bizType;
+      const cfg = BUSINESS_CONFIGS[bizType];
+
+      // 1. Update UI Pill states
+      document.querySelectorAll('.biz-pill').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('biz-' + bizType);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // 2. Update Header Store Name & Today's Collection
+      const label = document.getElementById('current-biz-label');
+      if (label) label.innerText = cfg.name;
+      const collEl = document.querySelector('[data-i18n="nav_today_collection"]');
+      if (collEl) collEl.innerHTML = `Today: ${cfg.today_collection}`;
+      const limitBadge = document.getElementById('credit-limit-badge');
+      if (limitBadge) limitBadge.innerText = cfg.credit_limit;
+
+      // 3. Update Chat Initial Bubble
+      const userBubble = document.getElementById('initial-user-msg');
+      if (userBubble && cfg.initial_user[currentLanguage]) {
+        userBubble.innerHTML = cfg.initial_user[currentLanguage];
+      }
+      const aiBubble = document.getElementById('last-ai-text');
+      if (aiBubble && cfg.initial_ai[currentLanguage]) {
+        aiBubble.innerHTML = cfg.initial_ai[currentLanguage];
+      }
+
+      // 4. Update Prompts in chosen language
+      renderSamplePrompts();
+
+      // 5. Update Tab 2: ONDC Table & 2-KM Radar
+      renderOndcTable(cfg.ondc);
+      renderRadarTrends(cfg.radar);
+
+      // 6. Soundbox Voice Announcement in chosen language
+      const welcomeText = cfg.welcome_voice[currentLanguage] || cfg.welcome_voice['english'];
+      document.getElementById('speaker-status').innerText = welcomeText;
+      playSoundboxAudio(`welcome_${currentLanguage}`, welcomeText);
+
+      // 7. Sync with backend API
+      fetch('/api/business/switch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ business_type: bizType })
+      }).catch(() => {});
+    }
+
+    function renderOndcTable(rows) {
+      const tbody = document.getElementById('ondc-table-body');
+      if (!tbody || !rows) return;
+      tbody.innerHTML = '';
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-100 hover:bg-slate-50/50 transition";
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold text-slate-800">${r.item}</td>
+          <td class="p-3.5 ${r.stockClass}">${r.stock}</td>
+          <td class="p-3.5">${r.dist}</td>
+          <td class="p-3.5 font-bold text-emerald-600">${r.rate} ${r.oldRate ? `<span class="line-through text-slate-400 text-[10px] ml-1">${r.oldRate}</span>` : ''}</td>
+          <td class="p-3.5">
+            <button onclick="placeOrder('${r.item.replace(/'/g, "\'")}', '${r.qty}', '${r.amt}')" class="bg-paytm-navy hover:bg-blue-900 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition cursor-pointer">
+              ${r.btn}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderRadarTrends(trends) {
+      const container = document.getElementById('radar-trends-container');
+      if (!container || !trends) return;
+      container.innerHTML = '';
+      trends.forEach(t => {
+        const div = document.createElement('div');
+        div.className = "p-3.5 bg-slate-50 rounded-2xl border border-slate-200";
+        div.innerHTML = `
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-slate-800">${t.title}</span>
+            <span class="text-xs font-bold text-${t.color}-600">${t.badge}</span>
+          </div>
+          <p class="text-[11px] text-slate-500 leading-snug">${t.desc}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+
     const UI_TRANSLATIONS = {
       'english': {
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> Suggestions to ask:',
@@ -676,7 +1208,7 @@
         chart_title: "30-Day Verified Cash-Flow Velocity",
         chart_subtitle: "Deterministic signals driving risk-free micro-credit",
         chart_risk_badge: "Low Risk Tier A+",
-        credit_toast_msg: "<b>🎉 Disbursal Complete:</b> ₹2,50,000 credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
+        credit_toast_msg: "<b>🎉 Disbursal Complete:</b> <span id="credit-limit-badge">₹2,50,000</span> credited to Merchant Paytm Current Account in 12 seconds. Daily auto-repayment set at ₹450/day."
       },
       'telugu': {
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> అడగడానికి సూచనలు:',
@@ -777,7 +1309,7 @@
         chart_title: "30 రోజుల ధృవీకరించబడిన నగదు ప్రవాహం",
         chart_subtitle: "రిస్క్ లేని మైక్రో-క్రెడిట్ సంకేతాలు",
         chart_risk_badge: "తక్కువ రిస్క్ టైర్ A+",
-        credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> ₹2,50,000 వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
+        credit_toast_msg: "<b>🎉 జమ పూర్తయింది:</b> <span id="credit-limit-badge">₹2,50,000</span> వ్యాపారి పేటీఎం కరెంట్ అకౌంట్‌లో 12 సెకన్లలో జమ అయ్యాయి. రోజువారీ ఆటో-చెల్లింపు ₹450/రోజుగా నిర్ణయించబడింది."
       },
       'hindi': {
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> पूछने के लिए सुझाव:',
@@ -878,7 +1410,7 @@
         chart_title: "30 दिनों का सत्यापित नकदी प्रवाह",
         chart_subtitle: "जोखिम मुक्त माइक्रो-क्रेडिट संकेत",
         chart_risk_badge: "कम जोखिम टियर A+",
-        credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> ₹2,50,000 व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
+        credit_toast_msg: "<b>🎉 वितरण पूर्ण:</b> <span id="credit-limit-badge">₹2,50,000</span> व्यापारी के पेटीएम चालू खाते में 12 सेकंड में जमा किए गए। दैनिक ऑटो-भुगतान ₹450/दिन निर्धारित।"
       },
       'tamil': {
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> கேட்க பரிந்துரைகள்:',
@@ -979,7 +1511,7 @@
         chart_title: "30 நாட்கள் சரிபார்க்கப்பட்ட பணப்புழக்கம்",
         chart_subtitle: "பாதுகாப்பான கடன் மதிப்பீட்டு சமிக்ஞைகள்",
         chart_risk_badge: "குறைந்த ஆபத்து நிலை A+",
-        credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> ₹2,50,000 வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
+        credit_toast_msg: "<b>🎉 கடன் வழங்கப்பட்டது:</b> <span id="credit-limit-badge">₹2,50,000</span> வணிகரின் பேடிஎம் கணக்கில் 12 வினாடிகளில் வரவு வைக்கப்பட்டது. தினசரி செலுத்துகை ₹450/நாள்."
       },
       'kannada': {
         quick_suggestions_label: '<i class="fa-regular fa-lightbulb text-amber-500"></i> ಕೇಳಲು ಸಲಹೆಗಳು:',
@@ -1080,7 +1612,7 @@
         chart_title: "30 ದಿನಗಳ ಪರಿಶೀಲಿಸಿದ ನಗದು ಹರಿವು",
         chart_subtitle: "ಸುರಕ್ಷಿತ ಸಾಲದ ಅರ್ಹತಾ ಸಂಕೇತಗಳು",
         chart_risk_badge: "ಕಡಿಮೆ ಅಪಾಯ ಶ್ರೇಣಿ A+",
-        credit_toast_msg: "<b>🎉 ಸಾಲ ಜಮೆಯಾಗಿದೆ:</b> ₹2,50,000 ವ್ಯಾಪಾರಿಯ ಪೇಟಿಎಂ ಖಾತೆಗೆ 12 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಜಮೆಯಾಗಿದೆ. ದೈನಂದಿನ ಮರುಪಾವತಿ ₹450/ದಿನ."
+        credit_toast_msg: "<b>🎉 ಸಾಲ ಜಮೆಯಾಗಿದೆ:</b> <span id="credit-limit-badge">₹2,50,000</span> ವ್ಯಾಪಾರಿಯ ಪೇಟಿಎಂ ಖಾತೆಗೆ 12 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಜಮೆಯಾಗಿದೆ. ದೈನಂದಿನ ಮರುಪಾವತಿ ₹450/ದಿನ."
       }
     };
 
@@ -1170,14 +1702,15 @@
       };
       document.getElementById('active-lang-badge').innerText = 'Language: ' + names[lang];
 
-      // Update the chat message bubble and AI response text to the selected language
+      // Update the chat message bubble and AI response text to the selected language for active business
+      const bizCfg = (typeof BUSINESS_CONFIGS !== 'undefined' && BUSINESS_CONFIGS[currentBusinessType]) || null;
       const userBubble = document.getElementById('initial-user-msg');
-      if (userBubble && dict['initial_user_msg']) {
-        userBubble.innerHTML = dict['initial_user_msg'];
+      if (userBubble) {
+        userBubble.innerHTML = (bizCfg && bizCfg.initial_user && bizCfg.initial_user[lang]) || dict['initial_user_msg'];
       }
       const aiBubble = document.getElementById('last-ai-text');
-      if (aiBubble && dict['initial_ai_response']) {
-        aiBubble.innerHTML = dict['initial_ai_response'];
+      if (aiBubble) {
+        aiBubble.innerHTML = (bizCfg && bizCfg.initial_ai && bizCfg.initial_ai[lang]) || dict['initial_ai_response'];
       }
       window.lastClipKey = 'sales_' + lang;
 
@@ -1283,7 +1816,8 @@
     function renderSamplePrompts() {
       const container = document.getElementById('sample-prompts-container');
       const bottomContainer = document.getElementById('bottom-quick-suggestions');
-      const list = localizedPrompts[currentLanguage] || localizedPrompts['english'];
+      const bizCfg = BUSINESS_CONFIGS[currentBusinessType] || BUSINESS_CONFIGS['kirana'];
+      const list = (bizCfg.prompts && bizCfg.prompts[currentLanguage]) || localizedPrompts[currentLanguage] || localizedPrompts['english'];
 
       // 1. Render left-hand Soundbox prompt cards
       if (container) {
@@ -1431,7 +1965,7 @@
         const res = await fetch('/api/copilot/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: query, language: currentLanguage })
+          body: JSON.stringify({ query: query, language: currentLanguage, business_type: currentBusinessType })
         });
         const data = await res.json();
         renderAiResponse(data.voice_response, clipKey);
@@ -1444,11 +1978,8 @@
       let resp = "";
       const lang = currentLanguage;
       if (clipKey.startsWith('sales')) {
-        if (lang === 'telugu') resp = "సేత్ గారూ, ఈరోజు సాయంత్రం వరకు మొత్తం ₹18,420 కలెక్షన్ వచ్చింది. అమూల్ పాలు కేవలం 4 ప్యాకెట్లు మాత్రమే మిగిలి ఉన్నాయి, రీస్టాక్ చేయండి!";
-        else if (lang === 'tamil') resp = "சேத் அவர்களே, இன்று மாலை வரை மொத்தம் ₹18,420 வசூலாகியுள்ளது. அமுல் பால் வெறும் 4 பாக்கெட்டுகள் மட்டுமே உள்ளன, உடனே ரீஸ்டாக் செய்யுங்கள்!";
-        else if (lang === 'kannada') resp = "ಸೇಠ್ ಅವರೇ, ಇಂದು ಸಂಜೆಯವರೆಗೆ ಒಟ್ಟು ₹18,420 ಕಲೆಕ್ಷನ್ ಆಗಿದೆ. ಅಮುಲ್ ಹಾಲಿನ ಕೇವಲ 4 ಪ್ಯಾಕೆಟ್‌ಗಳು ಉಳಿದಿವೆ, ತಕ್ಷಣವೇ ರೀಸ್ಟಾಕ್ ಮಾಡಿ!";
-        else if (lang === 'hindi') resp = "सेठ जी, आज शाम तक कुल ₹18,420 का कलेक्शन हुआ है। अमूल दूध के सिर्फ 4 पैकेट बचे हैं, तुरंत रीस्टॉक करें!";
-        else resp = "Boss, today's total collection reached ₹18,420 across 64 transactions. Alert: Amul Milk has only 4 packets left in stock, restock recommended immediately!";
+        const bizCfg = BUSINESS_CONFIGS[currentBusinessType] || BUSINESS_CONFIGS['kirana'];
+        resp = (bizCfg.initial_ai && bizCfg.initial_ai[lang]) ? bizCfg.initial_ai[lang].replace(/^"|"$/g, '') : `Boss, today's total collection reached ${bizCfg.today_collection}. Restock recommended immediately!`;
       } else if (clipKey.startsWith('stock')) {
         if (lang === 'telugu') resp = "మీ దుకాణంలో 3 వస్తువులు తక్కువ స్టాక్‌లో ఉన్నాయి. బాలాజీ ఏజెన్సీ ONDC లో అమూల్ పాలను ₹24.20 కి ఇస్తున్నారు. రీ-ఆర్డర్ సిద్ధం చేశాను.";
         else if (lang === 'tamil') resp = "கடையில் 3 பொருட்கள் குறைவான இருப்பில் உள்ளன. பாலாஜி ஏஜென்சி ONDC-யில் அமுல் பால் வழங்குகிறது. ஆர்டர் தயாராக உள்ளது.";
@@ -1462,11 +1993,11 @@
         else if (lang === 'hindi') resp = "दुकान पर कुल ₹12,450 का उधार बाकी है। अनिल वर्मा जी को व्हाट्सएप पर विनम्र रिमाइंडर और पेमेंट लिंक भेज दिया गया है।";
         else resp = "A total of ₹12,450 in customer credit is pending. WhatsApp reminder with dynamic UPI link sent to Anil Verma.";
       } else if (clipKey.startsWith('loan')) {
-        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు ₹2,50,000 తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
-        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு ₹2,50,000 உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
-        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ ₹2,50,000 ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
-        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको ₹2,50,000 का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
-        else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for ₹2,50,000 in instant working capital credit.";
+        if (lang === 'telugu') resp = "అభినందనలు! మీ పేటీఎం సౌండ్‌బాక్స్ ఆధారంగా మీకు <span id="credit-limit-badge">₹2,50,000</span> తక్షణ వర్కింగ్ క్యాపిటల్ లోన్ 180 సెకన్లలో ఆమోదించబడింది.";
+        else if (lang === 'tamil') resp = "வாழ்த்துகள்! உங்கள் பேடிஎம் சவுண்ட்பாக்ஸ் அடிப்படையில் உங்களுக்கு <span id="credit-limit-badge">₹2,50,000</span> உடனடி மூலதன கடன் 180 வினாடிகளில் முன்அனுமதி வழங்கப்பட்டுள்ளது.";
+        else if (lang === 'kannada') resp = "ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಪೇಟಿಎಂ ಸೌಂಡ್‌ಬಾಕ್ಸ್ ಆಧಾರದ ಮೇಲೆ ನಿಮಗೆ <span id="credit-limit-badge">₹2,50,000</span> ತ್ವರಿತ ಸಾಲ 180 ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮಂಜೂರಾಗಿದೆ.";
+        else if (lang === 'hindi') resp = "बधाई हो! आपके पेटीएम साउंडबॉक्स के आधार पर आपको <span id="credit-limit-badge">₹2,50,000</span> का इंस्टेंट वर्किंग कैपिटल लोन 180 सेकंड में प्री-अप्रूव्ड मिला है।";
+        else resp = "Congratulations! Based on your verified Paytm Soundbox and daily settlement velocity, you are pre-approved for <span id="credit-limit-badge">₹2,50,000</span> in instant working capital credit.";
       } else {
         resp = UI_TRANSLATIONS[lang].sb_ready_status;
       }
