@@ -8,6 +8,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="static/audio_bundle.js"></script>
+    <!-- Leaflet Map CSS & JS for Customer Geolocation -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -60,6 +63,51 @@
       border-color: #00BAF2;
       font-weight: 800;
       box-shadow: 0 0 10px rgba(0, 186, 242, 0.45);
+    }
+
+  
+    /* Customer Geolocation Map Styles */
+    #customer-map {
+      height: 380px;
+      width: 100%;
+      border-radius: 1.25rem;
+      z-index: 10;
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e2e8f0;
+      padding: 0;
+    }
+    .leaflet-popup-content {
+      margin: 12px 14px;
+      line-height: 1.4;
+    }
+    .store-marker-pin {
+      width: 32px;
+      height: 32px;
+      background: #002970;
+      color: #00BAF2;
+      border: 3px solid #00BAF2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 0 15px rgba(0, 186, 242, 0.6);
+    }
+    .cust-marker-pin {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      border: 2px solid white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
     }
 
   </style>
@@ -542,12 +590,26 @@
       </div>
 
       <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="font-bold text-slate-800" data-i18n="khata_ledger_title">Active Khata Ledger & Automated Chasers</h3>
-          <span class="text-xs text-slate-400" data-i18n="khata_upi_enabled">Dynamic 1-Click UPI Enabled</span>
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="font-bold text-slate-800" data-i18n="khata_ledger_title">Active Khata Ledger & Customer Geolocation</h3>
+            <p class="text-xs text-slate-500">2-KM Neighborhood Debt Recovery & Delivery Radius Map</p>
+          </div>
+          <!-- View Switcher: List vs Map -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+            <button onclick="toggleKhataView('list')" id="khata-view-list" class="px-3 py-1.5 rounded-lg font-bold bg-white text-paytm-navy shadow-xs transition cursor-pointer">
+              <i class="fa-solid fa-list mr-1"></i> List View
+            </button>
+            <button onclick="toggleKhataView('map')" id="khata-view-map" class="px-3 py-1.5 rounded-lg font-bold text-slate-500 hover:text-slate-800 transition cursor-pointer flex items-center gap-1.5">
+              <i class="fa-solid fa-map-location-dot text-cyan-600"></i>
+              <span>Customer Map View</span>
+              <span class="bg-cyan-100 text-cyan-800 text-[10px] px-1.5 py-0.2 rounded-full font-extrabold">2-KM</span>
+            </button>
+          </div>
         </div>
 
-        <div class="space-y-3">
+        <!-- 1. List View Container -->
+        <div id="khata-list-container" class="space-y-3">
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div class="flex items-center space-x-2">
@@ -594,6 +656,33 @@
                 Send WhatsApp & QR
               </button>
             </div>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- 2. Interactive Customer 2-KM Geo-Map View -->
+        <div id="khata-map-container" class="hidden space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2 text-xs bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-store text-paytm-navy"></i> <span id="map-center-store">Sri Lakshmi Store (Merchant Center)</span></span>
+              <span class="text-slate-400">•</span>
+              <span class="text-slate-500"><i class="fa-solid fa-radar text-cyan-500"></i> Neighborhood Radius: <b>2.0 KM</b></span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1 text-[11px]"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> High Debt (>₹3k)</span>
+              <span class="flex items-center gap-1 text-[11px]"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Moderate</span>
+              <span class="flex items-center gap-1 text-[11px]"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Low</span>
+            </div>
+          </div>
+          
+          <div id="customer-map" class="rounded-2xl border border-slate-200 shadow-inner relative overflow-hidden bg-slate-100">
+            <!-- Leaflet map injects here -->
+          </div>
+
+          <!-- Quick Customer Geo-Cards below map -->
+          <div id="map-customer-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs pt-1">
+            <!-- Dynamically injected customer cards with 1-click focus & WhatsApp -->
           </div>
         </div>
 
@@ -1153,6 +1242,283 @@
     }
 
 
+    
+    // ==========================================
+    // CUSTOMER GEOLOCATION MAP LOGIC (2-KM RADIUS)
+    // ==========================================
+    let customerMap = null;
+    let customerMarkersLayer = null;
+    let merchantStoreMarker = null;
+    let radarCircle = null;
+    let currentKhataView = 'list';
+
+    // Store & Customer Geocoordinates by Business Type
+    const BUSINESS_GEO_DATA = {
+      'kirana': {
+        store: { name: "Sri Lakshmi Kirana & General Store", lat: 12.9345, lng: 77.6320, loc: "Koramangala 4th Block" },
+        customers: [
+          { id: "K1", name: "Anil Verma (Gym Trainer)", lat: 12.9372, lng: 77.6345, dist: "0.4 km", due: "₹4,850", days: "18 Days", risk: "high", addr: "4th Cross, FitZone Gym", notes: "Eggs tray & oats" },
+          { id: "K2", name: "Ramesh Sharma (Flat 302)", lat: 12.9310, lng: 77.6360, dist: "0.8 km", due: "₹3,420", days: "12 Days", risk: "moderate", addr: "Green Glen Apts, Flat 302", notes: "Atta 10kg & Oil" },
+          { id: "K3", name: "Sita Ram (Tailor Shop)", lat: 12.9352, lng: 77.6300, dist: "0.3 km", due: "₹1,180", days: "5 Days", risk: "low", addr: "Near Ganapathi Temple", notes: "Daily tea milk & sugar" },
+          { id: "K4", name: "Pooja Reddy", lat: 12.9285, lng: 77.6310, dist: "1.1 km", due: "₹950", days: "3 Days", risk: "low", addr: "17th Main, 5th Block", notes: "Snacks & soft drinks" },
+          { id: "K5", name: "Kiran Kumar", lat: 12.9410, lng: 77.6280, dist: "1.4 km", due: "₹2,050", days: "9 Days", risk: "moderate", addr: "Teachers Colony, 1st Cross", notes: "Monthly groceries" }
+        ]
+      },
+      'pharmacy': {
+        store: { name: "Sanjivani MedPlus Pharmacy", lat: 12.9298, lng: 77.5840, loc: "Jayanagar 4th Block" },
+        customers: [
+          { id: "KP1", name: "Dr. Mehra Clinic", lat: 12.9320, lng: 77.5875, dist: "0.5 km", due: "₹6,800", days: "15 Days", risk: "high", addr: "Apollo Diagnostic Lane", notes: "Syringes, Dettol bulk" },
+          { id: "KP2", name: "Anil Verma (Gym Trainer)", lat: 12.9275, lng: 77.5820, dist: "0.4 km", due: "₹3,200", days: "10 Days", risk: "moderate", addr: "Fitness First Studio", notes: "Multivitamins & Protein" },
+          { id: "KP3", name: "Mrs. Revathi (Senior Citizen)", lat: 12.9360, lng: 77.5810, dist: "1.2 km", due: "₹1,450", days: "6 Days", risk: "low", addr: "Elder Care Enclave, Flat 12", notes: "Monthly BP & Diabetes" }
+        ]
+      },
+      'restaurant': {
+        store: { name: "Udupi Grand Cafe & Tiffin", lat: 12.9719, lng: 77.6412, loc: "Indiranagar 100ft Road" },
+        customers: [
+          { id: "KR1", name: "Tech Corp Office Tiffin", lat: 12.9745, lng: 77.6435, dist: "0.5 km", due: "₹7,800", days: "14 Days", risk: "high", addr: "Prestige Tech Park, Gate 2", notes: "Monthly breakfast catering" },
+          { id: "KR2", name: "Anil Verma (Gym Trainer)", lat: 12.9695, lng: 77.6390, dist: "0.4 km", due: "₹2,850", days: "8 Days", risk: "low", addr: "CrossFit Box, 12th Main", notes: "Daily egg omelettes & juice" },
+          { id: "KR3", name: "City Cab Drivers Stand", lat: 12.9780, lng: 77.6460, dist: "1.5 km", due: "₹1,650", days: "6 Days", risk: "low", addr: "Indiranagar Metro Taxi Stand", notes: "Night shift tea & buns" }
+        ]
+      },
+      'apparel': {
+        store: { name: "Trends Fashion & Garments", lat: 12.9822, lng: 77.6083, loc: "Commercial Street" },
+        customers: [
+          { id: "KA1", name: "Geeta Boutique", lat: 12.9850, lng: 77.6110, dist: "0.6 km", due: "₹9,200", days: "20 Days", risk: "high", addr: "Jewellers Street, 2nd Flr", notes: "Festive designer kurtis bulk" },
+          { id: "KA2", name: "Anil Verma (Gym Trainer)", lat: 12.9795, lng: 77.6060, dist: "0.4 km", due: "₹3,500", days: "9 Days", risk: "moderate", addr: "Gold Gym Commercial Branch", notes: "Track pants & gym tees" },
+          { id: "KA3", name: "Rajesh Tailors", lat: 12.9830, lng: 77.6055, dist: "0.3 km", due: "₹2,100", days: "7 Days", risk: "low", addr: "Main Bazar Cross", notes: "Suiting fabrics & lining" }
+        ]
+      },
+      'electronics': {
+        store: { name: "Digital Hub Mobile & Repair", lat: 12.9654, lng: 77.5810, loc: "SP Road Tech Market" },
+        customers: [
+          { id: "KE1", name: "Express Phone Repairs", lat: 12.9675, lng: 77.5830, dist: "0.4 km", due: "₹5,400", days: "16 Days", risk: "high", addr: "Sadar Patrappa Rd, Shop 4", notes: "Display combos & ICs" },
+          { id: "KE2", name: "Anil Verma (Gym Trainer)", lat: 12.9635, lng: 77.5790, dist: "0.4 km", due: "₹1,800", days: "8 Days", risk: "low", addr: "PowerGym SP Road", notes: "TWS Earbuds & fast charger" },
+          { id: "KE3", name: "Smart Solutions IT Office", lat: 12.9710, lng: 77.5865, dist: "1.3 km", due: "₹2,600", days: "5 Days", risk: "low", addr: "Town Hall Plaza, 3rd Floor", notes: "HDMI cables & multi-plugs" }
+        ]
+      }
+    };
+
+    function toggleKhataView(viewType) {
+      currentKhataView = viewType;
+      const listContainer = document.getElementById('khata-list-container');
+      const mapContainer = document.getElementById('khata-map-container');
+      const btnList = document.getElementById('khata-view-list');
+      const btnMap = document.getElementById('khata-view-map');
+
+      if (viewType === 'map') {
+        if (listContainer) listContainer.classList.add('hidden');
+        if (mapContainer) mapContainer.classList.remove('hidden');
+
+        if (btnList) {
+          btnList.classList.remove('bg-white', 'text-paytm-navy', 'shadow-xs');
+          btnList.classList.add('text-slate-500');
+        }
+        if (btnMap) {
+          btnMap.classList.add('bg-white', 'text-paytm-navy', 'shadow-xs');
+          btnMap.classList.remove('text-slate-500');
+        }
+
+        initCustomerMap();
+        setTimeout(() => {
+          if (customerMap) customerMap.invalidateSize();
+        }, 80);
+      } else {
+        if (listContainer) listContainer.classList.remove('hidden');
+        if (mapContainer) mapContainer.classList.add('hidden');
+
+        if (btnMap) {
+          btnMap.classList.remove('bg-white', 'text-paytm-navy', 'shadow-xs');
+          btnMap.classList.add('text-slate-500');
+        }
+        if (btnList) {
+          btnList.classList.add('bg-white', 'text-paytm-navy', 'shadow-xs');
+          btnList.classList.remove('text-slate-500');
+        }
+      }
+    }
+
+    function initCustomerMap() {
+      const mapEl = document.getElementById('customer-map');
+      if (!mapEl) return;
+
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const store = data.store;
+      const customers = data.customers;
+
+      const storeLabel = document.getElementById('map-center-store');
+      if (storeLabel) storeLabel.innerText = `${store.name} (${store.loc})`;
+
+      // If Leaflet is available
+      if (typeof L !== 'undefined') {
+        if (!customerMap) {
+          customerMap = L.map('customer-map', {
+            zoomControl: true,
+            scrollWheelZoom: false
+          }).setView([store.lat, store.lng], 15);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors | Paytm VyaparAI Geolocation'
+          }).addTo(customerMap);
+
+          customerMarkersLayer = L.layerGroup().addTo(customerMap);
+        } else {
+          customerMap.setView([store.lat, store.lng], 15);
+        }
+
+        // Clear existing markers
+        if (customerMarkersLayer) customerMarkersLayer.clearLayers();
+        if (radarCircle) customerMap.removeLayer(radarCircle);
+        if (merchantStoreMarker) customerMap.removeLayer(merchantStoreMarker);
+
+        // 2-KM translucent radar circle
+        radarCircle = L.circle([store.lat, store.lng], {
+          color: '#00BAF2',
+          fillColor: '#00BAF2',
+          fillOpacity: 0.12,
+          radius: 1200, // 1.2km delivery buffer
+          weight: 2,
+          dashArray: '6, 6'
+        }).addTo(customerMap);
+
+        // Merchant Store Marker
+        const storeIcon = L.divIcon({
+          className: 'store-marker-pin',
+          html: '<i class="fa-solid fa-store"></i>',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        });
+
+        merchantStoreMarker = L.marker([store.lat, store.lng], { icon: storeIcon })
+          .addTo(customerMap)
+          .bindPopup(`
+            <div class="text-xs p-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-6 h-6 rounded-lg bg-paytm-navy text-paytm-cyan flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-store"></i></span>
+                <b class="text-paytm-navy text-sm">${store.name}</b>
+              </div>
+              <p class="text-slate-500">${store.loc}</p>
+              <div class="mt-2 text-[11px] bg-cyan-50 text-cyan-800 p-1.5 rounded-lg font-bold border border-cyan-200">
+                <i class="fa-solid fa-satellite-dish mr-1"></i> Soundbox 4.0 Active Radar Center
+              </div>
+            </div>
+          `);
+
+        // Customer Markers
+        customers.forEach(c => {
+          const colorClass = c.risk === 'high' ? 'bg-rose-600' : c.risk === 'moderate' ? 'bg-amber-500' : 'bg-emerald-500';
+          const iconHtml = `<div class="cust-marker-pin ${colorClass}">${c.due.replace('₹', '')}</div>`;
+          
+          const custIcon = L.divIcon({
+            className: 'custom-pin-wrapper',
+            html: iconHtml,
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+          });
+
+          const popupContent = `
+            <div class="text-xs p-1 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                <b class="text-slate-800 text-sm">${c.name}</b>
+                <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${c.risk === 'high' ? 'bg-rose-100 text-rose-800' : c.risk === 'moderate' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                  ${c.days} Overdue
+                </span>
+              </div>
+              <div class="text-slate-600 space-y-0.5 text-[11px]">
+                <p><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> ${c.addr} (<b>${c.dist}</b>)</p>
+                <p><i class="fa-solid fa-bag-shopping text-slate-400 mr-1"></i> ${c.notes}</p>
+                <p class="text-sm font-extrabold ${c.risk === 'high' ? 'text-rose-600' : 'text-slate-800'} mt-1">Pending Due: ${c.due}</p>
+              </div>
+              <div class="flex items-center gap-1.5 pt-1">
+                <button onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="flex-1 bg-paytm-navy hover:bg-blue-900 text-white font-bold py-1.5 px-2 rounded-xl text-[11px] transition shadow flex items-center justify-center gap-1 cursor-pointer">
+                  <i class="fa-brands fa-whatsapp text-emerald-400"></i> Send WhatsApp UPI
+                </button>
+                <a href="https://maps.google.com/?q=${c.lat},${c.lng}" target="_blank" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 px-2.5 rounded-xl text-[11px] font-bold transition flex items-center justify-center" title="Navigate">
+                  <i class="fa-solid fa-diamond-turn-right text-cyan-600"></i>
+                </a>
+              </div>
+            </div>
+          `;
+
+          L.marker([c.lat, c.lng], { icon: custIcon })
+            .addTo(customerMarkersLayer)
+            .bindPopup(popupContent);
+        });
+      } else {
+        // Fallback Vector Radar Map if CDN is not reachable
+        renderOfflineRadarMap(mapEl, store, customers);
+      }
+
+      // Render cards below map
+      renderMapCustomerCards(customers);
+    }
+
+    function renderOfflineRadarMap(mapEl, store, customers) {
+      let pinsHtml = '';
+      customers.forEach((c, idx) => {
+        const topPct = 25 + (idx * 14) + (idx % 2 === 0 ? 5 : -5);
+        const leftPct = 20 + (idx * 15);
+        const bg = c.risk === 'high' ? 'bg-rose-500' : c.risk === 'moderate' ? 'bg-amber-500' : 'bg-emerald-500';
+        pinsHtml += `
+          <div onclick="sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="absolute p-2 rounded-xl bg-white shadow-lg border border-slate-200 cursor-pointer hover:scale-105 transition" style="top: ${topPct}%; left: ${leftPct}%;">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full ${bg}"></span>
+              <span class="font-bold text-[11px] text-slate-800">${c.name}</span>
+            </div>
+            <p class="text-[10px] text-rose-600 font-extrabold mt-0.5">${c.due} (${c.dist})</p>
+          </div>
+        `;
+      });
+
+      mapEl.innerHTML = `
+        <div class="relative w-full h-[380px] bg-slate-900 overflow-hidden flex items-center justify-center">
+          <div class="absolute w-72 h-72 rounded-full border border-cyan-400/30 animate-ping pointer-events-none"></div>
+          <div class="absolute w-96 h-96 rounded-full border border-cyan-400/20 pointer-events-none"></div>
+          <div class="absolute w-48 h-48 rounded-full border border-cyan-400/40 pointer-events-none"></div>
+          
+          <div class="z-20 p-3 rounded-2xl bg-paytm-navy text-white text-center border-2 border-cyan-400 shadow-xl">
+            <i class="fa-solid fa-store text-paytm-cyan text-base"></i>
+            <p class="font-bold text-xs mt-1">${store.name}</p>
+            <p class="text-[10px] text-cyan-200">${store.loc}</p>
+          </div>
+          ${pinsHtml}
+        </div>
+      `;
+    }
+
+    function renderMapCustomerCards(customers) {
+      const container = document.getElementById('map-customer-cards');
+      if (!container || !customers) return;
+      container.innerHTML = '';
+
+      customers.forEach(c => {
+        const borderClass = c.risk === 'high' ? 'border-rose-300 bg-rose-50/50' : c.risk === 'moderate' ? 'border-amber-200 bg-amber-50/40' : 'border-emerald-200 bg-emerald-50/40';
+        const card = document.createElement('div');
+        card.className = `p-2.5 rounded-2xl border ${borderClass} flex items-center justify-between gap-2 shadow-xs hover:border-cyan-400 transition cursor-pointer`;
+        card.innerHTML = `
+          <div class="truncate">
+            <p class="font-bold text-slate-800 text-[11.5px] truncate">${c.name}</p>
+            <p class="text-[10px] text-slate-500 truncate">${c.addr} • <b class="text-cyan-700">${c.dist}</b></p>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-extrabold text-xs ${c.risk === 'high' ? 'text-rose-600' : 'text-slate-800'}">${c.due}</span>
+            <button onclick="event.stopPropagation(); sendUdharReminder('${c.name.replace(/'/g, "\'")}', '${c.due}', '${c.due.replace(/[^0-9]/g, '')}')" class="block mt-0.5 text-[10px] bg-paytm-navy text-white px-2 py-0.5 rounded-lg font-bold hover:bg-blue-900 transition">
+              Remind
+            </button>
+          </div>
+        `;
+        card.onclick = () => focusCustomerOnMap(c.lat, c.lng, c.name);
+        container.appendChild(card);
+      });
+    }
+
+    function focusCustomerOnMap(lat, lng, name) {
+      if (customerMap) {
+        customerMap.flyTo([lat, lng], 17, { duration: 1.2 });
+      }
+    }
+
+
     function switchBusiness(bizType) {
       if (!BUSINESS_CONFIGS[bizType]) return;
       currentBusinessType = bizType;
@@ -1187,6 +1553,10 @@
       // 5. Update Tab 2: ONDC Table & 2-KM Radar
       renderOndcTable(cfg.ondc);
       renderRadarTrends(cfg.radar);
+      // Refresh Customer Map if initialized
+      if (typeof initCustomerMap === 'function') {
+        initCustomerMap();
+      }
 
       // 6. Soundbox Voice Announcement in chosen language
       const welcomeText = cfg.welcome_voice[currentLanguage] || cfg.welcome_voice['english'];
