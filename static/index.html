@@ -1730,6 +1730,12 @@
           </div>
         </div>
 
+        <!-- Record Payment Received Action -->
+        <button onclick="simulateCustomerPaymentFromModal()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-xs shadow-md flex items-center justify-center space-x-2 transition cursor-pointer">
+          <i class="fa-solid fa-circle-check text-yellow-300"></i>
+          <span>Customer Paid via Link/QR? Settle & View Receipt</span>
+        </button>
+
         <!-- Utility Buttons -->
         <div class="grid grid-cols-2 gap-2 pt-1">
           <button onclick="copyActiveMessageText()" class="py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer">
@@ -1970,6 +1976,102 @@
           </div>
           <button onclick="simulateQrPayment(100, 'A Customer')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition flex items-center gap-1.5 shrink-0 cursor-pointer">
             <i class="fa-solid fa-bell"></i> Pay ₹100
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OFFICIAL PAYTM PAYMENT RECEIVED NOTIFICATION & DETAILED RECEIPT MODAL -->
+    <div id="payment-received-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 relative animate-scale-up my-auto">
+        <!-- Close button -->
+        <button onclick="closePaymentReceivedModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition absolute top-4 right-4 cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+
+        <!-- Celebration Header & Soundbox Chime Badge -->
+        <div class="text-center pt-1">
+          <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+            <div class="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-60"></div>
+            <div class="relative w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-full flex items-center justify-center text-white text-3xl shadow-lg border-2 border-white">
+              <i class="fa-solid fa-check"></i>
+            </div>
+          </div>
+          <div class="mt-2.5">
+            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+              <i class="fa-solid fa-volume-high text-emerald-600"></i> Soundbox 4.0 Verified
+            </span>
+            <h3 class="text-xl font-black text-slate-900 mt-1">Payment Received!</h3>
+            <p class="text-xs text-slate-500">Credited instantly to merchant settlement account</p>
+          </div>
+          <!-- Large Amount Display -->
+          <div class="my-3 py-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 rounded-2xl border border-emerald-200">
+            <span class="text-[11px] font-bold text-emerald-700 block uppercase tracking-wider">Total Amount Credited</span>
+            <div id="rcpt-amount" class="text-3xl font-black text-emerald-950 mt-0.5">₹1,200.00</div>
+            <span class="text-[11px] font-semibold text-emerald-700">Zero MDR • Immediate UPI Clearing</span>
+          </div>
+        </div>
+
+        <!-- Authentic Payment Details Breakdown Card -->
+        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Payer / Customer:</span>
+            <span id="rcpt-customer-name" class="font-extrabold text-slate-800">Jafar</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Customer Mobile:</span>
+            <span id="rcpt-customer-phone" class="font-mono font-bold text-slate-800">+91 98450 11223</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Paid To (Merchant):</span>
+            <span class="font-bold text-slate-800 flex items-center gap-1">
+              <span>Shaik Japhar</span>
+              <i class="fa-solid fa-circle-check text-blue-500 text-[11px]"></i>
+            </span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Merchant UPI ID:</span>
+            <span class="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-[11px]">8310508118@ptyes</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">UPI Ref / RRN:</span>
+            <span id="rcpt-rrn" class="font-mono text-slate-700 font-bold">UPI/PAYTM/430592817291</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Payment Mode:</span>
+            <span class="font-bold text-slate-800">Paytm UPI (Scan & Pay)</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+            <span class="text-slate-500 font-semibold">Date & Time:</span>
+            <span id="rcpt-timestamp" class="text-slate-700 font-medium">31 Oct 2026, 03:10 PM</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-semibold">Purpose / Note:</span>
+            <span id="rcpt-purpose" class="font-semibold text-slate-700">Khata Debt Clearance (Paid in Full)</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-2 pt-1">
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="printPaymentReceipt()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer">
+              <i class="fa-solid fa-print text-paytm-navy"></i>
+              <span>Print Receipt</span>
+            </button>
+            <button onclick="downloadPaymentReceipt()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer">
+              <i class="fa-solid fa-download text-paytm-navy"></i>
+              <span>Save Receipt</span>
+            </button>
+          </div>
+
+          <!-- Send Payment Confirmation to Customer via WhatsApp/SMS -->
+          <button onclick="sendPaymentConfirmationToCustomer()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-extrabold text-xs shadow flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+            <span>Send Confirmation SMS & WhatsApp to Customer</span>
+          </button>
+
+          <button onclick="closePaymentReceivedModal()" class="w-full py-2 rounded-xl text-slate-500 hover:text-slate-700 font-bold text-xs cursor-pointer">
+            Done / Return to Dashboard
           </button>
         </div>
       </div>
@@ -4666,18 +4768,13 @@
         });
       } catch (e) {}
 
-      if (typeof speakFallbackSpeech === 'function') {
-        const msgs = {
-          'english': `₹${order.total_amt.toFixed(0)} received via Paytm QR from ${order.customer_name}. Order completed!`,
-          'telugu': `${order.customer_name} గారి నుంచి పేటీఎం క్యూఆర్ ద్వారా ₹${order.total_amt.toFixed(0)} వచ్చాయి. ఆర్డర్ పూర్తయింది!`,
-          'hindi': `${order.customer_name} से पेटीएम क्यूआर पर ₹${order.total_amt.toFixed(0)} प्राप्त हुए। आर्डर संपन्न!`,
-          'tamil': `${order.customer_name} அவர்களிடமிருந்து பேடிஎம் மூலம் ₹${order.total_amt.toFixed(0)} பெறப்பட்டது!`,
-          'kannada': `${order.customer_name} ಅವರಿಂದ ಪೇಟಿಎಂ ಕ್ಯೂಆರ್ ಮೂಲಕ ₹${order.total_amt.toFixed(0)} ಸ್ವೀಕರಿಸಲಾಗಿದೆ!`
-        };
-        speakFallbackSpeech(msgs[currentLanguage] || msgs['english']);
-      }
-
       renderCustomerOrders();
+      showPaymentReceivedReceipt({
+        amount: '₹' + order.total_amt.toFixed(2),
+        customerName: order.customer_name,
+        phone: order.phone,
+        purpose: `Customer Takeaway Order #${order.id} (${order.items.length} items packed)`
+      });
     }
 
     // Play Voice Note simulation
@@ -4845,19 +4942,24 @@
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 flex-wrap gap-y-1">
               <span class="font-extrabold text-base ${dueTextColor} mr-1">${c.due}</span>
-              <button onclick="openEditCustomerModal('${c.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2.5 py-1.5 rounded-xl text-xs transition shadow-sm flex items-center space-x-1 cursor-pointer" title="Edit Customer Details">
+              <button onclick="openEditCustomerModal('${c.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-2 py-1.5 rounded-xl text-xs transition shadow-sm flex items-center space-x-1 cursor-pointer" title="Edit Customer Details">
                 <i class="fa-solid fa-pen-to-square text-xs text-paytm-navy"></i>
                 <span>Edit</span>
               </button>
               <!-- WhatsApp Option -->
-              <button onclick="sendRealtimeCustomerReminder('${c.id}', 'whatsapp')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer" title="Send WhatsApp Message">
+              <button onclick="sendRealtimeCustomerReminder('${c.id}', 'whatsapp')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-2.5 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer" title="Send WhatsApp Message">
                 <i class="fa-brands fa-whatsapp text-sm"></i>
                 <span>WhatsApp</span>
               </button>
               <!-- Normal SMS Option with Mobile Number -->
-              <button onclick="sendRealtimeCustomerReminder('${c.id}', 'sms')" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer" title="Send Normal Mobile SMS to Phone">
+              <button onclick="sendRealtimeCustomerReminder('${c.id}', 'sms')" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-2.5 py-1.5 rounded-xl text-xs transition shadow flex items-center space-x-1 cursor-pointer" title="Send Normal Mobile SMS to Phone">
                 <i class="fa-solid fa-comment-sms text-xs"></i>
                 <span>Normal SMS</span>
+              </button>
+              <!-- Settle & Mark Paid Button -->
+              <button onclick="settleCustomerKhata('${c.id}')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black px-2.5 py-1.5 rounded-xl text-xs transition shadow-md flex items-center space-x-1 cursor-pointer" title="Payment Received - Generate Receipt & Settle">
+                <i class="fa-solid fa-circle-check text-yellow-300 text-xs"></i>
+                <span>Mark Paid</span>
               </button>
             </div>
           </div>
@@ -5991,12 +6093,228 @@ function switchTab(tabId) {
       if (waves) { waves.classList.remove('hidden'); setTimeout(() => waves.classList.add('hidden'), 3500); }
       if (bars) { bars.classList.remove('hidden'); setTimeout(() => bars.classList.add('hidden'), 3500); }
 
-      // Update Live Counter Ticker
+      // Trigger full payment received notification & detailed receipt modal
+      showPaymentReceivedReceipt({
+        amount: '₹' + amount,
+        customerName: customerName,
+        phone: '+91 98450 11223',
+        purpose: 'Official Paytm Counter QR Standee Scan & Pay'
+      });
+    }
+
+    // ==========================================
+    // PAYMENT RECEIVED NOTIFICATION & DETAILED RECEIPT
+    // ==========================================
+    let currentPaymentReceipt = null;
+
+    function showPaymentReceivedReceipt(details) {
+      currentPaymentReceipt = details;
+      const cleanAmt = String(details.amount || '0').replace(/[^0-9.]/g, '');
+      const numAmt = parseFloat(cleanAmt) || 0;
+      
+      const rrn = details.rrn || ('UPI/' + Date.now().toString().slice(-8) + Math.floor(1000 + Math.random() * 9000));
+      const timeStr = details.timestamp || new Date().toLocaleString('en-IN', { 
+        day: '2-digit', month: 'short', year: 'numeric', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+      });
+
+      const amtEl = document.getElementById('rcpt-amount');
+      const nameEl = document.getElementById('rcpt-customer-name');
+      const phoneEl = document.getElementById('rcpt-customer-phone');
+      const rrnEl = document.getElementById('rcpt-rrn');
+      const timeEl = document.getElementById('rcpt-timestamp');
+      const purposeEl = document.getElementById('rcpt-purpose');
+
+      if (amtEl) amtEl.innerText = details.amount.startsWith('₹') ? details.amount : `₹${numAmt.toFixed(2)}`;
+      if (nameEl) nameEl.innerText = details.customerName || 'Customer';
+      if (phoneEl) phoneEl.innerText = details.phone || '--';
+      if (rrnEl) rrnEl.innerText = rrn;
+      if (timeEl) timeEl.innerText = timeStr;
+      if (purposeEl) purposeEl.innerText = details.purpose || 'Paytm UPI Settlement';
+
+      // 1. Soundbox Multilingual Audio Announcement
+      const msgs = {
+        'english': `₹${numAmt.toFixed(0)} received via Paytm QR from ${details.customerName || 'Customer'}! Payment successful.`,
+        'telugu': `${details.customerName || 'కస్టమర్'} గారి నుంచి పేటీఎం క్యూఆర్ ద్వారా ₹${numAmt.toFixed(0)} వచ్చాయి! చెల్లింపు పూర్తయింది.`,
+        'hindi': `पेटीएम पर ${details.customerName || 'ग्राहक'} से ₹${numAmt.toFixed(0)} प्राप्त हुए! भुगतान सफल रहा।`,
+        'tamil': `${details.customerName || 'வாடிக்கையாளர்'} அவர்களிடமிருந்து பேடிஎம் மூலம் ₹${numAmt.toFixed(0)} பெறப்பட்டது!`,
+        'kannada': `${details.customerName || 'ಗ್ರಾಹಕರು'} ಅವರಿಂದ ಪೇಟಿಎಂ ಕ್ಯೂಆರ್ ಮೂಲಕ ₹${numAmt.toFixed(0)} ಸ್ವೀಕರಿಸಲಾಗಿದೆ!`
+      };
+      const voiceText = msgs[currentLanguage] || msgs['english'];
+      if (typeof triggerSoundboxSpeech === 'function') {
+        triggerSoundboxSpeech(voiceText);
+      }
+
+      // 2. Soundbox visual hardware waves & audio bars
+      const waves = document.getElementById('soundbox-speaker-waves');
+      const bars = document.getElementById('soundbox-audio-bars');
+      if (waves) { waves.classList.remove('hidden'); setTimeout(() => waves.classList.add('hidden'), 4500); }
+      if (bars) { bars.classList.remove('hidden'); setTimeout(() => bars.classList.add('hidden'), 4500); }
+
+      // 3. Live Counter Ticker Bar Update
       const ticker = document.getElementById('live-ticker-text');
       if (ticker) {
-        ticker.innerText = `₹${amount} received from ${customerName} (Just now) via Official Paytm QR Standee`;
+        ticker.innerText = `₹${numAmt.toFixed(0)} received from ${details.customerName || 'Customer'} (Just now) via Paytm Soundbox 4.0`;
       }
-      showToastNotification(`🎉 ${text}`);
+
+      // 4. Update Today's Collection Display in Navbar
+      const todayCollEl = document.querySelector('[data-i18n="nav_today_collection"]');
+      if (todayCollEl) {
+        const curText = todayCollEl.innerText;
+        const curNum = parseFloat(curText.replace(/[^0-9.]/g, '')) || 18420;
+        const newTotal = curNum + numAmt;
+        todayCollEl.innerText = `Today: ₹${newTotal.toLocaleString('en-IN')}`;
+      }
+
+      // 5. Toast Notification
+      showToastNotification(`🎉 Payment Received: ₹${numAmt.toFixed(0)} from ${details.customerName}!`);
+
+      // 6. Open Payment Received & Detailed Receipt Modal
+      const modal = document.getElementById('payment-received-modal');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePaymentReceivedModal() {
+      const modal = document.getElementById('payment-received-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Settle Customer Khata Balance
+    function settleCustomerKhata(customerId) {
+      const data = BUSINESS_GEO_DATA[currentBusinessType] || BUSINESS_GEO_DATA['kirana'];
+      const customers = data.customers || [];
+      const customer = customers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      const paidAmount = customer.due;
+      const custName = customer.name;
+      const custPhone = customer.phone;
+      const custNotes = customer.notes || 'Groceries & items';
+
+      // Settle balance to 0 in local state
+      customer.due = '₹0';
+      customer.days = '0 Days';
+      customer.risk = 'low';
+      customer.notes = `Cleared: ${custNotes}`;
+      saveGeoCustomers();
+      renderKhataLedger();
+
+      // Show Payment Received Receipt & Notification
+      showPaymentReceivedReceipt({
+        amount: paidAmount,
+        customerName: custName,
+        phone: custPhone,
+        purpose: `Khata Debt Clearance (${custNotes})`
+      });
+    }
+
+    // Simulate customer settlement from the WhatsApp/SMS modal
+    function simulateCustomerPaymentFromModal() {
+      if (!currentWaModalData) return;
+      const c = currentWaModalData.customer;
+      closeWhatsAppDispatchModal();
+      settleCustomerKhata(c.id);
+    }
+
+    // Print Payment Receipt
+    function printPaymentReceipt() {
+      if (!currentPaymentReceipt) return;
+      const d = currentPaymentReceipt;
+      const w = window.open('', '_blank', 'width=650,height=750');
+      if (!w) {
+        alert("Please allow popups to print receipt.");
+        return;
+      }
+      w.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Paytm Payment Receipt - ${d.customerName}</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 30px; background: #f8fafc; color: #002970; }
+              .card { max-width: 400px; margin: 0 auto; background: white; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #e2e8f0; text-align: left; }
+              .logo { text-align: center; font-size: 22px; font-weight: 900; color: #002970; margin-bottom: 4px; }
+              .logo span { color: #00b9f5; }
+              .check { text-align: center; color: #10b981; font-size: 40px; margin: 10px 0; }
+              .amt { text-align: center; font-size: 28px; font-weight: 900; color: #064e3b; margin: 8px 0; background: #ecfdf5; padding: 12px; border-radius: 16px; }
+              .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+              .lbl { color: #64748b; font-weight: 600; }
+              .val { font-weight: 700; color: #0f172a; }
+              .footer { text-align: center; margin-top: 18px; font-size: 11px; color: #94a3b8; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <div class="logo">Paytm <span>VyaparAI</span></div>
+              <div class="check">✔</div>
+              <h3 style="text-align: center; margin: 0; color: #0f172a;">Payment Received Successfully</h3>
+              <div class="amt">${d.amount}</div>
+              <div class="row"><span class="lbl">Customer / Payer:</span><span class="val">${d.customerName}</span></div>
+              <div class="row"><span class="lbl">Mobile Number:</span><span class="val">${d.phone}</span></div>
+              <div class="row"><span class="lbl">Paid To Merchant:</span><span class="val">Shaik Japhar ✔</span></div>
+              <div class="row"><span class="lbl">Merchant UPI ID:</span><span class="val">8310508118@ptyes</span></div>
+              <div class="row"><span class="lbl">UPI Reference No:</span><span class="val">${d.rrn || 'UPI/PAYTM/43059281'}</span></div>
+              <div class="row"><span class="lbl">Payment Mode:</span><span class="val">Paytm UPI (Scan & Pay)</span></div>
+              <div class="row"><span class="lbl">Date & Time:</span><span class="val">${d.timestamp || new Date().toLocaleString()}</span></div>
+              <div class="row"><span class="lbl">Purpose:</span><span class="val">${d.purpose}</span></div>
+              <div class="footer">Verified by Paytm Soundbox 4.0 • Zero MDR Gateway</div>
+            </div>
+            <script>window.onload = function() { setTimeout(function() { window.print(); }, 400); };<\/script>
+          </body>
+        </html>
+      `);
+      w.document.close();
+    }
+
+    // Download Payment Receipt HTML
+    function downloadPaymentReceipt() {
+      if (!currentPaymentReceipt) return;
+      const d = currentPaymentReceipt;
+      const receiptTxt = `PAYTM VYAPARAI - PAYMENT RECEIVED RECEIPT\n` +
+        `=============================================\n` +
+        `Status: SUCCESS (Verified via Soundbox 4.0)\n` +
+        `Amount Credited: ${d.amount}\n` +
+        `Customer / Payer: ${d.customerName} (${d.phone})\n` +
+        `Merchant: Shaik Japhar (8310508118@ptyes)\n` +
+        `UPI Ref No: ${d.rrn || 'UPI/PAYTM/43059281'}\n` +
+        `Payment Mode: Paytm UPI (Scan & Pay)\n` +
+        `Timestamp: ${d.timestamp || new Date().toLocaleString()}\n` +
+        `Note: ${d.purpose}\n` +
+        `=============================================`;
+      
+      const blob = new Blob([receiptTxt], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Paytm_Receipt_${(d.customerName || 'Customer').replace(/\s+/g, '_')}_${Date.now()}.txt`;
+      a.click();
+      showToastNotification("Payment receipt downloaded successfully!");
+    }
+
+    // Send Payment Confirmation to Customer via SMS & WhatsApp
+    function sendPaymentConfirmationToCustomer() {
+      if (!currentPaymentReceipt) return;
+      const d = currentPaymentReceipt;
+      const cleanPhone = cleanWhatsAppNumber(d.phone);
+      const confMsg = `Hello ${d.customerName}! 🙏 We have received your payment of *${d.amount}* via Paytm UPI (UPI Ref: ${d.rrn || 'UPI/PAYTM/43059281'}). Your balance is cleared. Thank you for shopping with us! - Shaik Japhar (8310508118@ptyes)`;
+
+      // Dispatch via SMS API
+      fetch('/api/sms/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: d.customerName,
+          phone: d.phone,
+          message: confMsg
+        })
+      }).catch(() => {});
+
+      // Open WhatsApp confirmation link
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(confMsg)}`;
+      try {
+        window.open(waUrl, '_blank');
+      } catch (e) {}
+
+      showToastNotification(`✅ Payment confirmation SMS & WhatsApp dispatched to ${d.customerName} (${d.phone})!`);
     }
 </script>
 </body>
